@@ -1,11 +1,29 @@
 <script setup lang='ts'>
+import { useRegisterStore } from '../../stores/register'
+
+const registerStore = useRegisterStore()
 const { form, errors, isSubmitting, submitForm } = useRegisterForm()
 
+const emit = defineEmits<{
+    'update:show': [value: boolean]
+}>()
+
 const submitMessage = ref<string>('')
+const showPassword = ref<boolean>(false)
+const showConfirmPassword = ref<boolean>(false)
 
 const onSubmit = async (): Promise<void> => {
-    const success = await submitForm()
-    submitMessage.value = success ? '注册信息已通过校验，可接入后端注册 API。' : ''
+    const result = await submitForm()
+
+    if (result) {
+        emit('update:show', true)
+        if ((result as { data: { success: boolean } }).data.success) {
+            registerStore.setRegisterResult(true)
+            navigateTo('/login')
+        } else{
+            registerStore.setRegisterResult(false)
+        }
+    }
 }
 </script>
 
@@ -55,10 +73,18 @@ const onSubmit = async (): Promise<void> => {
                     <span class='material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant transition-colors group-focus-within:text-primary'>lock</span>
                     <input
                         v-model='form.password'
-                        class='w-full rounded-xl border border-transparent bg-surface-container-lowest py-2 pl-12 pr-4 text-sm text-on-surface outline-none transition-all placeholder:text-outline/60 focus:border-primary focus:ring-1 focus:ring-primary'
-                        type='password'
-                        placeholder='••••••••'
+                        class='w-full rounded-xl border border-transparent bg-surface-container-lowest py-2 pl-12 pr-12 text-sm text-on-surface outline-none transition-all placeholder:text-outline/60 focus:border-primary focus:ring-1 focus:ring-primary'
+                        :type='showPassword ? "text" : "password"'
+                        placeholder='密码需包含英文和数字，且至少 8 位'
                     >
+                    <button
+                        class='absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant transition-colors hover:text-primary'
+                        type='button'
+                        :aria-label='showPassword ? "隐藏密码" : "显示密码"'
+                        @click='showPassword = !showPassword'
+                    >
+                        <span class='material-symbols-outlined text-[20px]'>{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+                    </button>
                 </div>
                 <p v-if='errors.password' class='text-xs text-error'>{{ errors.password }}</p>
             </label>
@@ -69,10 +95,18 @@ const onSubmit = async (): Promise<void> => {
                     <span class='material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant transition-colors group-focus-within:text-primary'>verified_user</span>
                     <input
                         v-model='form.confirmPassword'
-                        class='w-full rounded-xl border border-transparent bg-surface-container-lowest py-2 pl-12 pr-4 text-sm text-on-surface outline-none transition-all placeholder:text-outline/60 focus:border-primary focus:ring-1 focus:ring-primary'
-                        type='password'
-                        placeholder='••••••••'
+                        class='w-full rounded-xl border border-transparent bg-surface-container-lowest py-2 pl-12 pr-12 text-sm text-on-surface outline-none transition-all placeholder:text-outline/60 focus:border-primary focus:ring-1 focus:ring-primary'
+                        :type='showConfirmPassword ? "text" : "password"'
+                        placeholder='密码需包含英文和数字，且至少 8 位'
                     >
+                    <button
+                        class='absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant transition-colors hover:text-primary'
+                        type='button'
+                        :aria-label='showConfirmPassword ? "隐藏确认密码" : "显示确认密码"'
+                        @click='showConfirmPassword = !showConfirmPassword'
+                    >
+                        <span class='material-symbols-outlined text-[20px]'>{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</span>
+                    </button>
                 </div>
                 <p v-if='errors.confirmPassword' class='text-xs text-error'>{{ errors.confirmPassword }}</p>
             </label>

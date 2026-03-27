@@ -1,21 +1,6 @@
 <template>
   <div class="min-h-screen flex flex-col selection:bg-primary/30">
-    <header class="w-full bg-slate-950/80 backdrop-blur-xl">
-      <div class="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-4">
-        <div class="flex items-center gap-8">
-          <div class='font-["Manrope"] text-2xl font-black tracking-tighter text-primary'>SelfMap</div>
-          <div class="hidden md:flex gap-6">
-            <a class="text-[#a5a5ff] border-b-2 border-[#a5a5ff] pb-1 font-medium transition-colors duration-300" href="#">测评</a>
-            <a class="text-slate-400 hover:text-slate-100 font-medium transition-colors duration-300" href="#">报告</a>
-            <a class="text-slate-400 hover:text-slate-100 font-medium transition-colors duration-300" href="#">发现</a>
-          </div>
-        </div>
-        <div class="flex items-center gap-4">
-          <button class="bg-transparent text-white px-6 py-2 rounded-full font-bold text-sm hover:opacity-90 active:scale-95 transition-all">登录</button>
-          <button class="bg-primary px-6 py-2 rounded-full text-on-primary-container font-bold text-sm hover:opacity-90 active:scale-95 transition-all">注册</button>
-        </div>
-      </div>
-    </header>
+    <AuthTopBar />
 
     <main class="flex-grow flex flex-col items-center justify-center pt-8 pb-12 px-6">
       <div class="w-full max-w-3xl mb-12">

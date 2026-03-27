@@ -2,10 +2,11 @@
 const { form, errors, isSubmitting, submitForm } = useLoginForm()
 
 const submitMessage = ref<string>('')
+const showPassword = ref<boolean>(false)
 
 const onSubmit = async (): Promise<void> => {
     const success = await submitForm()
-    submitMessage.value = success ? '登录信息已通过校验，可接入后端登录 API。' : ''
+    // submitMessage.value = success ? '登录信息已通过校验，可接入后端登录 API。' : ''
 }
 </script>
 
@@ -41,10 +42,18 @@ const onSubmit = async (): Promise<void> => {
                     <span class='material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant transition-colors group-focus-within:text-primary'>lock</span>
                     <input
                         v-model='form.password'
-                        class='w-full rounded-xl border border-transparent bg-surface-container-lowest py-2 pl-12 pr-4 text-sm text-on-surface outline-none transition-all placeholder:text-outline/60 focus:border-primary focus:ring-1 focus:ring-primary'
-                        type='password'
-                        placeholder='••••••••'
+                        class='w-full rounded-xl border border-transparent bg-surface-container-lowest py-2 pl-12 pr-12 text-sm text-on-surface outline-none transition-all placeholder:text-outline/60 focus:border-primary focus:ring-1 focus:ring-primary'
+                        :type='showPassword ? "text" : "password"'
+                        placeholder='输入您的密码'
                     >
+                    <button
+                        class='absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant transition-colors hover:text-primary'
+                        type='button'
+                        :aria-label='showPassword ? "隐藏密码" : "显示密码"'
+                        @click='showPassword = !showPassword'
+                    >
+                        <span class='material-symbols-outlined text-[20px]'>{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+                    </button>
                 </div>
                 <p v-if='errors.password' class='text-xs text-error'>{{ errors.password }}</p>
             </label>
