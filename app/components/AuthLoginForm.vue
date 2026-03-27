@@ -16,7 +16,7 @@ const onSubmit = async (): Promise<void> => {
     emit("update:show", true);
     if ((result as { data: { success: boolean } }).data.success) {
       loginStore.setLoginResult(true);
-      navigateTo("/mbti-test");
+      navigateTo("/mbti");
     } else {
       loginStore.setLoginResult(false);
     }
