@@ -1,0 +1,59 @@
+---
+description: SelfMap Vue3/Nuxt4 工程架构与编码约束
+alwaysApply: true
+---
+
+# SelfMap 前端工程规则（Vue 3 + Nuxt 4）
+
+## 1) 核心架构与版本约束
+
+- 项目默认技术栈：Vue 3 + Nuxt 4。
+- 组件开发必须使用 Composition API 与 `<script setup>`。
+- 组件脚本必须使用 TypeScript（`<script setup lang="ts">`）。
+- 强制类型安全：必须定义 `interface`/`type`；禁止新增 `any`。
+- `props` 必须使用 `defineProps<{ ... }>()` 进行纯类型声明。
+- 全局状态管理统一使用 Pinia。
+
+## 2) 代码风格与美化
+
+- 命名规范：
+  - 变量/函数：`camelCase`（例：`userData`）。
+  - 组件文件：PascalCase 且双词命名（例：`UserCard.vue`）。
+  - 组件内 `name`：必须使用 PascalCase。
+- 格式规范：
+  - 缩进固定 4 个空格。
+  - 字符串引号统一使用单引号。
+- 样式规范：
+  - 必须使用 Tailwind CSS。
+  - 优先使用全局 CSS 变量；禁止硬编码颜色值（如 `#fff`、`rgb(...)`）。
+
+## 3) 文件组织与逻辑拆分
+
+- 严禁跨层调用，保持目录职责单一。
+- 目录约定：
+  - `app/api/`：按模块封装 API 请求；禁止在页面中直接写 axios 请求逻辑。
+  - `app/assets/`：静态资源。
+  - `app/components/`：通用业务组件。
+  - `app/layouts/`：通用布局组件。
+  - `app/middleware/`：Nuxt 中间件。
+  - `app/pages/`：页面级组件。
+  - `app/utils/`：公共工具函数。
+  - `app/composables/`：复用逻辑 Hooks；禁止使用 Mixins（Vue 3）。
+- 自动导入限制：`unplugin-auto-import` 仅用于官方库 API；业务逻辑禁止自动导入，避免全局污染。
+- 服务端目录约定：
+  - `server/api/`：接口处理（例：`api/user/aaa.ts` -> `user/aaa`，`api/user/[id].ts` -> `user/1`）。
+  - `server/middleware/`：Nuxt 服务端中间件。
+
+## 4) 安全与环境变量
+
+- 零硬编码：禁止在代码中写入 API Key、Token、BaseURL 等敏感配置。
+- 环境隔离：必须使用 `.env` 区分开发/测试/生产环境。
+- 变量读取：
+  - Vite：`import.meta.env.VITE_XXX`
+  - Vue CLI：`process.env.VUE_APP_XXX`
+- 关键配置必须提供合理的 fallback 默认值。
+
+## 5) 注释与文档规范
+
+- 复杂逻辑函数必须使用 JSDoc 注释并说明 `@description`、`@param`、`@returns`。
+- 每个页面文件头部必须简述业务背景与页面目的。

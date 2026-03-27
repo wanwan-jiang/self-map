@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body,
+#__nuxt {
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+}
+
+body {
+  min-height: 100vh;
+  background-color: #0a0e14;
+  color: #f1f3fc;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* .text-on-primary-container {
+  color: #527bb9; 
+}
+
+.text-on-primary-container:hover {
+  color: #527bb9 !important;  
+} */
