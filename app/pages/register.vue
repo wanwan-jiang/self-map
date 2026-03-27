@@ -19,6 +19,8 @@ useHead({
         }
     ]
 })
+
+const showPopUp = ref(false)
 </script>
 
 <template>
@@ -29,9 +31,10 @@ useHead({
             <div class='pointer-events-none absolute bottom-[-10%] right-[-10%] h-[40%] w-[40%] rounded-full bg-secondary/10 blur-[100px]' />
             <section class='relative z-10 grid w-full max-w-[980px] overflow-hidden rounded-2xl border border-outline-variant/20 bg-surface-container-low lg:grid-cols-2'>
                 <AuthMarketingPanel />
-                <AuthRegisterForm />
+                <AuthRegisterForm @update:show="showPopUp = $event" />
             </section>
         </main>
         <AuthFooterLinks />
+        <PopUp v-if="showPopUp" @close="showPopUp = false" />
     </div>
 </template>

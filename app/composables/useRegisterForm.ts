@@ -18,10 +18,11 @@ interface UseRegisterFormReturn {
     form: Ref<RegisterFormState>
     errors: Ref<RegisterFormErrors>
     isSubmitting: Ref<boolean>
-    submitForm: () => Promise<boolean>
+    submitForm: () => Promise<object | boolean>
 }
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const PASSWORD_PATTERN = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/
 
 export const useRegisterForm = (): UseRegisterFormReturn => {
     const form = ref<RegisterFormState>({
@@ -42,12 +43,12 @@ export const useRegisterForm = (): UseRegisterFormReturn => {
             nextErrors.username = '请输入用户名'
         }
 
-        if (!EMAIL_PATTERN.test(form.value.email.trim())) {
+        if (!EMAIL_PATTERN.test(form.value.email.trim())) { 
             nextErrors.email = '请输入有效邮箱地址'
         }
 
-        if (form.value.password.length < 8) {
-            nextErrors.password = '密码至少 8 位'
+        if (!PASSWORD_PATTERN.test(form.value.password)) {
+            nextErrors.password = '密码需包含英文和数字，且至少 8 位'
         }
 
         if (form.value.confirmPassword !== form.value.password) {
@@ -62,15 +63,15 @@ export const useRegisterForm = (): UseRegisterFormReturn => {
         return Object.keys(nextErrors).length === 0
     }
 
-    const submitForm = async (): Promise<boolean> => {
+    const submitForm = async (): Promise<object | boolean> => {
         if (!validate()) {
             return false
         }
 
         isSubmitting.value = true
         try {
-            await new Promise((resolve) => setTimeout(resolve, 600))
-            return true
+            const result = await new Promise<object>((resolve) => setTimeout(() => resolve({data:{success:true}}), 600))
+            return result
         } finally {
             isSubmitting.value = false
         }

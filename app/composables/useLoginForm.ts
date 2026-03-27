@@ -15,6 +15,8 @@ interface UseLoginFormReturn {
     submitForm: () => Promise<boolean>
 }
 
+const PASSWORD_PATTERN = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/
+
 export const useLoginForm = (): UseLoginFormReturn => {
     const form = ref<LoginFormState>({
         username: '',
@@ -31,8 +33,8 @@ export const useLoginForm = (): UseLoginFormReturn => {
             nextErrors.username = '请输入用户名'
         }
 
-        if (form.value.password.length < 8) {
-            nextErrors.password = '密码至少 8 位'
+        if (!PASSWORD_PATTERN.test(form.value.password)) {
+            nextErrors.password = '密码需包含英文和数字，且至少 8 位'
         }
 
         errors.value = nextErrors
