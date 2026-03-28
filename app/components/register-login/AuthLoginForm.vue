@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useLoginStore } from "../../stores/login";
+import { useLoginStore } from "../../../stores/login";
 const emit = defineEmits<{
   "update:show": [value: boolean];
 }>();

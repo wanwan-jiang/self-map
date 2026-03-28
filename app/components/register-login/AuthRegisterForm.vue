@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useRegisterStore } from "../../stores/register";
+import { useRegisterStore } from "../../../stores/register";
 
 const registerStore = useRegisterStore();
 const { form, errors, isSubmitting, submitForm } = useRegisterForm();

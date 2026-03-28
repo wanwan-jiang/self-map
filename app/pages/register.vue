@@ -2,6 +2,9 @@
 /**
  * @description SelfMap 注册入口页，承载用户从访问到创建账号的主路径。
  */
+import AuthMarketingPanel from '~/components/register-login/AuthMarketingPanel.vue';
+import AuthRegisterForm from '~/components/register-login/AuthRegisterForm.vue';
+
 useHead({
   title: "SelfMap - 注册",
   htmlAttrs: {

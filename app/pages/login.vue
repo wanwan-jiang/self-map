@@ -2,6 +2,9 @@
 /**
  * @description SelfMap 登录入口页，用于已有账号用户回到系统继续使用。
  */
+import AuthMarketingPanel from '~/components/register-login/AuthMarketingPanel.vue';
+import AuthLoginForm from '~/components/register-login/AuthLoginForm.vue';
+
 useHead({
   title: "SelfMap - 登录",
   htmlAttrs: {
