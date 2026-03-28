@@ -78,12 +78,13 @@
               class="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             />
           </NuxtLink>
-          <a
-            class="text-on-surface-variant hover:text-primary transition-colors duration-300 font-medium text-sm tracking-wide py-2 border-b border-transparent hover:border-primary/30"
-            href="#"
+          <button
+            type="button"
+            class="text-on-surface-variant hover:text-primary transition-colors duration-300 font-medium text-sm tracking-wide py-2 border-b border-transparent hover:border-primary/30 bg-transparent cursor-pointer"
+            @click="onRetryTest"
           >
             重新测评
-          </a>
+          </button>
         </div>
       </div>
     </main>
@@ -125,6 +126,14 @@
 </template>
 
 <script setup lang="ts">
+import { useMbtiStore } from '../../../stores/mbti'
+
+const mbtiStore = useMbtiStore()
+
+const onRetryTest = (): void => {
+    mbtiStore.resetSubmitState()
+}
+
 useHead({
   title: "SelfMap AI - 测评完成",
   htmlAttrs: {
