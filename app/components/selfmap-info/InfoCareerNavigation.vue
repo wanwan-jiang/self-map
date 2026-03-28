@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { SelfmapCareerPathModel, SelfmapSkillModel } from '../../types/selfmapReport'
+import InfoGlassCard from './InfoGlassCard.vue'
 
 defineProps<{
     imageUrl: string
@@ -42,7 +43,7 @@ defineProps<{
                 </div>
             </div>
 
-            <SelfmapInfoGlassCard padding-class="p-8">
+            <InfoGlassCard padding-class="p-8">
                 <h3 class="text-xl font-bold mb-6 text-secondary">核心赋能技能 (Key Skills)</h3>
                 <ul class="space-y-6">
                     <li v-for="skill in skills" :key="skill.id" class="flex items-start gap-3">
@@ -58,7 +59,7 @@ defineProps<{
                 <div class="mt-10 p-4 rounded-2xl bg-secondary-container/20 border border-secondary/20">
                     <p class="text-xs text-secondary-fixed-dim italic">"{{ quote }}"</p>
                 </div>
-            </SelfmapInfoGlassCard>
+            </InfoGlassCard>
         </div>
     </section>
 </template>

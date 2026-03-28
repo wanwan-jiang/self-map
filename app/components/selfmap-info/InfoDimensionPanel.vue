@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { SelfmapDimensionAxisLabel, SelfmapDimensionLegendItem } from '../../types/selfmapReport'
+import InfoGlassCard from './InfoGlassCard.vue'
 
 defineProps<{
     axisLabels: SelfmapDimensionAxisLabel[]
@@ -15,7 +16,7 @@ const dotClass = (tone: SelfmapDimensionLegendItem['dotTone']): string => {
 
 <template>
     <section class="md:col-span-5">
-        <SelfmapInfoGlassCard padding-class="p-8 flex flex-col justify-center min-h-[450px]">
+        <InfoGlassCard padding-class="p-8 flex flex-col justify-center min-h-[450px]">
             <div class="flex justify-between items-center mb-8">
                 <h2 class="text-2xl font-bold">维度分布</h2>
                 <span class="material-symbols-outlined text-on-surface-variant">info</span>
@@ -61,6 +62,6 @@ const dotClass = (tone: SelfmapDimensionLegendItem['dotTone']): string => {
                     <span class="text-on-surface-variant">{{ row.text }}</span>
                 </div>
             </div>
-        </SelfmapInfoGlassCard>
+        </InfoGlassCard>
     </section>
 </template>

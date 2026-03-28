@@ -2,6 +2,11 @@
 /**
  * @description SelfMap 结果分析信息页：装配报告头部、维度面板、洞察与职业建议等子模块。
  */
+import InfoCareerNavigation from '~/components/selfmap-info/InfoCareerNavigation.vue'
+import InfoDimensionPanel from '~/components/selfmap-info/InfoDimensionPanel.vue'
+import InfoInsightsSection from '~/components/selfmap-info/InfoInsightsSection.vue'
+import InfoReportFooter from '~/components/selfmap-info/InfoReportFooter.vue'
+import InfoReportHeader from '~/components/selfmap-info/InfoReportHeader.vue'
 import { selfmapReportSample } from '../data/selfmapReportSample'
 
 const report = selfmapReportSample
@@ -34,14 +39,14 @@ const onRetryTest = async (): Promise<void> => {
         <AuthTopBar />
 
         <main class="flex-grow pt-8 pb-20 px-6 max-w-7xl mx-auto w-full">
-            <SelfmapInfoReportHeader :model="report.header" @retry-test="onRetryTest" />
+            <InfoReportHeader :model="report.header" @retry-test="onRetryTest" />
 
             <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-                <SelfmapInfoDimensionPanel :axis-labels="report.dimensionAxisLabels" :legend="report.dimensionLegend" />
-                <SelfmapInfoInsightsSection :cards="report.insightCards" />
+                <InfoDimensionPanel :axis-labels="report.dimensionAxisLabels" :legend="report.dimensionLegend" />
+                <InfoInsightsSection :cards="report.insightCards" />
             </div>
 
-            <SelfmapInfoCareerNavigation
+            <InfoCareerNavigation
                 :image-url="report.careerImageUrl"
                 :image-alt="report.careerImageAlt"
                 :paths="report.careerPaths"
@@ -50,7 +55,7 @@ const onRetryTest = async (): Promise<void> => {
             />
         </main>
 
-        <SelfmapInfoReportFooter />
+        <InfoReportFooter />
     </div>
 </template>
 
