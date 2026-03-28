@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { useLoginStore } from "../../../stores/login";
+import { useMbtiStore } from "../../../stores/mbti";
 
+const viewReportError = ref(false);
 const route = useRoute();
 const loginStore = useLoginStore();
+const mbtiStore = useMbtiStore();
+const { isSubmitSuccess } = storeToRefs(mbtiStore);
 const loginSuccess = computed<boolean>(() => {
   return loginStore.loginSuccess;
 });
@@ -13,6 +17,18 @@ const isReportScene = computed<boolean>(() => {
 const activeTab = computed<"test" | "report">(() => {
   return route.path === "/selfmap-info" ? "report" : "test";
 });
+
+const reportTabLinkClass = computed(() =>
+  activeTab.value === "report" ? "border-b-2 border-primary pb-1 text-primary" : "text-slate-400 hover:text-slate-100",
+);
+
+const onReportTabBlockedClick = (): void => {
+  if (isSubmitSuccess.value) {
+    void navigateTo('/selfmap-info');
+    return;
+  }
+  viewReportError.value = true;
+};
 </script>
 
 <template>
@@ -39,17 +55,14 @@ const activeTab = computed<"test" | "report">(() => {
           >
             测评
           </NuxtLink>
-          <NuxtLink
-            to="/selfmap-info"
+          <button
+            type="button"
             class="font-medium transition-colors duration-300"
-            :class="
-              activeTab === 'report'
-                ? 'border-b-2 border-primary pb-1 text-primary'
-                : 'text-slate-400 hover:text-slate-100'
-            "
+            :class="reportTabLinkClass"
+            @click="onReportTabBlockedClick"
           >
             报告
-          </NuxtLink>
+          </button>
         </div>
       </div>
 
@@ -75,5 +88,7 @@ const activeTab = computed<"test" | "report">(() => {
         </a>
       </div>
     </div>
+
+    <PopUp v-if="viewReportError" :info-report="true" @close="viewReportError = false" />
   </header>
 </template>

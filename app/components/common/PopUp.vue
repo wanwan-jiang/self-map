@@ -8,6 +8,7 @@ const { loginSuccess } = storeToRefs(loginStore);
 const props = defineProps<{
   register?: boolean;
   login?: boolean;
+  infoReport?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -23,7 +24,9 @@ const startHideTimer = (): void => {
   }
 
   hideTimer = setTimeout(() => {
-    registerStore.clearRegisterSuccess();
+    if (props.register) {
+      registerStore.clearRegisterSuccess();
+    }
     emit("close");
     hideTimer = null;
   }, AUTO_HIDE_MS);
@@ -32,13 +35,17 @@ const startHideTimer = (): void => {
 watch(
   registerSuccess,
   () => {
-    startHideTimer();
+    if (props.register) {
+      startHideTimer();
+    }
   },
   { flush: "post" },
 );
 
 onMounted(() => {
-  startHideTimer();
+  if (props.register || props.login || props.infoReport) {
+    startHideTimer();
+  }
 });
 
 onBeforeUnmount(() => {
@@ -49,21 +56,6 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <!-- <div class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
-    <div
-      class="bg-surface/80 backdrop-blur-2xl border px-8 py-4 rounded-full shadow-[0_0_40px_rgba(88,86,214,0.2)] flex items-center gap-4 animate-in fade-in zoom-in duration-300 pointer-events-auto border-error/30"
-      style="box-shadow: 0 0 40px rgba(255, 110, 132, 0.2)"
-    >
-      <div class="w-10 h-10 rounded-full flex items-center justify-center bg-error/20 text-error">
-        <span class="material-symbols-outlined text-[24px] font-bold">error</span>
-      </div>
-      <div class="flex flex-col">
-        <span class="text-on-surface font-headline font-bold text-lg leading-none">注册失败</span>
-        <span class="text-on-surface-variant text-xs mt-0.5">抱歉，注册过程中出现</span>
-      </div>
-    </div>
-  </div> -->
-
   <div v-if="register">
     <div class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none" v-if="registerSuccess">
       <div
@@ -126,6 +118,24 @@ onBeforeUnmount(() => {
           <div class="flex flex-col">
             <span class="text-on-surface font-headline font-bold text-lg leading-none">登录失败</span>
             <span class="text-on-surface-variant text-xs mt-0.5">请稍后重试...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div v-if="infoReport">
+    <div class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
+      <div
+        class="bg-surface/80 backdrop-blur-2xl border border-primary/30 px-8 py-4 rounded-full shadow-[0_0_40px_rgba(88,86,214,0.2)] flex items-center gap-4 animate-in fade-in zoom-in duration-300 pointer-events-auto"
+      >
+        <div class="w-10 h-10 rounded-full flex items-center justify-center bg-error/20 text-error">
+          <span class="material-symbols-outlined text-[24px] font-bold">error</span>
+        </div>
+        <div>
+          <div class="flex flex-col">
+            <span class="text-on-surface font-headline font-bold text-lg leading-none">查看失败</span>
+            <span class="text-on-surface-variant text-xs mt-0.5">未测试报告，请先进行测评...</span>
           </div>
         </div>
       </div>
