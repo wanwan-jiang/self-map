@@ -2,8 +2,6 @@
 /**
  * @description SelfMap 登录入口页，用于已有账号用户回到系统继续使用。
  */
-import AuthMarketingPanel from '~/components/register-login/AuthMarketingPanel.vue';
-import AuthLoginForm from '~/components/register-login/AuthLoginForm.vue';
 
 useHead({
   title: "SelfMap - 登录",
@@ -27,7 +25,7 @@ const showPopUp = ref(false);
 </script>
 
 <template>
-  <div class="min-h-screen bg-background text-on-surface font-[&quot;Plus_Jakarta_Sans&quot;] selection:bg-primary/30">
+  <div class="min-h-screen bg-background text-on-surface font-['Plus_Jakarta_Sans'] selection:bg-primary/30">
     <AuthTopBar />
     <main class="relative flex flex-1 items-center justify-center overflow-hidden px-3 pb-3 pt-3 lg:pb-4 lg:pt-4">
       <div

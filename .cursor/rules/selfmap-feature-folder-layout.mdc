@@ -1,0 +1,51 @@
+---
+description: 新功能多文件时的目录归属：独立新文件夹、归入已有业务文件夹、领域内公共子组件用 common
+alwaysApply: true
+---
+
+# 功能与组件目录归属
+
+在 `app/components/`、`app/pages/` 及相关业务目录中新增文件时，按以下顺序决定放置位置。
+
+## 1. 多文件新功能 → 独立新文件夹
+
+- 同一新功能会新增**多个**文件（多个 `.vue`、或页面 + 组件 + composable 等）时，**不要**平铺在父目录根下。
+- 在对应层级新建**以功能命名的文件夹**（PascalCase 或 kebab-case 与现有目录保持一致，如 `selfmap-info`、`register-login`），相关文件放在该文件夹内。
+
+## 2. 与已有功能相关 → 放进已有文件夹
+
+- 若变更/扩展的是已有业务能力（例如继续完善 MBTI、登录注册、报告页），新文件放在**已有**的业务文件夹下，与同级组件并列。
+- 避免为同一业务再开一个语义重复的新顶层文件夹。
+
+## 3. 从某业务里抽出的「领域内公共」组件 → `common` 子文件夹
+
+- 仅在**某一个业务文件夹内部**被多处复用、但尚不适合提升到全局 `app/components/` 根目录的组件，放在该业务文件夹下的 **`common/`** 子目录中。
+
+示例（与当前仓库风格一致）：
+
+```
+app/components/mbti/
+  MbtiTest.vue
+  common/
+    MbtiSharedBadge.vue   # 仅 mbti 内多组件共用
+```
+
+```
+app/components/register-login/
+  AuthLoginForm.vue
+  common/
+    AuthFormField.vue     # 仅 register-login 内表单共用
+```
+
+## 4. 与全局根目录组件的关系
+
+- **跨多个业务模块**复用、且无单一业务归属的通用 UI，可放在 `app/components/` 根目录（与现有 `AuthTopBar.vue`、`PopUp.vue` 等一致），或按团队后续约定的全局目录；不要复制到每个业务的 `common/` 里维护多份。
+
+## 快速自检
+
+| 情况 | 放置方式 |
+|------|----------|
+| 新功能，多文件 | 新建功能文件夹，文件收拢在内 |
+| 扩展现有功能 | 现有业务文件夹内新增 |
+| 仅某业务内复用 | `该业务文件夹/common/` |
+| 全站多处复用 | `app/components/` 根或既有全局约定 |

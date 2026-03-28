@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useRegisterStore } from "../../stores/register";
-import { useLoginStore } from "../../stores/login";
+import { useRegisterStore } from "../../../stores/register";
+import { useLoginStore } from "../../../stores/login";
 const registerStore = useRegisterStore();
 const loginStore = useLoginStore();
 const { registerSuccess } = storeToRefs(registerStore);
