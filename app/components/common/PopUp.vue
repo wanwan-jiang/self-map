@@ -57,7 +57,10 @@ onBeforeUnmount(() => {
 
 <template>
   <div v-if="register">
-    <div class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none" v-if="registerSuccess">
+    <div
+      class="fixed inset-0 z-[100] flex items-start justify-center pt-[20px] pointer-events-none"
+      v-if="registerSuccess"
+    >
       <div
         class="bg-surface/80 backdrop-blur-2xl border border-primary/30 px-8 py-4 rounded-full shadow-[0_0_40px_rgba(88,86,214,0.2)] flex items-center gap-4 animate-in fade-in zoom-in duration-300 pointer-events-auto"
       >
@@ -73,7 +76,7 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <div class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none" v-else>
+    <div class="fixed inset-0 z-[100] flex items-start justify-center pt-[20px] pointer-events-none" v-else>
       <div
         class="bg-surface/80 backdrop-blur-2xl border border-primary/30 px-8 py-4 rounded-full shadow-[0_0_40px_rgba(88,86,214,0.2)] flex items-center gap-4 animate-in fade-in zoom-in duration-300 pointer-events-auto"
       >
@@ -91,7 +94,10 @@ onBeforeUnmount(() => {
   </div>
 
   <div v-if="login">
-    <div class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none" v-if="loginSuccess">
+    <div
+      class="fixed inset-0 z-[100] flex items-start justify-center pt-[20px] pointer-events-none"
+      v-if="loginSuccess"
+    >
       <div
         class="bg-surface/80 backdrop-blur-2xl border border-primary/30 px-8 py-4 rounded-full shadow-[0_0_40px_rgba(88,86,214,0.2)] flex items-center gap-4 animate-in fade-in zoom-in duration-300 pointer-events-auto"
       >
@@ -107,7 +113,7 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <div class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none" v-else>
+    <div class="fixed inset-0 z-[100] flex items-start justify-center pt-[20px] pointer-events-none" v-else>
       <div
         class="bg-surface/80 backdrop-blur-2xl border border-primary/30 px-8 py-4 rounded-full shadow-[0_0_40px_rgba(88,86,214,0.2)] flex items-center gap-4 animate-in fade-in zoom-in duration-300 pointer-events-auto"
       >
@@ -125,7 +131,7 @@ onBeforeUnmount(() => {
   </div>
 
   <div v-if="infoReport">
-    <div class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
+    <div class="pt-[20px] fixed inset-0 z-[100] flex items-start justify-center pointer-events-none">
       <div
         class="bg-surface/80 backdrop-blur-2xl border border-primary/30 px-8 py-4 rounded-full shadow-[0_0_40px_rgba(88,86,214,0.2)] flex items-center gap-4 animate-in fade-in zoom-in duration-300 pointer-events-auto"
       >
