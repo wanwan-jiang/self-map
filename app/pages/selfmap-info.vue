@@ -2,81 +2,79 @@
 /**
  * @description SelfMap 结果分析信息页：装配报告头部、维度面板、洞察与职业建议等子模块。
  */
-import InfoCareerNavigation from '~/components/selfmap-info/InfoCareerNavigation.vue'
-import InfoDimensionPanel from '~/components/selfmap-info/InfoDimensionPanel.vue'
-import InfoInsightsSection from '~/components/selfmap-info/InfoInsightsSection.vue'
-import InfoReportFooter from '~/components/selfmap-info/InfoReportFooter.vue'
-import InfoReportHeader from '~/components/selfmap-info/InfoReportHeader.vue'
-import { selfmapReportSample } from '../data/selfmapReportSample'
+import { useMbtiStore } from "../../stores/mbti";
+import { selfmapReportSample } from "../data/selfmapReportSample";
 
-const report = selfmapReportSample
+const report = selfmapReportSample;
+const mbtiStore = useMbtiStore();
 
 useHead({
-    title: 'SelfMap - 性格报告',
-    htmlAttrs: {
-        lang: 'zh-CN',
-        class: 'dark'
+  title: "SelfMap - 性格报告",
+  htmlAttrs: {
+    lang: "zh-CN",
+    class: "dark",
+  },
+  link: [
+    {
+      rel: "stylesheet",
+      href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap",
     },
-    link: [
-        {
-            rel: 'stylesheet',
-            href: 'https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap'
-        },
-        {
-            rel: 'stylesheet',
-            href: 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap'
-        }
-    ]
-})
+    {
+      rel: "stylesheet",
+      href: "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap",
+    },
+  ],
+});
 
 const onRetryTest = async (): Promise<void> => {
-    await navigateTo('/mbti')
-}
+  mbtiStore.resetSubmitState();
+  await navigateTo("/mbti");
+};
 </script>
 
 <template>
-    <div class="min-h-screen flex flex-col">
-        <AuthTopBar />
+  <div class="min-h-screen flex flex-col">
+    <AuthTopBar />
 
-        <main class="flex-grow pt-8 pb-20 px-6 max-w-7xl mx-auto w-full">
-            <InfoReportHeader :model="report.header" @retry-test="onRetryTest" />
+    <main class="flex-grow pt-8 pb-20 px-6 max-w-7xl mx-auto w-full">
+      <InfoReportHeader :model="report.header" @retry-test="onRetryTest" />
 
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-                <InfoDimensionPanel :axis-labels="report.dimensionAxisLabels" :legend="report.dimensionLegend" />
-                <InfoInsightsSection :cards="report.insightCards" />
-            </div>
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <InfoDimensionPanel :axis-labels="report.dimensionAxisLabels" :legend="report.dimensionLegend" />
+        <InfoInsightsSection :cards="report.insightCards" />
+      </div>
 
-            <InfoCareerNavigation
-                :image-url="report.careerImageUrl"
-                :image-alt="report.careerImageAlt"
-                :paths="report.careerPaths"
-                :skills="report.skills"
-                :quote="report.quote"
-            />
-        </main>
+      <InfoCareerNavigation
+        :image-url="report.careerImageUrl"
+        :image-alt="report.careerImageAlt"
+        :paths="report.careerPaths"
+        :skills="report.skills"
+        :quote="report.quote"
+      />
+    </main>
 
-        <InfoReportFooter />
-    </div>
+    <AuthFooterLinks />
+  </div>
 </template>
 
 <style scoped>
 :global(.material-symbols-outlined) {
-    font-variation-settings:
-        'FILL' 0,
-        'wght' 400,
-        'GRAD' 0,
-        'opsz' 24;
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
 }
 
 :global(body) {
-    background-color: #0a0e14;
-    color: #f1f3fc;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: #0a0e14;
+  color: #f1f3fc;
+  font-family: "Plus Jakarta Sans", sans-serif;
 }
 
 :deep(h1),
 :deep(h2),
 :deep(h3) {
-    font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", sans-serif;
 }
 </style>

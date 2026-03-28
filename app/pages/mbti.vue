@@ -2,9 +2,8 @@
   <div class="min-h-screen flex flex-col selection:bg-primary/30">
     <AuthTopBar />
     <MbtiFinish v-if="isSubmitSuccess" />
-    <template v-else>
-      <MbtiTest />
-    </template>
+    <MbtiTest v-else />
+    <AuthFooterLinks />
   </div>
 </template>
 

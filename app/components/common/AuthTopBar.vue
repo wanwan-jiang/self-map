@@ -1,6 +1,11 @@
 <script setup lang="ts">
-const route = useRoute();
+import { useLoginStore } from "../../../stores/login";
 
+const route = useRoute();
+const loginStore = useLoginStore();
+const loginSuccess = computed<boolean>(() => {
+  return loginStore.loginSuccess;
+});
 const isReportScene = computed<boolean>(() => {
   return route.path === "/mbti" || route.path === "/mbti-test" || route.path === "/selfmap-info";
 });
@@ -23,42 +28,45 @@ const activeTab = computed<"test" | "report">(() => {
         </div>
 
         <div v-if="isReportScene" class="hidden md:flex gap-6">
-          <a
+          <NuxtLink
+            to="/mbti"
             class="font-medium transition-colors duration-300"
             :class="
               activeTab === 'test'
-                ? 'text-[#a5a5ff] border-b-2 border-[#a5a5ff] pb-1'
+                ? 'border-b-2 border-primary pb-1 text-primary'
                 : 'text-slate-400 hover:text-slate-100'
             "
-            href="#"
           >
             测评
-          </a>
-          <a
+          </NuxtLink>
+          <NuxtLink
+            to="/selfmap-info"
             class="font-medium transition-colors duration-300"
             :class="
               activeTab === 'report'
-                ? 'text-[#a5a5ff] border-b-2 border-[#a5a5ff] pb-1'
+                ? 'border-b-2 border-primary pb-1 text-primary'
                 : 'text-slate-400 hover:text-slate-100'
             "
-            href="#"
           >
             报告
-          </a>
+          </NuxtLink>
         </div>
       </div>
 
       <div v-if="isReportScene" class="flex items-center gap-4">
-        <button
-          class="bg-transparent text-white px-6 py-2 rounded-full font-bold text-sm hover:opacity-90 active:scale-95 transition-all"
-        >
-          登录
-        </button>
-        <button
-          class="bg-primary px-6 py-2 rounded-full text-on-primary-container font-bold text-sm hover:opacity-90 active:scale-95 transition-all"
-        >
-          注册
-        </button>
+        <div v-if="!loginSuccess">
+          <button
+            class="bg-transparent text-white px-6 py-2 rounded-full font-bold text-sm hover:opacity-90 active:scale-95 transition-all"
+          >
+            登录
+          </button>
+          <button
+            class="bg-primary px-6 py-2 rounded-full text-on-primary-container font-bold text-sm hover:opacity-90 active:scale-95 transition-all"
+          >
+            注册
+          </button>
+        </div>
+        <AuthUserMenu v-else />
       </div>
 
       <div v-else class="flex items-center gap-4">
