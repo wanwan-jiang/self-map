@@ -1,3 +1,7 @@
+/**
+ * @description 登录表单验证逻辑
+ */
+import { userFormLoginSchema } from "../../validators/user";
 interface LoginFormState {
   username: string;
   password: string;
@@ -29,12 +33,10 @@ export const useLoginForm = (): UseLoginFormReturn => {
   const validate = (): boolean => {
     const nextErrors: LoginFormErrors = {};
 
-    if (!form.value.username.trim()) {
-      nextErrors.username = "请输入用户名";
-    }
-
-    if (!PASSWORD_PATTERN.test(form.value.password)) {
-      nextErrors.password = "密码需包含英文和数字，且至少 8 位";
+    const result = userFormLoginSchema.safeParse(form.value);
+    if (!result.success) {
+      nextErrors.username = result.error.format().username?._errors[0];
+      nextErrors.password = result.error.format().password?._errors[0];
     }
 
     errors.value = nextErrors;

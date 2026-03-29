@@ -1,3 +1,8 @@
+/**
+ * @description 注册表单验证逻辑
+ */
+import { userFormRegisterSchema } from "../../validators/user";
+
 interface RegisterFormState {
   username: string;
   email: string;
@@ -21,9 +26,6 @@ interface UseRegisterFormReturn {
   submitForm: () => Promise<object | boolean>;
 }
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PASSWORD_PATTERN = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
-
 export const useRegisterForm = (): UseRegisterFormReturn => {
   const form = ref<RegisterFormState>({
     username: "",
@@ -39,24 +41,13 @@ export const useRegisterForm = (): UseRegisterFormReturn => {
   const validate = (): boolean => {
     const nextErrors: RegisterFormErrors = {};
 
-    if (!form.value.username.trim()) {
-      nextErrors.username = "请输入用户名";
-    }
-
-    if (!EMAIL_PATTERN.test(form.value.email.trim())) {
-      nextErrors.email = "请输入有效邮箱地址";
-    }
-
-    if (!PASSWORD_PATTERN.test(form.value.password)) {
-      nextErrors.password = "密码需包含英文和数字，且至少 8 位";
-    }
-
-    if (form.value.confirmPassword !== form.value.password) {
-      nextErrors.confirmPassword = "两次密码输入不一致";
-    }
-
-    if (!form.value.agreeTerms) {
-      nextErrors.agreeTerms = "请先同意服务条款和隐私政策";
+    const result = userFormRegisterSchema.safeParse(form.value);
+    if (!result.success) {
+      nextErrors.username = result.error.format().username?._errors[0];
+      nextErrors.email = result.error.format().email?._errors[0];
+      nextErrors.password = result.error.format().password?._errors[0];
+      nextErrors.confirmPassword = result.error.format().confirmPassword?._errors[0];
+      nextErrors.agreeTerms = result.error.format().agreeTerms?._errors[0];
     }
 
     errors.value = nextErrors;
