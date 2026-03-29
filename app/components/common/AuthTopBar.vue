@@ -41,7 +41,7 @@ const reportTabLinkClass = computed(() =>
 
 const onReportTabBlockedClick = (): void => {
   if (isSubmitSuccess.value) {
-    void navigateTo('/selfmap-info');
+    void navigateTo("/selfmap-info");
     return;
   }
   viewReportError.value = true;

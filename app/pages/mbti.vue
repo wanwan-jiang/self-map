@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen flex flex-col selection:bg-primary/30">
-    <AuthTopBar />
+    <AuthTopBar report-scene report-tab="test" />
     <MbtiFinish v-if="isSubmitSuccess" />
     <MbtiTest v-else />
     <AuthFooterLinks />
