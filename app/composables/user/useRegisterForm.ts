@@ -103,12 +103,6 @@ export const useRegisterForm = (): UseRegisterFormReturn => {
         }
         return false;
       }
-      if (code === 404) {
-        errors.value = {
-          email: "注册接口未找到：请用 npm run dev（nuxt dev）启动，并重启一次开发服务",
-        };
-        return false;
-      }
       return false;
     } finally {
       isSubmitting.value = false;

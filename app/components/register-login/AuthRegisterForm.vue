@@ -16,11 +16,13 @@ const showConfirmPassword = ref<boolean>(false);
 const onSubmit = async (): Promise<void> => {
   const result = await submitForm();
 
+  emit("update:show", true);
+
   if (result === false) {
+    registerStore.setRegisterResult(false);
     return;
   }
 
-  emit("update:show", true);
   registerStore.setRegisterResult(true);
   navigateTo("/login");
 };

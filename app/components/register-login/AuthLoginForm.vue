@@ -14,15 +14,16 @@ const showPassword = ref<boolean>(false);
 
 const onSubmit = async (): Promise<void> => {
   const result = await submitForm();
-  if (result && typeof result === "object") {
-    emit("update:show", true);
-    if ((result as { data: { success: boolean } }).data.success) {
-      loginStore.setLoginResult(true);
-      navigateTo("/mbti");
-    } else {
-      loginStore.setLoginResult(false);
-    }
+
+  emit("update:show", true);
+
+  if (result === false) {
+    loginStore.setLoginResult(false);
+    return;
   }
+
+  loginStore.setLoginResult(true);
+  navigateTo("/mbti");
 };
 </script>
 

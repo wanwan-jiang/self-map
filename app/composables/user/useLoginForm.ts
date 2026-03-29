@@ -21,6 +21,19 @@ interface UseLoginFormReturn {
   submitForm: () => Promise<boolean | object>;
 }
 
+interface LoginApiSuccess {
+  success: true;
+  data: {
+    username: string;
+  };
+}
+
+interface LoginApiFailBody {
+  success: false;
+  message: string;
+  fieldErrors?: Record<string, string[] | undefined>;
+}
+
 export const useLoginForm = (): UseLoginFormReturn => {
   const form = ref<LoginFormState>({
     username: "",
@@ -44,17 +57,36 @@ export const useLoginForm = (): UseLoginFormReturn => {
     return Object.keys(nextErrors).length === 0;
   };
 
-  const submitForm = async (): Promise<boolean | object> => {
+  const submitForm = async (): Promise<LoginApiSuccess | false> => {
     if (!validate()) {
       return false;
     }
 
     isSubmitting.value = true;
     try {
-      const result = await new Promise<object>((resolve) =>
-        setTimeout(() => resolve({ data: { success: true } }), 600),
-      );
-      return result;
+      const result = await $fetch<LoginApiSuccess>("/api/user/login", {
+        method: "POST",
+        body: form.value,
+      });
+      if (result.success) {
+        return result;
+      }
+      return false;
+    } catch (e: unknown) {
+      const err = e as { statusCode?: number; data?: unknown };
+      const code = err.statusCode;
+      if (code === 400 && err.data && typeof err.data === "object") {
+        const body = err.data as LoginApiFailBody;
+        if (body.fieldErrors) {
+          const fe = body.fieldErrors;
+          errors.value = {
+            username: fe.username?.[0],
+            password: fe.password?.[0],
+          };
+        }
+        return false;
+      }
+      return false;
     } finally {
       isSubmitting.value = false;
     }
