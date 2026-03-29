@@ -2,6 +2,7 @@
  * @description 注册表单验证逻辑
  */
 import { userFormRegisterSchema } from "../../../validators/user";
+import { flattenError } from "zod";
 
 interface RegisterFormState {
   username: string;
@@ -43,11 +44,12 @@ export const useRegisterForm = (): UseRegisterFormReturn => {
 
     const result = userFormRegisterSchema.safeParse(form.value);
     if (!result.success) {
-      nextErrors.username = result.error.format().username?._errors[0];
-      nextErrors.email = result.error.format().email?._errors[0];
-      nextErrors.password = result.error.format().password?._errors[0];
-      nextErrors.confirmPassword = result.error.format().confirmPassword?._errors[0];
-      nextErrors.agreeTerms = result.error.format().agreeTerms?._errors[0];
+      const { fieldErrors } = flattenError(result.error);
+      nextErrors.username = fieldErrors.username?.[0];
+      nextErrors.email = fieldErrors.email?.[0];
+      nextErrors.password = fieldErrors.password?.[0];
+      nextErrors.confirmPassword = fieldErrors.confirmPassword?.[0];
+      nextErrors.agreeTerms = fieldErrors.agreeTerms?.[0];
     }
 
     errors.value = nextErrors;

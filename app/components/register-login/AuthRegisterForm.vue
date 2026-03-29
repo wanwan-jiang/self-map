@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useRegisterStore } from "../../../stores/register";
+import { useRegisterForm } from "~/composables/user/useRegisterForm";
 
 const registerStore = useRegisterStore();
 const { form, errors, isSubmitting, submitForm } = useRegisterForm();

@@ -2,6 +2,8 @@
  * @description 登录表单验证逻辑
  */
 import { userFormLoginSchema } from "../../../validators/user";
+import { flattenError } from "zod";
+
 interface LoginFormState {
   username: string;
   password: string;
@@ -33,8 +35,9 @@ export const useLoginForm = (): UseLoginFormReturn => {
 
     const result = userFormLoginSchema.safeParse(form.value);
     if (!result.success) {
-      nextErrors.username = result.error.format().username?._errors[0];
-      nextErrors.password = result.error.format().password?._errors[0];
+      const { fieldErrors } = flattenError(result.error);
+      nextErrors.username = fieldErrors.username?.[0];
+      nextErrors.password = fieldErrors.password?.[0];
     }
 
     errors.value = nextErrors;
