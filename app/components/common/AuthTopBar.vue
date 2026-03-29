@@ -67,17 +67,19 @@ const onReportTabBlockedClick = (): void => {
       </div>
 
       <div v-if="isReportScene" class="flex items-center gap-4">
-        <div v-if="!loginSuccess">
-          <button
-            class="bg-transparent text-white px-6 py-2 rounded-full font-bold text-sm hover:opacity-90 active:scale-95 transition-all"
+        <div v-if="!loginSuccess" class="flex items-center gap-2">
+          <NuxtLink
+            to="/login"
+            class="inline-flex items-center justify-center bg-transparent text-white px-6 py-2 rounded-full font-bold text-sm hover:opacity-90 active:scale-95 transition-all"
           >
             登录
-          </button>
-          <button
-            class="bg-primary px-6 py-2 rounded-full text-on-primary-container font-bold text-sm hover:opacity-90 active:scale-95 transition-all"
+          </NuxtLink>
+          <NuxtLink
+            to="/register"
+            class="inline-flex items-center justify-center bg-primary px-6 py-2 rounded-full text-on-primary-container font-bold text-sm hover:opacity-90 active:scale-95 transition-all"
           >
             注册
-          </button>
+          </NuxtLink>
         </div>
         <AuthUserMenu v-else />
       </div>

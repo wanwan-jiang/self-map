@@ -28,6 +28,7 @@
 </template>
 
 <script setup lang="ts">
+import { useMbtiTest } from "~/composables/useMbtiTest";
 import { useMbtiStore } from "../../../stores/mbti";
 
 const mbtiStore = useMbtiStore();
