@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { useLoginStore } from "../../../stores/login";
 import { useLoginForm } from "~/composables/user/useLoginForm";
+import type { LoginApiSuccess, LoginApiFailBody, LoginShowUpdatePayload } from "~/types/loginType";
 
 const emit = defineEmits<{
-  "update:show": [value: boolean];
+  "update:show": [payload: LoginShowUpdatePayload];
 }>();
 
 const loginStore = useLoginStore();
@@ -13,16 +14,19 @@ const submitMessage = ref<string>("");
 const showPassword = ref<boolean>(false);
 
 const onSubmit = async (): Promise<void> => {
-  const result = await submitForm();
+  const result: LoginApiSuccess | LoginApiFailBody | false = await submitForm();
 
-  emit("update:show", true);
-
-  if (result === false) {
+  if (result === false || (result && result.success === false)) {
+    console.log("result", result);
+    const message = result && "message" in result ? result.message : undefined;
+    emit("update:show", { show: true, ...(message ? { message } : {}) });
     loginStore.setLoginResult(false);
     return;
   }
 
+  emit("update:show", { show: true });
   loginStore.setLoginResult(true);
+
   navigateTo("/mbti");
 };
 </script>

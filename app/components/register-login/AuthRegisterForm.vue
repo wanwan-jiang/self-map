@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRegisterStore } from "../../../stores/register";
 import { useRegisterForm } from "~/composables/user/useRegisterForm";
-import type { RegisterApiSuccess, RegisterApiFailBody, RegisterShowUpdatePayload } from "~/types/register";
+import type { RegisterApiSuccess, RegisterApiFailBody, RegisterShowUpdatePayload } from "~/types/registerType";
 
 const registerStore = useRegisterStore();
 const { form, errors, isSubmitting, submitForm } = useRegisterForm();

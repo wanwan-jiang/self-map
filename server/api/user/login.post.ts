@@ -3,11 +3,14 @@
  */
 import { flattenError } from "zod";
 import { userFormLoginSchema } from "../../../validators/user";
+import { Users } from "../../models/users";
 
 interface LoginSuccessBody {
   success: true;
   data: {
     username: string;
+    /** 会话标识，与 Set-Cookie 中的加密会话配合使用；客户端也可按需持久化 */
+    token: string;
   };
 }
 
@@ -40,14 +43,41 @@ export default defineEventHandler(async (event): Promise<LoginSuccessBody | Logi
     };
   }
 
-  const { username } = parsed.data;
+  const { username, password } = parsed.data;
 
-  // TODO: 按 username 查库、用安全比较校验密码哈希；失败时返回 401 与统一文案（避免枚举用户）；成功时签发 session/JWT（禁止日志明文密码）
+  const user = await Users.findOne({ username });
+  if (!user) {
+    setResponseStatus(event, 401);
+    return {
+      success: false,
+      message: "该用户不存在",
+    };
+  }
+
+  const passwordOk = await verifyPassword(user.password, password);
+  if (!passwordOk) {
+    setResponseStatus(event, 401);
+    return {
+      success: false,
+      message: "密码输入错误",
+    };
+  }
+
+  await setUserSession(event, {
+    user: {
+      username: user.username,
+    },
+    loggedInAt: new Date(),
+  });
+
+  const session = await getUserSession(event);
+  const token = session.id ?? "";
 
   return {
     success: true,
     data: {
       username,
+      token,
     },
   };
 });

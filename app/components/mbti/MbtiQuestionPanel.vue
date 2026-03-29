@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MbtiQuestion } from "../../types/mbti";
+import type { MbtiQuestion } from "../../types/mbtiType";
 
 interface Props {
   question: MbtiQuestion;

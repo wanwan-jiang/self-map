@@ -3,36 +3,14 @@
  */
 import { userFormLoginSchema } from "../../../validators/user";
 import { flattenError } from "zod";
-
-interface LoginFormState {
-  username: string;
-  password: string;
-}
-
-interface LoginFormErrors {
-  username?: string;
-  password?: string;
-}
-
-interface UseLoginFormReturn {
-  form: Ref<LoginFormState>;
-  errors: Ref<LoginFormErrors>;
-  isSubmitting: Ref<boolean>;
-  submitForm: () => Promise<boolean | object>;
-}
-
-interface LoginApiSuccess {
-  success: true;
-  data: {
-    username: string;
-  };
-}
-
-interface LoginApiFailBody {
-  success: false;
-  message: string;
-  fieldErrors?: Record<string, string[] | undefined>;
-}
+import type {
+  LoginFormState,
+  LoginFormErrors,
+  UseLoginFormReturn,
+  LoginApiSuccess,
+  LoginApiFailBody,
+} from "../../types/loginType";
+import { setAuthToken, setAuthUsername } from "../../utils/authToken";
 
 export const useLoginForm = (): UseLoginFormReturn => {
   const form = ref<LoginFormState>({
@@ -57,7 +35,7 @@ export const useLoginForm = (): UseLoginFormReturn => {
     return Object.keys(nextErrors).length === 0;
   };
 
-  const submitForm = async (): Promise<LoginApiSuccess | false> => {
+  const submitForm = async (): Promise<LoginApiSuccess | LoginApiFailBody | false> => {
     if (!validate()) {
       return false;
     }
@@ -68,10 +46,11 @@ export const useLoginForm = (): UseLoginFormReturn => {
         method: "POST",
         body: form.value,
       });
-      if (result.success) {
-        return result;
+      if (result.data.token) {
+        setAuthToken(result.data.token);
       }
-      return false;
+      setAuthUsername(result.data.username);
+      return result;
     } catch (e: unknown) {
       const err = e as { statusCode?: number; data?: unknown };
       const code = err.statusCode;
@@ -86,7 +65,7 @@ export const useLoginForm = (): UseLoginFormReturn => {
         }
         return false;
       }
-      return false;
+      return err.data as LoginApiFailBody;
     } finally {
       isSubmitting.value = false;
     }

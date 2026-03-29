@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useLoginStore } from "../../../stores/login";
+import { clearAuthToken, getAuthToken, getAuthUsername } from "~/utils/authToken";
 
 const props = defineProps<{
   /** 未传时使用占位文案，后续可由父级或 store 注入 */
@@ -8,12 +9,40 @@ const props = defineProps<{
 
 const loginStore = useLoginStore();
 
-const resolvedDisplayName = computed(() => props.displayName ?? "用户12345");
+const cachedUsername = ref<string | null>(null);
+
+function syncUsernameFromStorage(): void {
+  if (!import.meta.client) {
+    return;
+  }
+  if (getAuthToken() && getAuthUsername()) {
+    cachedUsername.value = getAuthUsername();
+  } else {
+    cachedUsername.value = null;
+  }
+}
+
+onMounted(() => {
+  syncUsernameFromStorage();
+});
+
+watch(
+  () => loginStore.loginSuccess,
+  (ok) => {
+    if (ok) {
+      syncUsernameFromStorage();
+    }
+  },
+);
+
+const resolvedDisplayName = computed(() => props.displayName ?? cachedUsername.value ?? "用户12345");
 
 /**
  * @description 退出登录：将 `loginSuccess` 置为 `false`，并进入 `/login`（替换当前历史记录，避免后退仍停留在需登录态页面）。
  */
 const onLogout = async (): Promise<void> => {
+  clearAuthToken();
+  cachedUsername.value = null;
   loginStore.clearLoginSuccess();
   await navigateTo("/login", { replace: true });
 };

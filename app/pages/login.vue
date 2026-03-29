@@ -3,6 +3,10 @@
  * @description SelfMap 登录入口页，用于已有账号用户回到系统继续使用。
  */
 
+definePageMeta({
+  middleware: ["loginMW"],
+});
+
 useHead({
   title: "SelfMap - 登录",
   htmlAttrs: {
@@ -22,6 +26,7 @@ useHead({
 });
 
 const showPopUp = ref(false);
+const message = ref<string | undefined>(undefined);
 </script>
 
 <template>
@@ -38,8 +43,13 @@ const showPopUp = ref(false);
         class="relative z-10 grid w-full max-w-[980px] overflow-hidden rounded-2xl border border-outline-variant/20 bg-surface-container-low lg:grid-cols-2"
       >
         <AuthMarketingPanel />
-        <AuthLoginForm @update:show="showPopUp = $event" />
-        <PopUp v-if="showPopUp" @close="showPopUp = false" :login="true" />
+        <AuthLoginForm
+          @update:show="
+            showPopUp = $event.show;
+            message = $event.message;
+          "
+        />
+        <PopUp v-if="showPopUp" @close="showPopUp = false" :login="true" :message="message" />
       </section>
     </main>
     <AuthFooterLinks />

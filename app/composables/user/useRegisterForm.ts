@@ -10,7 +10,7 @@ import type {
   RegisterApiSuccess,
   RegisterApiFailBody,
   UseRegisterFormReturn,
-} from "../../types/register";
+} from "../../types/registerType";
 
 export const useRegisterForm = (): UseRegisterFormReturn => {
   const form = ref<RegisterFormState>({
@@ -48,7 +48,7 @@ export const useRegisterForm = (): UseRegisterFormReturn => {
 
     isSubmitting.value = true;
     try {
-      const result = await $fetch<RegisterApiSuccess | RegisterApiFailBody | false>("/api/user/register", {
+      const result = await $fetch<RegisterApiSuccess>("/api/user/register", {
         method: "POST",
         body: form.value,
       });

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SelfmapDimensionAxisLabel, SelfmapDimensionLegendItem } from "../../types/selfmapReport";
+import type { SelfmapDimensionAxisLabel, SelfmapDimensionLegendItem } from "../../types/selfmapReportType";
 import InfoGlassCard from "./InfoGlassCard.vue";
 
 const props = defineProps<{
