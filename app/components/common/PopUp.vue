@@ -9,6 +9,7 @@ const props = defineProps<{
   register?: boolean;
   login?: boolean;
   infoReport?: boolean;
+  message?: string;
 }>();
 
 const emit = defineEmits<{
@@ -86,7 +87,7 @@ onBeforeUnmount(() => {
         <div>
           <div class="flex flex-col">
             <span class="text-on-surface font-headline font-bold text-lg leading-none">注册失败</span>
-            <span class="text-on-surface-variant text-xs mt-0.5">请稍后重试...</span>
+            <span class="text-on-surface-variant text-xs mt-0.5">{{ message || "请稍后重试..." }}</span>
           </div>
         </div>
       </div>

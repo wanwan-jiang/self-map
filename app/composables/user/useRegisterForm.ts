@@ -4,43 +4,13 @@
 import { flattenError } from "zod";
 import { userFormRegisterSchema } from "../../../validators/user";
 
-interface RegisterFormState {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  agreeTerms: boolean;
-}
-
-interface RegisterFormErrors {
-  username?: string;
-  email?: string;
-  password?: string;
-  confirmPassword?: string;
-  agreeTerms?: string;
-}
-
-/** 与 server/api/user/register.post 成功响应一致 */
-export interface RegisterApiSuccess {
-  success: true;
-  data: {
-    username: string;
-    email: string;
-  };
-}
-
-interface RegisterApiFailBody {
-  success: false;
-  message: string;
-  fieldErrors?: Record<string, string[] | undefined>;
-}
-
-interface UseRegisterFormReturn {
-  form: Ref<RegisterFormState>;
-  errors: Ref<RegisterFormErrors>;
-  isSubmitting: Ref<boolean>;
-  submitForm: () => Promise<RegisterApiSuccess | false>;
-}
+import type {
+  RegisterFormState,
+  RegisterFormErrors,
+  RegisterApiSuccess,
+  RegisterApiFailBody,
+  UseRegisterFormReturn,
+} from "../../types/register";
 
 export const useRegisterForm = (): UseRegisterFormReturn => {
   const form = ref<RegisterFormState>({
@@ -71,26 +41,24 @@ export const useRegisterForm = (): UseRegisterFormReturn => {
     return Object.keys(nextErrors).length === 0;
   };
 
-  const submitForm = async (): Promise<RegisterApiSuccess | false> => {
+  const submitForm = async (): Promise<RegisterApiSuccess | RegisterApiFailBody | false> => {
     if (!validate()) {
       return false;
     }
 
     isSubmitting.value = true;
     try {
-      const result = await $fetch<RegisterApiSuccess>("/api/user/register", {
+      const result = await $fetch<RegisterApiSuccess | RegisterApiFailBody | false>("/api/user/register", {
         method: "POST",
         body: form.value,
       });
-      if (result.success) {
-        return result;
-      }
-      return false;
+      return result;
     } catch (e: unknown) {
       const err = e as { statusCode?: number; data?: unknown };
       const code = err.statusCode;
       if (code === 400 && err.data && typeof err.data === "object") {
         const body = err.data as RegisterApiFailBody;
+        console.log("body3333333333333", body);
         if (body.fieldErrors) {
           const fe = body.fieldErrors;
           errors.value = {
@@ -103,7 +71,7 @@ export const useRegisterForm = (): UseRegisterFormReturn => {
         }
         return false;
       }
-      return false;
+      return err.data as RegisterApiFailBody;
     } finally {
       isSubmitting.value = false;
     }

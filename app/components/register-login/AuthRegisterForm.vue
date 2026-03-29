@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { useRegisterStore } from "../../../stores/register";
 import { useRegisterForm } from "~/composables/user/useRegisterForm";
+import type { RegisterApiSuccess, RegisterApiFailBody, RegisterShowUpdatePayload } from "~/types/register";
 
 const registerStore = useRegisterStore();
 const { form, errors, isSubmitting, submitForm } = useRegisterForm();
 
 const emit = defineEmits<{
-  "update:show": [value: boolean];
+  "update:show": [payload: RegisterShowUpdatePayload];
 }>();
 
 const submitMessage = ref<string>("");
@@ -14,15 +15,17 @@ const showPassword = ref<boolean>(false);
 const showConfirmPassword = ref<boolean>(false);
 
 const onSubmit = async (): Promise<void> => {
-  const result = await submitForm();
+  const result: RegisterApiSuccess | RegisterApiFailBody | false = await submitForm();
 
-  emit("update:show", true);
-
-  if (result === false) {
+  if (result === false || (result && result.success === false)) {
+    console.log("result", result);
+    const message = result && "message" in result ? result.message : undefined;
+    emit("update:show", { show: true, ...(message ? { message } : {}) });
     registerStore.setRegisterResult(false);
     return;
   }
 
+  emit("update:show", { show: true });
   registerStore.setRegisterResult(true);
   navigateTo("/login");
 };

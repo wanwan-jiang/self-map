@@ -42,10 +42,28 @@ export default defineEventHandler(async (event): Promise<RegisterSuccessBody | R
     };
   }
 
-  const { username, email } = parsed.data;
+  const { username, email, agreeTerms } = parsed.data;
 
-  // TODO: 使用 parsed.data.password 做 scrypt/argon2 哈希（禁止日志明文）；校验唯一后入库
-  // 对密码加密 nuxt-auth-utils
+  const existing = await Users.findOne({
+    $or: [{ email }, { username }],
+  });
+  if (existing) {
+    setResponseStatus(event, 409);
+    return {
+      success: false,
+      message: existing.email === email ? "该邮箱已被注册" : "该用户名已被占用",
+    };
+  }
+
+  const hashedPassword = await hashPassword(parsed.data.password);
+
+  await Users.create({
+    username,
+    email,
+    password: hashedPassword,
+    agreeTerms,
+    createdAt: new Date(),
+  });
 
   return {
     success: true,

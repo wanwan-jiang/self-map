@@ -22,6 +22,7 @@ useHead({
 });
 
 const showPopUp = ref(false);
+const message = ref<string | undefined>(undefined);
 </script>
 
 <template>
@@ -38,10 +39,15 @@ const showPopUp = ref(false);
         class="relative z-10 grid w-full max-w-[980px] overflow-hidden rounded-2xl border border-outline-variant/20 bg-surface-container-low lg:grid-cols-2"
       >
         <AuthMarketingPanel />
-        <AuthRegisterForm @update:show="showPopUp = $event" />
+        <AuthRegisterForm
+          @update:show="
+            showPopUp = $event.show;
+            message = $event.message;
+          "
+        />
       </section>
     </main>
     <AuthFooterLinks />
-    <PopUp v-if="showPopUp" @close="showPopUp = false" :register="true" />
+    <PopUp v-if="showPopUp" @close="showPopUp = false" :register="true" :message="message" />
   </div>
 </template>
