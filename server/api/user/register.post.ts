@@ -3,6 +3,7 @@
  */
 import { flattenError } from "zod";
 import { userFormRegisterSchema } from "../../../validators/user";
+import { Users } from "../../models/users";
 
 interface RegisterSuccessBody {
   success: true;
@@ -44,6 +45,7 @@ export default defineEventHandler(async (event): Promise<RegisterSuccessBody | R
   const { username, email } = parsed.data;
 
   // TODO: 使用 parsed.data.password 做 scrypt/argon2 哈希（禁止日志明文）；校验唯一后入库
+  // 对密码加密 nuxt-auth-utils
 
   return {
     success: true,

@@ -26,10 +26,9 @@ export default defineNuxtConfig({
       ignore: ["**/common/**", "**/register-login/**", "**/selfmap-info/**", "**/mbti/**"],
     },
   ],
-  modules: ["@pinia/nuxt", "@nuxtjs/tailwindcss"],
+  modules: ["@pinia/nuxt", "@nuxtjs/tailwindcss", "nuxt-mongoose", "nuxt-auth-utils"],
   css: ["~/assets/css/main.css"],
-  // tailwindcss: {
-  //     cssPath: '~/assets/css/main.css',
-  //     exposeConfig: true,
-  //   },
+  mongoose: {
+    uri: import.meta.env.NUXT_MONGOOSE_URI,
+  },
 });
