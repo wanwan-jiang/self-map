@@ -1,15 +1,32 @@
 <script setup lang="ts">
-import { useLoginStore } from "../../../stores/login";
+import { getAuthToken } from "~/utils/authToken";
 import { useMbtiStore } from "../../../stores/mbti";
 
 const viewReportError = ref(false);
 const route = useRoute();
-const loginStore = useLoginStore();
 const mbtiStore = useMbtiStore();
 const { isSubmitSuccess } = storeToRefs(mbtiStore);
-const loginSuccess = computed<boolean>(() => {
-  return loginStore.loginSuccess;
+
+/** 与 localStorage 中的 token 同步，用于顶栏登录态展示 */
+const hasToken = ref(false);
+
+function syncAuthTokenFromStorage(): void {
+  if (!import.meta.client) {
+    return;
+  }
+  hasToken.value = Boolean(getAuthToken());
+}
+
+onMounted(() => {
+  syncAuthTokenFromStorage();
+  window.addEventListener("storage", syncAuthTokenFromStorage);
 });
+
+onUnmounted(() => {
+  window.removeEventListener("storage", syncAuthTokenFromStorage);
+});
+
+watch(() => route.fullPath, syncAuthTokenFromStorage);
 const isReportScene = computed<boolean>(() => {
   return route.path === "/mbti" || route.path === "/mbti-test" || route.path === "/selfmap-info";
 });
@@ -67,7 +84,7 @@ const onReportTabBlockedClick = (): void => {
       </div>
 
       <div v-if="isReportScene" class="flex items-center gap-4">
-        <div v-if="!loginSuccess" class="flex items-center gap-2">
+        <div v-if="!hasToken" class="flex items-center gap-2">
           <NuxtLink
             to="/login"
             class="inline-flex items-center justify-center bg-transparent text-white px-6 py-2 rounded-full font-bold text-sm hover:opacity-90 active:scale-95 transition-all"

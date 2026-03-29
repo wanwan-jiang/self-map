@@ -3,10 +3,6 @@
  * @description SelfMap 登录入口页，用于已有账号用户回到系统继续使用。
  */
 
-definePageMeta({
-  middleware: ["loginMW"],
-});
-
 useHead({
   title: "SelfMap - 登录",
   htmlAttrs: {
