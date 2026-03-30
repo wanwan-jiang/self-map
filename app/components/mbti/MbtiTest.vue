@@ -48,11 +48,78 @@ const {
 } = await useMbtiTest();
 
 const handleSubmit = async (): Promise<void> => {
+  if (typeof window === "undefined") {
+    return;
+  }
+
   type Answer = { id: string; value: number; dimension_en?: string };
-  Object.values(answers.value).forEach((answer: Answer) => {
-    console.log("answer", answer.id, answer.value, answer.dimension_en);
-  });
-  localStorage.setItem("isSubmitSuccess", "true");
+
+  type AxisPair = "EI" | "SN" | "TF" | "JP";
+  type AxisLetter = "E" | "I" | "S" | "N" | "T" | "F" | "J" | "P";
+  type AxisKey = AxisPair | AxisLetter;
+  const stats: Record<AxisKey, number> = {
+    EI: 0,
+    E: 0,
+    I: 0,
+    SN: 0,
+    S: 0,
+    N: 0,
+    TF: 0,
+    T: 0,
+    F: 0,
+    JP: 0,
+    J: 0,
+    P: 0,
+  };
+
+  const axisPairByDimension = new Map<string, AxisPair>([
+    ["EI", "EI"],
+    ["SN", "SN"],
+    ["TF", "TF"],
+    ["JP", "JP"],
+  ]);
+
+  const mbtiScoreToLetter = (pair: AxisPair, value: number): AxisLetter | undefined => {
+    if (value === 0) return undefined;
+
+    if (pair === "EI") return value > 0 ? "E" : "I";
+    if (pair === "SN") return value > 0 ? "S" : "N";
+    if (pair === "TF") return value > 0 ? "T" : "F";
+    // pair === "JP"
+    return value > 0 ? "J" : "P";
+  };
+
+  for (const answer of Object.values(answers.value) as Answer[]) {
+    const dim = (answer.dimension_en ?? "").toUpperCase();
+    const pair = axisPairByDimension.get(dim);
+    if (pair === undefined) continue;
+
+    stats[pair] = stats[pair] + 1;
+
+    const picked = mbtiScoreToLetter(pair, answer.value);
+    if (picked === undefined) continue;
+    stats[picked] = stats[picked] + 1;
+  }
+
+  const getFinalLetter = (pair: AxisPair, positive: AxisLetter, negative: AxisLetter): AxisLetter => {
+    // 按你的规则：正数 > 负数 => positive，否则 => negative（包含相等时）
+    return stats[positive] > stats[negative] ? positive : negative;
+  };
+
+  const ei = getFinalLetter("EI", "E", "I");
+  const sn = getFinalLetter("SN", "S", "N");
+  const tf = getFinalLetter("TF", "T", "F");
+  const jp = getFinalLetter("JP", "J", "P");
+
+  const mbtiType = `${ei}${sn}${tf}${jp}`;
+  
+  console.log("answers", answers.value);
+  console.log("mbtiType", mbtiType);
+  console.log("stats", stats);
+  
+  // window.localStorage.setItem("mbti_stats", JSON.stringify(stats));
+  // window.localStorage.setItem("mbti_type", mbtiType);
+  // window.localStorage.setItem("isSubmitSuccess", "true");
 };
 
 useHead({
