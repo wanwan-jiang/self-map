@@ -3,6 +3,10 @@
  * @description SelfMap 注册入口页，承载用户从访问到创建账号的主路径。
  */
 
+definePageMeta({
+  middleware: ["redirect-authed-guest"],
+});
+
 useHead({
   title: "SelfMap - 注册",
   htmlAttrs: {

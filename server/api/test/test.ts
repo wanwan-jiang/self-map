@@ -1,4 +1,4 @@
-import { Test } from "../../models/test";
+import { Test } from "../../db/test";
 export default defineEventHandler(async (event) => {
   const test = await Test.find({});
   //   .select(["name", "birthday"])

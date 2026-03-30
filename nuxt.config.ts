@@ -3,6 +3,11 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
 
+  routeRules: {
+    "/login": { ssr: false },
+    "/register": { ssr: false },
+  },
+
   //忽略组件注册目录
   components: [
     {

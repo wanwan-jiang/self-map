@@ -3,7 +3,7 @@
  */
 import { flattenError } from "zod";
 import { userFormLoginSchema } from "../../../validators/user";
-import { Users } from "../../models/users";
+import { Users } from "../../db/users";
 
 interface LoginSuccessBody {
   success: true;
