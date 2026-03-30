@@ -29,9 +29,6 @@
 
 <script setup lang="ts">
 import { useMbtiTest } from "~/composables/user/useMbtiTest";
-import { useMbtiStore } from "../../../stores/mbti";
-
-const mbtiStore = useMbtiStore();
 
 const {
   total,
@@ -51,7 +48,11 @@ const {
 } = await useMbtiTest();
 
 const handleSubmit = async (): Promise<void> => {
-  await mbtiStore.submitTest();
+  type Answer = { id: string; value: number; dimension_en?: string };
+  Object.values(answers.value).forEach((answer: Answer) => {
+    console.log("answer", answer.id, answer.value, answer.dimension_en);
+  });
+  localStorage.setItem("isSubmitSuccess", "true");
 };
 
 useHead({

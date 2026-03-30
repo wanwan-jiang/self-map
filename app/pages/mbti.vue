@@ -8,8 +8,10 @@
 </template>
 
 <script setup lang="ts">
-import { useMbtiStore } from "../../stores/mbti";
+const isSubmitSuccess = ref(false);
 
-const mbtiStore = useMbtiStore();
-const { isSubmitSuccess } = storeToRefs(mbtiStore);
+// SSR 期间没有 localStorage，避免导致 /mbti 页面 500
+if (typeof window !== "undefined") {
+  isSubmitSuccess.value = Boolean(window.localStorage.getItem("isSubmitSuccess"));
+}
 </script>

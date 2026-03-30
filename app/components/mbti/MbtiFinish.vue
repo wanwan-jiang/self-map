@@ -126,13 +126,9 @@
 </template>
 
 <script setup lang="ts">
-import { useMbtiStore } from '../../../stores/mbti'
-
-const mbtiStore = useMbtiStore()
-
 const onRetryTest = (): void => {
-    mbtiStore.resetSubmitState()
-}
+  localStorage.removeItem("isSubmitSuccess");
+};
 
 useHead({
   title: "SelfMap AI - 测评完成",

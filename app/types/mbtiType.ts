@@ -8,6 +8,7 @@ export interface MbtiOption {
 export interface MbtiQuestion {
   id: string;
   dimension: string;
+  dimension_en: string;
   title: string;
   options: MbtiOption[];
 }

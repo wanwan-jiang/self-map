@@ -13,7 +13,12 @@ export const useMbtiTest = async () => {
 
   const total = mbtiQuestions.length;
   const currentIndex = ref(0);
-  const answers = ref<Record<string, string>>({});
+  interface SelectedAnswerPayload {
+    id: string;
+    value: number;
+    dimension_en?: string;
+  }
+  const answers = ref<Record<string, SelectedAnswerPayload>>({});
 
   const currentQuestion = computed(() => mbtiQuestions[currentIndex.value]);
   const currentNumber = computed(() => currentIndex.value + 1);
@@ -29,13 +34,14 @@ export const useMbtiTest = async () => {
 
   const selectedOptionId = computed(() => {
     const key = getQuestionKey(currentQuestion.value);
-    return key ? answers.value[key] : undefined;
+    return key ? answers.value[key]?.id : undefined;
   });
 
-  const selectOption = (optionId: string): void => {
+  const selectOption = (payload: SelectedAnswerPayload): void => {
     const key = getQuestionKey(currentQuestion.value);
     if (!key) return;
-    answers.value[key] = optionId;
+    answers.value[key] = { ...payload, dimension_en: currentQuestion.value?.dimension_en ?? "" };
+    console.log("answers.value", answers.value);
   };
 
   const goPrev = (): void => {

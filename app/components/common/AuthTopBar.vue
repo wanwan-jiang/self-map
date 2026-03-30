@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { getAuthToken } from "~/utils/authToken";
-import { useMbtiStore } from "../../../stores/mbti";
 
 const viewReportError = ref(false);
 const route = useRoute();
-const mbtiStore = useMbtiStore();
-const { isSubmitSuccess } = storeToRefs(mbtiStore);
 
+const isSubmitSuccess = ref(false);
+// SSR 期间没有 localStorage，避免导致页面 500
+if (typeof window !== "undefined") {
+  isSubmitSuccess.value = Boolean(window.localStorage.getItem("isSubmitSuccess"));
+}
 /** 与 localStorage 中的 token 同步，用于顶栏登录态展示 */
 const hasToken = ref(false);
 

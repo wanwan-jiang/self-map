@@ -2,11 +2,9 @@
 /**
  * @description SelfMap 结果分析信息页：装配报告头部、维度面板、洞察与职业建议等子模块。
  */
-import { useMbtiStore } from "../../stores/mbti";
 import { selfmapReportSample } from "../data/selfmapReportSample";
 
 const report = selfmapReportSample;
-const mbtiStore = useMbtiStore();
 
 useHead({
   title: "SelfMap - 性格报告",
@@ -27,7 +25,7 @@ useHead({
 });
 
 const onRetryTest = async (): Promise<void> => {
-  mbtiStore.resetSubmitState();
+  localStorage.removeItem("isSubmitSuccess");
   await navigateTo("/mbti");
 };
 </script>

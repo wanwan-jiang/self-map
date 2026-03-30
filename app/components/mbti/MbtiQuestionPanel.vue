@@ -13,7 +13,7 @@ interface Props {
 const props = defineProps<Props>();
 
 const emit = defineEmits<{
-  select: [optionId: string];
+  select: [payload: { id: string; value: number }];
   prev: [];
   next: [];
   submit: [];
@@ -47,7 +47,7 @@ const isActiveOption = (optionId: string): boolean => props.selectedOptionId ===
             : 'border-transparent hover:border-primary/40 hover:bg-surface-container-high'
         "
         type="button"
-        @click="emit('select', option.id)"
+        @click="emit('select', { id: option.id, value: option.value })"
       >
         <div
           class="absolute -right-4 -top-4 w-24 h-24 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors"
