@@ -1,6 +1,16 @@
-import { mbtiQuestions } from "../../data/mbtiQuestions";
+import type { MbtiQuestion } from "~/types/mbtiType";
 
-export const useMbtiTest = () => {
+/**
+ * 与答案 Record 的键一致：优先业务 id，避免仅 MongoDB `_id` 时与 `?? ""` 查键不一致。
+ */
+function getQuestionKey(question: MbtiQuestion | undefined): string {
+  if (!question?.id) return "";
+  return question.id;
+}
+
+export const useMbtiTest = async () => {
+  const mbtiQuestions = await $fetch<MbtiQuestion[]>("/api/mbti-test/mbti");
+
   const total = mbtiQuestions.length;
   const currentIndex = ref(0);
   const answers = ref<Record<string, string>>({});
@@ -12,11 +22,20 @@ export const useMbtiTest = () => {
   const canGoPrev = computed(() => currentIndex.value > 0);
   const canGoNext = computed(() => currentIndex.value < total - 1);
   const isLastQuestion = computed(() => currentIndex.value === total - 1);
-  const hasSelectedCurrent = computed(() => Boolean(answers.value[currentQuestion.value?.id ?? ""]));
+  const hasSelectedCurrent = computed(() => {
+    const key = getQuestionKey(currentQuestion.value);
+    return key.length > 0 && Boolean(answers.value[key]);
+  });
+
+  const selectedOptionId = computed(() => {
+    const key = getQuestionKey(currentQuestion.value);
+    return key ? answers.value[key] : undefined;
+  });
 
   const selectOption = (optionId: string): void => {
-    if (!currentQuestion.value) return;
-    answers.value[currentQuestion.value.id] = optionId;
+    const key = getQuestionKey(currentQuestion.value);
+    if (!key) return;
+    answers.value[key] = optionId;
   };
 
   const goPrev = (): void => {
@@ -39,6 +58,7 @@ export const useMbtiTest = () => {
     canGoNext,
     isLastQuestion,
     hasSelectedCurrent,
+    selectedOptionId,
     answers,
     selectOption,
     goPrev,

@@ -10,7 +10,7 @@
     <MbtiQuestionPanel
       v-if="currentQuestion"
       :question="currentQuestion"
-      :selected-option-id="answers[currentQuestion.id]"
+      :selected-option-id="selectedOptionId"
       :can-go-prev="canGoPrev"
       :can-go-next="canGoNext"
       :is-last-question="isLastQuestion"
@@ -43,11 +43,12 @@ const {
   canGoNext,
   isLastQuestion,
   hasSelectedCurrent,
+  selectedOptionId,
   answers,
   selectOption,
   goPrev,
   goNext,
-} = useMbtiTest();
+} = await useMbtiTest();
 
 const handleSubmit = async (): Promise<void> => {
   await mbtiStore.submitTest();
