@@ -9,9 +9,24 @@
 
 <script setup lang="ts">
 const isSubmitSuccess = ref(false);
+const SUBMIT_SUCCESS_KEY = "isSubmitSuccess";
+const SUBMIT_SUCCESS_EVENT = "mbti-submit-success-changed";
 
-// SSR 期间没有 localStorage，避免导致 /mbti 页面 500
-if (typeof window !== "undefined") {
-  isSubmitSuccess.value = Boolean(window.localStorage.getItem("isSubmitSuccess"));
-}
+const syncSubmitSuccess = (): void => {
+  if (typeof window === "undefined") {
+    return;
+  }
+  isSubmitSuccess.value = Boolean(window.localStorage.getItem(SUBMIT_SUCCESS_KEY));
+};
+
+onMounted(() => {
+  syncSubmitSuccess();
+  window.addEventListener("storage", syncSubmitSuccess);
+  window.addEventListener(SUBMIT_SUCCESS_EVENT, syncSubmitSuccess);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("storage", syncSubmitSuccess);
+  window.removeEventListener(SUBMIT_SUCCESS_EVENT, syncSubmitSuccess);
+});
 </script>

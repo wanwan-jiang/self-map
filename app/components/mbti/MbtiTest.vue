@@ -112,14 +112,11 @@ const handleSubmit = async (): Promise<void> => {
   const jp = getFinalLetter("JP", "J", "P");
 
   const mbtiType = `${ei}${sn}${tf}${jp}`;
-  
-  console.log("answers", answers.value);
-  console.log("mbtiType", mbtiType);
-  console.log("stats", stats);
-  
-  // window.localStorage.setItem("mbti_stats", JSON.stringify(stats));
-  // window.localStorage.setItem("mbti_type", mbtiType);
-  // window.localStorage.setItem("isSubmitSuccess", "true");
+
+  window.localStorage.setItem("mbti_stats", JSON.stringify(stats));
+  window.localStorage.setItem("mbti_type", mbtiType);
+  window.localStorage.setItem("isSubmitSuccess", "true");
+  window.dispatchEvent(new Event("mbti-submit-success-changed"));
 };
 
 useHead({

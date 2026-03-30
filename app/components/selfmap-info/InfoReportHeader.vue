@@ -18,14 +18,14 @@ const emit = defineEmits<{
         <span
           class="inline-block py-1 px-4 rounded-full bg-secondary-container/30 text-secondary text-sm font-medium mb-4"
         >
-          {{ model.badge }}
+          MBTI 专业深度解析
         </span>
         <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-4">
-          {{ model.titleLead }}
-          <span class="text-primary text-glow">{{ model.typeHighlight }}</span>
+          你的性格类型是：
+          <span class="text-primary text-glow">{{ model.type }} - {{ model.title }}</span>
         </h1>
         <p class="text-on-surface-variant text-lg leading-relaxed">
-          {{ model.summary }}
+          {{ model.desc }}
         </p>
       </div>
       <div class="flex gap-4">
