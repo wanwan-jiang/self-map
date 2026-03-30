@@ -14,10 +14,10 @@ export interface SelfmapDimensionLegendItem {
 }
 
 export interface SelfmapDimensionAxisLabel {
-  id: string;
-  text: string;
-  positionClass: string;
-  textToneClass: string;
+  desc?: string;
+  stats?: Record<string, number>;
+  title?: string;
+  type?: string;
 }
 
 export interface SelfmapInsightCardModel {

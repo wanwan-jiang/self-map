@@ -74,8 +74,8 @@ onMounted(async () => {
       <InfoReportHeader :model="submitResult" @retry-test="onRetryTest" />
 
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-        <InfoDimensionPanel :axis-labels="report.dimensionAxisLabels || []" :legend="report.dimensionLegend || []" />
-        <!-- <InfoInsightsSection :cards="report.insightCards" /> -->
+        <InfoDimensionPanel :model="submitResult" />
+        <InfoInsightsSection :cards="report.insightCards || []" />
       </div>
 
       <!-- <InfoCareerNavigation

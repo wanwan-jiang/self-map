@@ -3,6 +3,7 @@ import type { SelfmapInsightCardModel, SelfmapInsightTone } from "../../types/se
 
 defineProps<{
   card: SelfmapInsightCardModel;
+  title: string;
 }>();
 
 const iconWrapClass = (tone: SelfmapInsightTone): string => {
@@ -32,7 +33,7 @@ const iconClass = (tone: SelfmapInsightTone): string => {
       <span class="material-symbols-outlined text-3xl" :class="iconClass(card.tone)">{{ card.icon }}</span>
     </div>
     <div>
-      <h3 class="text-xl font-bold mb-2">{{ card.title }}</h3>
+      <h3 class="text-xl font-bold mb-2">{{ title }}</h3>
       <p class="text-on-surface-variant leading-relaxed" :class="card.tags?.length ? 'mb-3' : ''">
         {{ card.body }}
       </p>
