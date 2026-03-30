@@ -17,6 +17,15 @@ const AXIS_LABEL_LAYOUT_CLASSES = [
 
 const axisLabelsForChart = computed(() => props.axisLabels.slice(0, AXIS_LABEL_LAYOUT_CLASSES.length));
 
+const DIMENSION_POLYGON_POINTS = [
+  [50, 16],
+  [78.8, 50],
+  [50, 86],
+  [24, 50],
+] as const;
+
+const dimensionPolygonPoints = DIMENSION_POLYGON_POINTS.map(([x, y]) => `${x},${y}`).join(' ');
+
 const dotClass = (tone: SelfmapDimensionLegendItem["dotTone"]): string => {
   if (tone === "primary") return "bg-primary";
   if (tone === "secondary") return "bg-secondary";
@@ -43,8 +52,8 @@ const dotClass = (tone: SelfmapDimensionLegendItem["dotTone"]): string => {
             <line class="stroke-on-surface/20" stroke-width="0.5" x1="10" x2="90" y1="50" y2="50" />
             <polygon
               class="fill-primary/20 stroke-primary [stroke-linejoin:round]"
-              points="50,16 78.8,50 50,86 24,50"
-              stroke-width="2"
+              :points="dimensionPolygonPoints"
+              stroke-width="1"
             />
           </svg>
           <div
