@@ -1,32 +1,32 @@
 <template>
   <div class="min-h-screen flex flex-col selection:bg-primary/30">
     <AuthTopBar report-scene report-tab="test" />
-    <MbtiFinish v-if="isSubmitSuccess" />
+    <MbtiFinish v-if="hasMbtiType" />
     <MbtiTest v-else />
     <AuthFooterLinks />
   </div>
 </template>
 
 <script setup lang="ts">
-const isSubmitSuccess = ref(false);
-const SUBMIT_SUCCESS_KEY = "isSubmitSuccess";
-const SUBMIT_SUCCESS_EVENT = "mbti-submit-success-changed";
+const hasMbtiType = ref(false);
+const MBTI_TYPE_KEY = 'mbti_type';
+const MBTI_SUBMIT_EVENT = 'mbti-submit-success-changed';
 
-const syncSubmitSuccess = (): void => {
-  if (typeof window === "undefined") {
+const syncMbtiTypeStatus = (): void => {
+  if (typeof window === 'undefined') {
     return;
   }
-  isSubmitSuccess.value = Boolean(window.localStorage.getItem(SUBMIT_SUCCESS_KEY));
+  hasMbtiType.value = Boolean(window.localStorage.getItem(MBTI_TYPE_KEY));
 };
 
 onMounted(() => {
-  syncSubmitSuccess();
-  window.addEventListener("storage", syncSubmitSuccess);
-  window.addEventListener(SUBMIT_SUCCESS_EVENT, syncSubmitSuccess);
+  syncMbtiTypeStatus();
+  window.addEventListener('storage', syncMbtiTypeStatus);
+  window.addEventListener(MBTI_SUBMIT_EVENT, syncMbtiTypeStatus);
 });
 
 onUnmounted(() => {
-  window.removeEventListener("storage", syncSubmitSuccess);
-  window.removeEventListener(SUBMIT_SUCCESS_EVENT, syncSubmitSuccess);
+  window.removeEventListener('storage', syncMbtiTypeStatus);
+  window.removeEventListener(MBTI_SUBMIT_EVENT, syncMbtiTypeStatus);
 });
 </script>

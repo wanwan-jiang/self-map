@@ -127,8 +127,9 @@
 
 <script setup lang="ts">
 const onRetryTest = (): void => {
-  localStorage.removeItem("isSubmitSuccess");
-  window.dispatchEvent(new Event("mbti-submit-success-changed"));
+  localStorage.removeItem('mbti_type');
+  localStorage.removeItem('mbti_stats');
+  window.dispatchEvent(new Event('mbti-submit-success-changed'));
 };
 
 useHead({

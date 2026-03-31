@@ -2,12 +2,16 @@
 /**
  * @description SelfMap 结果分析信息页：装配报告头部、维度面板、洞察与职业建议等子模块。
  */
+import { fetchUserMbtiResults } from "../api/user/mbtiResults";
 import { selfmapReportSample } from "../data/selfmapReportSample";
 import type { SelfmapReportHeaderModel } from "../types/selfmapReportType";
+import type { UserMbtiResultItem } from "../types/userMbtiResultType";
+import { getAuthToken } from "../utils/authToken";
 
 const report = selfmapReportSample;
 const submitResult = ref<SelfmapReportHeaderModel>({});
 const submitError = ref<string>("");
+const savedHistory = ref<UserMbtiResultItem[]>([]);
 
 useHead({
   title: "SelfMap - 性格报告",
@@ -28,14 +32,33 @@ useHead({
 });
 
 const onRetryTest = async (): Promise<void> => {
-  localStorage.removeItem("isSubmitSuccess");
+  localStorage.removeItem("mbti_type");
+  localStorage.removeItem("mbti_stats");
   window.dispatchEvent(new Event("mbti-submit-success-changed"));
   await navigateTo("/mbti");
 };
 
 onMounted(async () => {
-  const mbtiType = window.localStorage.getItem("mbti_type");
+  let mbtiType = window.localStorage.getItem("mbti_type");
   const mbtiStatsRaw = window.localStorage.getItem("mbti_stats");
+
+  if (getAuthToken()) {
+    try {
+      const res = await fetchUserMbtiResults();
+      savedHistory.value = res.data.items;
+
+      if (!mbtiType && savedHistory.value.length > 0) {
+        const latestMbti = savedHistory.value[0]?.mbti?.toUpperCase() ?? "";
+        const latestStats = savedHistory.value[0]?.stats ?? {};
+        window.localStorage.setItem("mbti_type", latestMbti);
+        window.localStorage.setItem("mbti_stats", JSON.stringify(latestStats));
+        window.dispatchEvent(new Event("mbti-submit-success-changed"));
+        mbtiType = latestMbti;
+      }
+    } catch {
+      savedHistory.value = [];
+    }
+  }
 
   if (!mbtiType) {
     await navigateTo("/mbti");

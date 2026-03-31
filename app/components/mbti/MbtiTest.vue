@@ -28,7 +28,9 @@
 </template>
 
 <script setup lang="ts">
+import { saveUserMbtiResult } from "~/api/user/mbtiResults";
 import { useMbtiTest } from "~/composables/user/useMbtiTest";
+import { getAuthToken } from "~/utils/authToken";
 
 const {
   total,
@@ -46,6 +48,9 @@ const {
   goPrev,
   goNext,
 } = await useMbtiTest();
+
+const MBTI_TYPE_KEY = "mbti_type";
+const MBTI_SUBMIT_EVENT = "mbti-submit-success-changed";
 
 const handleSubmit = async (): Promise<void> => {
   if (typeof window === "undefined") {
@@ -85,7 +90,7 @@ const handleSubmit = async (): Promise<void> => {
     if (pair === "EI") return value > 0 ? "E" : "I";
     if (pair === "SN") return value > 0 ? "S" : "N";
     if (pair === "TF") return value > 0 ? "T" : "F";
-    // pair === "JP"
+    // pair === 'JP'
     return value > 0 ? "J" : "P";
   };
 
@@ -113,10 +118,21 @@ const handleSubmit = async (): Promise<void> => {
 
   const mbtiType = `${ei}${sn}${tf}${jp}`;
 
+  if (getAuthToken()) {
+    try {
+      await saveUserMbtiResult(mbtiType, stats);
+    } catch (error) {
+      console.error("保存 MBTI 结果失败", error);
+    }
+  }
   window.localStorage.setItem("mbti_stats", JSON.stringify(stats));
-  window.localStorage.setItem("mbti_type", mbtiType);
-  window.localStorage.setItem("isSubmitSuccess", "true");
-  window.dispatchEvent(new Event("mbti-submit-success-changed"));
+  window.localStorage.setItem(MBTI_TYPE_KEY, mbtiType);
+
+  if (window.localStorage.getItem(MBTI_TYPE_KEY)) {
+    window.dispatchEvent(new Event(MBTI_SUBMIT_EVENT));
+  }
+
+  // window.alert("提交失败，请重新完成测评后再试。");
 };
 
 useHead({

@@ -20,6 +20,7 @@ interface LoginApiSuccess {
   data: {
     username: string;
     token: string;
+    userId: string;
   };
 }
 

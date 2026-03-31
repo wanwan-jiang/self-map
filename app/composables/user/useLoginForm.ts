@@ -10,7 +10,7 @@ import type {
   LoginApiSuccess,
   LoginApiFailBody,
 } from "../../types/loginType";
-import { setAuthToken, setAuthUsername } from "../../utils/authToken";
+import { setAuthToken, setAuthUserId, setAuthUsername } from "../../utils/authToken";
 
 export const useLoginForm = (): UseLoginFormReturn => {
   const form = ref<LoginFormState>({
@@ -50,6 +50,9 @@ export const useLoginForm = (): UseLoginFormReturn => {
         setAuthToken(result.data.token);
       }
       setAuthUsername(result.data.username);
+      if (result.data.userId) {
+        setAuthUserId(result.data.userId);
+      }
       return result;
     } catch (e: unknown) {
       const err = e as { statusCode?: number; data?: unknown };
