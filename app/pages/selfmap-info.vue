@@ -101,13 +101,13 @@ onMounted(async () => {
         <InfoInsightsSection :cards="submitResult.character" />
       </div>
 
-      <!-- <InfoCareerNavigation
-        :image-url="report.careerImageUrl"
-        :image-alt="report.careerImageAlt"
-        :paths="report.careerPaths"
-        :skills="report.skills"
-        :quote="report.quote"
-      /> -->
+      <InfoCareerNavigation
+        :image-url="report.careerImageUrl ?? ''"
+        :image-alt="report.careerImageAlt ?? ''"
+        :paths="report.careerPaths ?? []"
+        :skills="report.skills ?? []"
+        :quote="report.quote ?? ''"
+      />
     </main>
 
     <AuthFooterLinks />
