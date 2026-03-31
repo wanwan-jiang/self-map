@@ -35,7 +35,7 @@ watch(
   },
 );
 
-const resolvedDisplayName = computed(() => props.displayName ?? cachedUsername.value ?? "用户12345");
+const resolvedDisplayName = computed(() => props.displayName ?? cachedUsername.value ?? "");
 
 /**
  * @description 退出登录：将 `loginSuccess` 置为 `false`，并进入 `/login`（替换当前历史记录，避免后退仍停留在需登录态页面）。

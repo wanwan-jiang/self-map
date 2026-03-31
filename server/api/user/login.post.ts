@@ -11,6 +11,8 @@ interface LoginSuccessBody {
     username: string;
     /** 会话标识，与 Set-Cookie 中的加密会话配合使用；客户端也可按需持久化 */
     token: string;
+    /** 用户文档主键，用于业务侧关联（如测试结果） */
+    userId: string;
   };
 }
 
@@ -78,6 +80,7 @@ export default defineEventHandler(async (event): Promise<LoginSuccessBody | Logi
     data: {
       username,
       token,
+      userId: String(user._id),
     },
   };
 });

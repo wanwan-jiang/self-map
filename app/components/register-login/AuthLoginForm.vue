@@ -17,7 +17,6 @@ const onSubmit = async (): Promise<void> => {
   const result: LoginApiSuccess | LoginApiFailBody | false = await submitForm();
 
   if (result === false || (result && result.success === false)) {
-    console.log("result", result);
     const message = result && "message" in result ? result.message : undefined;
     emit("update:show", { show: true, ...(message ? { message } : {}) });
     loginStore.setLoginResult(false);
@@ -27,6 +26,8 @@ const onSubmit = async (): Promise<void> => {
   emit("update:show", { show: true });
   loginStore.setLoginResult(true);
 
+  localStorage.removeItem("mbti_type");
+  localStorage.removeItem("mbti_stats");
   navigateTo("/mbti");
 };
 </script>

@@ -4,10 +4,12 @@ import { getAuthToken } from "~/utils/authToken";
 const viewReportError = ref(false);
 const route = useRoute();
 
-const isSubmitSuccess = ref(false);
+const hasMbtiType = ref(false);
+const MBTI_TYPE_KEY = 'mbti_type';
+const MBTI_SUBMIT_EVENT = 'mbti-submit-success-changed';
 // SSR 期间没有 localStorage，避免导致页面 500
-if (typeof window !== "undefined") {
-  isSubmitSuccess.value = Boolean(window.localStorage.getItem("isSubmitSuccess"));
+if (typeof window !== 'undefined') {
+  hasMbtiType.value = Boolean(window.localStorage.getItem(MBTI_TYPE_KEY));
 }
 /** 与 localStorage 中的 token 同步，用于顶栏登录态展示 */
 const hasToken = ref(false);
@@ -19,13 +21,25 @@ function syncAuthTokenFromStorage(): void {
   hasToken.value = Boolean(getAuthToken());
 }
 
+function syncMbtiTypeFromStorage(): void {
+  if (!import.meta.client) {
+    return;
+  }
+  hasMbtiType.value = Boolean(window.localStorage.getItem(MBTI_TYPE_KEY));
+}
+
 onMounted(() => {
   syncAuthTokenFromStorage();
-  window.addEventListener("storage", syncAuthTokenFromStorage);
+  syncMbtiTypeFromStorage();
+  window.addEventListener('storage', syncAuthTokenFromStorage);
+  window.addEventListener('storage', syncMbtiTypeFromStorage);
+  window.addEventListener(MBTI_SUBMIT_EVENT, syncMbtiTypeFromStorage);
 });
 
 onUnmounted(() => {
-  window.removeEventListener("storage", syncAuthTokenFromStorage);
+  window.removeEventListener('storage', syncAuthTokenFromStorage);
+  window.removeEventListener('storage', syncMbtiTypeFromStorage);
+  window.removeEventListener(MBTI_SUBMIT_EVENT, syncMbtiTypeFromStorage);
 });
 
 watch(() => route.fullPath, syncAuthTokenFromStorage);
@@ -42,8 +56,8 @@ const reportTabLinkClass = computed(() =>
 );
 
 const onReportTabBlockedClick = (): void => {
-  if (isSubmitSuccess.value) {
-    void navigateTo("/selfmap-info");
+  if (hasMbtiType.value) {
+    void navigateTo('/selfmap-info');
     return;
   }
   viewReportError.value = true;
