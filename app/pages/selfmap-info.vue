@@ -6,12 +6,15 @@ import { fetchUserMbtiResults } from "../api/user/mbtiResults";
 import { selfmapReportSample } from "../data/selfmapReportSample";
 import type { SelfmapReportHeaderModel } from "../types/selfmapReportType";
 import type { UserMbtiResultItem } from "../types/userMbtiResultType";
-import { getAuthToken } from "../utils/authToken";
+import { clearAuthToken, getAuthToken } from "../utils/authToken";
+import { useChatAI } from "../composables/chat/chat_ai";
 
 const report = selfmapReportSample;
 const submitResult = ref<SelfmapReportHeaderModel>({});
 const submitError = ref<string>("");
 const savedHistory = ref<UserMbtiResultItem[]>([]);
+const resultQwenMbti = ref<string>("");
+const { askQwenStream } = useChatAI();
 
 useHead({
   title: "SelfMap - 性格报告",
@@ -55,7 +58,19 @@ onMounted(async () => {
         window.dispatchEvent(new Event("mbti-submit-success-changed"));
         mbtiType = latestMbti;
       }
-    } catch {
+    } catch (error: unknown) {
+      const statusCode =
+        typeof error === "object" &&
+        error !== null &&
+        "statusCode" in error &&
+        typeof (error as { statusCode?: unknown }).statusCode === "number"
+          ? (error as { statusCode: number }).statusCode
+          : undefined;
+
+      // 本地 token 存在但会话已失效时，清理本地登录态，避免重复触发 401 请求。
+      if (statusCode === 401) {
+        clearAuthToken();
+      }
       savedHistory.value = [];
     }
   }
@@ -74,7 +89,12 @@ onMounted(async () => {
     }
   }
 
+  const message = `你好，分析下我的MBTI:${mbtiType}的报告，并给出职业规划建议。最后不要出现任何其他内容，只返回职业规划建议。`;
   try {
+    resultQwenMbti.value = "";
+    await askQwenStream(message, (_delta, fullText) => {
+      resultQwenMbti.value = fullText;
+    });
     submitResult.value = await $fetch<SelfmapReportHeaderModel>("/api/mbti-test/result", {
       method: "POST",
       body: {
@@ -104,9 +124,7 @@ onMounted(async () => {
       <InfoCareerNavigation
         :image-url="report.careerImageUrl ?? ''"
         :image-alt="report.careerImageAlt ?? ''"
-        :paths="report.careerPaths ?? []"
-        :skills="report.skills ?? []"
-        :quote="report.quote ?? ''"
+        :result-qwen-mbti="resultQwenMbti"
       />
     </main>
 

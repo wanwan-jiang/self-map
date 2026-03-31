@@ -32,6 +32,9 @@ export default defineNuxtConfig({
     },
   ],
   modules: ["@pinia/nuxt", "@nuxtjs/tailwindcss", "nuxt-mongoose", "nuxt-auth-utils"],
+  runtimeConfig: {
+    qwenApiKey: import.meta.env.QWEN_API_KEY || '',
+  },
   css: ["~/assets/css/main.css"],
   mongoose: {
     uri: import.meta.env.NUXT_MONGOOSE_URI,

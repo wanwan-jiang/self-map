@@ -5,9 +5,10 @@ import InfoGlassCard from "./InfoGlassCard.vue";
 defineProps<{
   imageUrl: string;
   imageAlt: string;
-  paths: SelfmapCareerPathModel[];
-  skills: SelfmapSkillModel[];
-  quote: string;
+  // skills: SelfmapSkillModel[];
+  // quote: string;
+  // paths: SelfmapCareerPathModel[];
+  resultQwenMbti?: string;
 }>();
 </script>
 
@@ -19,15 +20,16 @@ defineProps<{
     </h2>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="lg:col-span-2 glass-card rounded-lg overflow-hidden flex flex-col md:flex-row">
-        <div class="md:w-1/3 relative h-64 md:h-auto">
+        <div class="relative h-64 md:h-72 md:w-72 md:shrink-0 lg:h-80 lg:w-80">
           <img class="absolute inset-0 w-full h-full object-cover" :src="imageUrl" :alt="imageAlt" />
           <div
             class="absolute inset-0 bg-gradient-to-r from-transparent to-surface-container-highest/10 md:to-transparent"
           ></div>
         </div>
         <div class="p-8 flex-grow">
-          <h3 class="text-xl font-bold mb-6 text-primary">职业路径建议 (Career Paths)</h3>
-          <div class="space-y-6">
+          <h3 class="text-xl font-bold mb-6 text-primary">职业路径建议</h3>
+          <div class="text-sm text-on-surface-variant whitespace-pre-wrap">{{ resultQwenMbti }}</div>
+          <!-- <div class="space-y-6">
             <div
               v-for="path in paths"
               :key="path.id"
@@ -39,11 +41,11 @@ defineProps<{
               </div>
               <span class="material-symbols-outlined text-primary">{{ path.icon }}</span>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
 
-      <InfoGlassCard padding-class="p-8">
+      <!-- <InfoGlassCard padding-class="p-8">
         <h3 class="text-xl font-bold mb-6 text-secondary">核心赋能技能 (Key Skills)</h3>
         <ul class="space-y-6">
           <li v-for="skill in skills" :key="skill.id" class="flex items-start gap-3">
@@ -59,7 +61,7 @@ defineProps<{
         <div class="mt-10 p-4 rounded-2xl bg-secondary-container/20 border border-secondary/20">
           <p class="text-xs text-secondary-fixed-dim italic">"{{ quote }}"</p>
         </div>
-      </InfoGlassCard>
+      </InfoGlassCard> -->
     </div>
   </section>
 </template>
