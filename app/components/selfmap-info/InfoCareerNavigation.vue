@@ -5,7 +5,7 @@ import InfoGlassCard from "./InfoGlassCard.vue";
 defineProps<{
   imageUrl: string;
   imageAlt: string;
-  // skills: SelfmapSkillModel[];
+  skills: SelfmapSkillModel[];
   // quote: string;
   // paths: SelfmapCareerPathModel[];
   resultQwenMbti?: string;
@@ -45,8 +45,8 @@ defineProps<{
         </div>
       </div>
 
-      <!-- <InfoGlassCard padding-class="p-8">
-        <h3 class="text-xl font-bold mb-6 text-secondary">核心赋能技能 (Key Skills)</h3>
+      <InfoGlassCard padding-class="p-8">
+        <h3 class="text-xl font-bold mb-6 text-secondary">核心赋能技能</h3>
         <ul class="space-y-6">
           <li v-for="skill in skills" :key="skill.id" class="flex items-start gap-3">
             <div class="mt-1 w-5 h-5 rounded bg-primary-dim/20 flex items-center justify-center">
@@ -58,10 +58,10 @@ defineProps<{
             </div>
           </li>
         </ul>
-        <div class="mt-10 p-4 rounded-2xl bg-secondary-container/20 border border-secondary/20">
+        <!-- <div class="mt-10 p-4 rounded-2xl bg-secondary-container/20 border border-secondary/20">
           <p class="text-xs text-secondary-fixed-dim italic">"{{ quote }}"</p>
-        </div>
-      </InfoGlassCard> -->
+        </div> -->
+      </InfoGlassCard>
     </div>
   </section>
 </template>

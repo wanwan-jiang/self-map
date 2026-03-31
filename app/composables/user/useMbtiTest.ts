@@ -41,7 +41,7 @@ export const useMbtiTest = async () => {
     const key = getQuestionKey(currentQuestion.value);
     if (!key) return;
     answers.value[key] = { ...payload, dimension_en: currentQuestion.value?.dimension_en ?? "" };
-    console.log("answers.value", answers.value);
+    // console.log("answers.value", answers.value);
   };
 
   const goPrev = (): void => {

@@ -4,7 +4,7 @@
  */
 import { fetchUserMbtiResults } from "../api/user/mbtiResults";
 import { selfmapReportSample } from "../data/selfmapReportSample";
-import type { SelfmapReportHeaderModel } from "../types/selfmapReportType";
+import type { SelfmapReportHeaderModel, SelfmapSkillModel } from "../types/selfmapReportType";
 import type { UserMbtiResultItem } from "../types/userMbtiResultType";
 import { clearAuthToken, getAuthToken } from "../utils/authToken";
 import { useChatAI } from "../composables/chat/chat_ai";
@@ -14,7 +14,52 @@ const submitResult = ref<SelfmapReportHeaderModel>({});
 const submitError = ref<string>("");
 const savedHistory = ref<UserMbtiResultItem[]>([]);
 const resultQwenMbti = ref<string>("");
+const aiSkills = ref<SelfmapSkillModel[]>([]);
 const { askQwenStream } = useChatAI();
+
+const parseSkillsFromStreamText = (fullText: string): SelfmapSkillModel[] => {
+  const lines = fullText
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const parsed: SelfmapSkillModel[] = [];
+
+  for (const line of lines) {
+    const cleanedLine = line.replace(/^\d+[\.、]\s*/, "").replace(/^[-*]\s*/, "");
+    const separator = cleanedLine.includes("|")
+      ? "|"
+      : cleanedLine.includes("：")
+      ? "："
+      : cleanedLine.includes(":")
+      ? ":"
+      : "";
+
+    if (!separator) {
+      continue;
+    }
+
+    const [rawTitle, ...restParts] = cleanedLine.split(separator);
+    const title = rawTitle?.trim();
+    const description = restParts.join(separator).trim();
+
+    if (!title || !description) {
+      continue;
+    }
+
+    parsed.push({
+      id: `ai-skill-${parsed.length + 1}`,
+      title,
+      description,
+    });
+
+    if (parsed.length >= 3) {
+      break;
+    }
+  }
+
+  return parsed;
+};
 
 useHead({
   title: "SelfMap - 性格报告",
@@ -90,11 +135,8 @@ onMounted(async () => {
   }
 
   const message = `你好，分析下我的MBTI:${mbtiType}的报告，并给出职业规划建议。最后不要出现任何其他内容，只返回职业规划建议。`;
+  const messageTitle = `请给出三点${mbtiType}的核心赋能技能。严格按三行输出，每行格式：标题|描述。标题6个字以内，描述16个字以内，不要输出其他内容。`;
   try {
-    resultQwenMbti.value = "";
-    await askQwenStream(message, (_delta, fullText) => {
-      resultQwenMbti.value = fullText;
-    });
     submitResult.value = await $fetch<SelfmapReportHeaderModel>("/api/mbti-test/result", {
       method: "POST",
       body: {
@@ -102,6 +144,20 @@ onMounted(async () => {
         stats: mbtiStats,
       },
     });
+
+    resultQwenMbti.value = "";
+    await askQwenStream(message, (_delta, fullText) => {
+      resultQwenMbti.value = fullText;
+    });
+
+    aiSkills.value = [];
+    await askQwenStream(messageTitle, (_delta, fullText) => {
+      aiSkills.value = parseSkillsFromStreamText(fullText);
+    });
+
+    if (aiSkills.value.length === 0) {
+      aiSkills.value = report.skills ?? [];
+    }
   } catch (error) {
     submitError.value = "获取 MBTI 报告失败，请稍后重试。";
     console.error("获取 MBTI 报告失败", error);
@@ -124,6 +180,7 @@ onMounted(async () => {
       <InfoCareerNavigation
         :image-url="report.careerImageUrl ?? ''"
         :image-alt="report.careerImageAlt ?? ''"
+        :skills="aiSkills"
         :result-qwen-mbti="resultQwenMbti"
       />
     </main>
