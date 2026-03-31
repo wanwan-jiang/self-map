@@ -4,6 +4,7 @@ import type { SelfmapInsightCardModel, SelfmapInsightTone } from "../../types/se
 defineProps<{
   card: SelfmapInsightCardModel;
   title: string;
+  icon: string;
 }>();
 
 const iconWrapClass = (tone: SelfmapInsightTone): string => {
@@ -29,13 +30,13 @@ const iconClass = (tone: SelfmapInsightTone): string => {
   <article
     class="glass-card rounded-lg p-6 flex gap-6 hover:bg-surface-container-highest/40 transition-all cursor-default"
   >
-    <div class="w-14 h-14 shrink-0 rounded-2xl flex items-center justify-center" :class="iconWrapClass(card.tone)">
-      <span class="material-symbols-outlined text-3xl" :class="iconClass(card.tone)">{{ card.icon }}</span>
+    <div class="w-14 h-14 shrink-0 rounded-2xl flex items-center justify-center" :class="iconWrapClass('primary')">
+      <span class="material-symbols-outlined text-3xl" :class="iconClass('primary')">{{ icon }}</span>
     </div>
     <div>
       <h3 class="text-xl font-bold mb-2">{{ title }}</h3>
       <p class="text-on-surface-variant leading-relaxed" :class="card.tags?.length ? 'mb-3' : ''">
-        {{ card.body }}
+        {{ card.content }}
       </p>
       <div v-if="card.tags?.length" class="flex gap-2 flex-wrap">
         <span

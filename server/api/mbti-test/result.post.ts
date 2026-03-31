@@ -43,7 +43,7 @@ export default defineEventHandler(async (event) => {
     type: result.type,
     title: result.title,
     desc: result.desc,
+    character: result.character,
     stats: body?.stats ?? null,
   };
 });
-  

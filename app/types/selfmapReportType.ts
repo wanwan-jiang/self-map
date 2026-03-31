@@ -5,6 +5,7 @@ export interface SelfmapReportHeaderModel {
   stats?: Record<string, number>;
   title?: string;
   type?: string;
+  character?: SelfmapInsightCardModel[] | Record<string, SelfmapInsightCardModel>;
 }
 
 export interface SelfmapDimensionLegendItem {
@@ -21,12 +22,8 @@ export interface SelfmapDimensionAxisLabel {
 }
 
 export interface SelfmapInsightCardModel {
-  id: string;
-  icon: string;
-  tone: SelfmapInsightTone;
-  title: string;
-  body: string;
-  tags?: string[];
+  content: string;
+  tags: Record<string, string>;
 }
 
 export interface SelfmapCareerPathModel {

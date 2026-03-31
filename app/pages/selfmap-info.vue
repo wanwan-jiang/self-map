@@ -75,7 +75,7 @@ onMounted(async () => {
 
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
         <InfoDimensionPanel :model="submitResult" />
-        <InfoInsightsSection :cards="report.insightCards || []" />
+        <InfoInsightsSection :cards="submitResult.character" />
       </div>
 
       <!-- <InfoCareerNavigation
