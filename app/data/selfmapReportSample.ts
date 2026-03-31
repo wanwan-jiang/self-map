@@ -64,42 +64,42 @@ export const selfmapReportSample: SelfmapReportContent = {
   careerImageUrl:
     "https://lh3.googleusercontent.com/aida-public/AB6AXuABM2HZpXoA6M085fPEIEIZOZsWGZk3S2vqwGDtKNLqYF1tcBBaP1uXf3zQIv2KN56CnXKxn1PV2icdlbf3NuG-7Wh0d_ic-K1kPTFHZQDSv2L3K8nFFBFa0_IBLNPIPv7yKvuLZNmNej02drIS60uJ_DaqJ2gDazOri9QCzmdMxdI44YN29DfVet69Gwc8NF-dgAKV4TVNL_UGC6AbqAKaYPMxeHrBpTflT6nzywPARUlPXhtvpfGLKkK0Fu5BYRnUl3imAUjkCRhY",
   careerImageAlt: "Career workspace",
-  careerPaths: [
-    {
-      id: "exec",
-      title: "企业高管 / 团队负责人",
-      description: "利用天生的领导力与战略眼光",
-      icon: "trending_up",
-    },
-    {
-      id: "hr",
-      title: "心理咨询 / 人力资源",
-      description: "深度连接他人的情感与成长潜能",
-      icon: "favorite",
-    },
-    {
-      id: "pr",
-      title: "公关 / 媒体传播",
-      description: "发挥卓越的感召力与故事讲述能力",
-      icon: "campaign",
-    },
-  ],
+  // careerPaths: [
+  //   {
+  //     id: "exec",
+  //     title: "企业高管 / 团队负责人",
+  //     description: "利用天生的领导力与战略眼光",
+  //     icon: "trending_up",
+  //   },
+  //   {
+  //     id: "hr",
+  //     title: "心理咨询 / 人力资源",
+  //     description: "深度连接他人的情感与成长潜能",
+  //     icon: "favorite",
+  //   },
+  //   {
+  //     id: "pr",
+  //     title: "公关 / 媒体传播",
+  //     description: "发挥卓越的感召力与故事讲述能力",
+  //     icon: "campaign",
+  //   },
+  // ],
   skills: [
-    {
-      id: "comm",
-      title: "战略型沟通",
-      description: "不仅传递信息，更要传递愿景与共鸣。",
-    },
-    {
-      id: "conflict",
-      title: "冲突解决与调解",
-      description: "将你的同理心转化为可落地的双赢方案。",
-    },
-    {
-      id: "cross",
-      title: "跨职能协作",
-      description: "利用你的直觉识别并链接不同领域的资源。",
-    },
+    // {
+    //   id: "comm",
+    //   title: "战略型沟通",
+    //   description: "不仅传递信息，更要传递愿景与共鸣。",
+    // },
+    // {
+    //   id: "conflict",
+    //   title: "冲突解决与调解",
+    //   description: "将你的同理心转化为可落地的双赢方案。",
+    // },
+    // {
+    //   id: "cross",
+    //   title: "跨职能协作",
+    //   description: "利用你的直觉识别并链接不同领域的资源。",
+    // },
   ],
   quote: "你的最大力量在于你赋予他人的力量。保持对人性的信仰，同时学会在逻辑与情感间平衡。",
 };

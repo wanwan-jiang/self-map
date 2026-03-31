@@ -30,10 +30,10 @@ const parseSkillsFromStreamText = (fullText: string): SelfmapSkillModel[] => {
     const separator = cleanedLine.includes("|")
       ? "|"
       : cleanedLine.includes("：")
-      ? "："
-      : cleanedLine.includes(":")
-      ? ":"
-      : "";
+        ? "："
+        : cleanedLine.includes(":")
+          ? ":"
+          : "";
 
     if (!separator) {
       continue;
