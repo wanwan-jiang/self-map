@@ -29,8 +29,9 @@
 
 <script setup lang="ts">
 import { saveUserMbtiResult } from "~/api/user/mbtiResults";
-import { useMbtiTest } from "~/composables/user/useMbtiTest";
+import { usePersonTest } from "~/composables/person_test/usePersonTest";
 import { getAuthToken } from "~/utils/authToken";
+import { MBTI_TYPE_KEY, MBTI_SUBMIT_EVENT } from "~/variables/variable";
 
 const {
   total,
@@ -47,10 +48,7 @@ const {
   selectOption,
   goPrev,
   goNext,
-} = await useMbtiTest();
-
-const MBTI_TYPE_KEY = "mbti_type";
-const MBTI_SUBMIT_EVENT = "mbti-submit-success-changed";
+} = await usePersonTest(MBTI_TYPE_KEY);
 
 const handleSubmit = async (): Promise<void> => {
   if (typeof window === "undefined") {

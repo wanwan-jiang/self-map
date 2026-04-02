@@ -1,26 +1,38 @@
-import type { MbtiQuestion } from "~/types/mbtiType";
-
+import type { TestQuestion } from "~/types/questionType";
+import { MBTI_TYPE_KEY, BIG_FIVE_TYPE_KEY } from "~/variables/variable";
 /**
  * 与答案 Record 的键一致：优先业务 id，避免仅 MongoDB `_id` 时与 `?? ""` 查键不一致。
  */
-function getQuestionKey(question: MbtiQuestion | undefined): string {
+function getQuestionKey(question: TestQuestion | undefined): string {
   if (!question?.id) return "";
   return question.id;
 }
 
-export const useMbtiTest = async () => {
-  const mbtiQuestions = await $fetch<MbtiQuestion[]>("/api/mbti-test/mbti");
+interface SelectedAnswerPayload {
+  id: string;
+  value: number;
+  domain?: string;
+  facet?: number;
+  keyed?: string;
+  dimension_en?: string;
+}
 
-  const total = mbtiQuestions.length;
-  const currentIndex = ref(0);
-  interface SelectedAnswerPayload {
-    id: string;
-    value: number;
-    dimension_en?: string;
+export const usePersonTest = async (type: string) => {
+  let questions: TestQuestion[] = [];
+  //TODO
+  if (type === MBTI_TYPE_KEY) {
+    questions = await $fetch<TestQuestion[]>("/api/mbti-test/mbti");
+  } else if (type === BIG_FIVE_TYPE_KEY) {
+    questions = await $fetch<TestQuestion[]>("/api/mbti-test/big-five");
   }
+
+  const total = questions.length;
+  const currentIndex = ref(0);
+
+  //TODO
   const answers = ref<Record<string, SelectedAnswerPayload>>({});
 
-  const currentQuestion = computed(() => mbtiQuestions[currentIndex.value]);
+  const currentQuestion = computed(() => questions[currentIndex.value]);
   const currentNumber = computed(() => currentIndex.value + 1);
   const progressPercent = computed(() => (total > 0 ? Number(((currentNumber.value / total) * 100).toFixed(2)) : 0));
   const estimatedMinutesLeft = computed(() => Math.max(1, total - currentNumber.value));
@@ -40,8 +52,19 @@ export const useMbtiTest = async () => {
   const selectOption = (payload: SelectedAnswerPayload): void => {
     const key = getQuestionKey(currentQuestion.value);
     if (!key) return;
-    answers.value[key] = { ...payload, dimension_en: currentQuestion.value?.dimension_en ?? "" };
-    // console.log("answers.value", answers.value);
+    if (type === MBTI_TYPE_KEY) {
+      answers.value[key] = { ...payload, dimension_en: currentQuestion.value?.dimension_en ?? "" };
+    } else if (type === BIG_FIVE_TYPE_KEY) {
+      answers.value[key] = {
+        ...payload,
+        domain: currentQuestion.value?.domain ?? "",
+        facet: currentQuestion.value?.facet ?? 0,
+        keyed: currentQuestion.value?.keyed ?? "",
+      };
+    }
+    // TODO
+
+    console.log("answers.value", answers.value);
   };
 
   const goPrev = (): void => {

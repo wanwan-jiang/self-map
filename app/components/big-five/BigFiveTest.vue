@@ -29,10 +29,10 @@
 
 <script setup lang="ts">
 import { saveUserMbtiResult as saveUserBigFiveResult } from "~/api/user/mbtiResults";
-import { useBigFiveTest } from "~/composables/user/useBigFiveTest";
 import { getAuthToken } from "~/utils/authToken";
 import { BIG_FIVE_TYPE_KEY } from "~/variables/variable";
 import { BIG_FIVE_SUBMIT_EVENT } from "~/variables/variable";
+import { usePersonTest } from "~/composables/person_test/usePersonTest";
 
 const {
   total,
@@ -49,7 +49,7 @@ const {
   selectOption,
   goPrev,
   goNext,
-} = await useBigFiveTest();
+} = await usePersonTest(BIG_FIVE_TYPE_KEY);
 
 const handleSubmit = async (): Promise<void> => {
   if (typeof window === "undefined") {
