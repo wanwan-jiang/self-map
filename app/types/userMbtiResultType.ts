@@ -1,4 +1,4 @@
-export interface UserMbtiStats {
+interface UserMbtiStats {
   EI: number;
   E: number;
   I: number;
@@ -13,7 +13,7 @@ export interface UserMbtiStats {
   P: number;
 }
 
-export interface UserMbtiResultItem {
+interface UserMbtiResultItem {
   id: string;
   userId: string;
   mbti: string;
@@ -21,14 +21,16 @@ export interface UserMbtiResultItem {
   createdAt: string;
 }
 
-export interface UserMbtiResultsListResponse {
+interface UserMbtiResultsListResponse {
   success: true;
   data: {
     items: UserMbtiResultItem[];
   };
 }
 
-export interface UserMbtiResultSaveResponse {
+interface UserMbtiResultSaveResponse {
   success: true;
   data: UserMbtiResultItem;
 }
+
+export type { UserMbtiStats, UserMbtiResultItem, UserMbtiResultsListResponse, UserMbtiResultSaveResponse };

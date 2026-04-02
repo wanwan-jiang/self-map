@@ -1,6 +1,6 @@
-export type SelfmapInsightTone = "primary" | "secondary" | "tertiary";
+type SelfmapInsightTone = "primary" | "secondary" | "tertiary";
 
-export interface SelfmapReportHeaderModel {
+interface SelfmapReportHeaderModel {
   desc?: string;
   stats?: Record<string, number>;
   title?: string;
@@ -8,44 +8,44 @@ export interface SelfmapReportHeaderModel {
   character?: SelfmapInsightCardModel[] | Record<string, SelfmapInsightCardModel>;
 }
 
-export interface SelfmapDimensionLegendItem {
+interface SelfmapDimensionLegendItem {
   id: string;
   dotTone: SelfmapInsightTone;
   text: string;
 }
 
-export interface SelfmapDimensionAxisLabel {
+interface SelfmapDimensionAxisLabel {
   desc?: string;
   stats?: Record<string, number>;
   title?: string;
   type?: string;
 }
-export interface InsightDisplayItem {
+interface InsightDisplayItem {
   id: string;
   title: string;
   icon: string;
   card: SelfmapInsightCardModel;
 }
 
-export interface SelfmapInsightCardModel {
+interface SelfmapInsightCardModel {
   content: string;
   tags: Record<string, string>;
 }
 
-export interface SelfmapCareerPathModel {
+interface SelfmapCareerPathModel {
   id: string;
   title: string;
   description: string;
   icon: string;
 }
 
-export interface SelfmapSkillModel {
+interface SelfmapSkillModel {
   id: string;
   title: string;
   description: string;
 }
 
-export interface SelfmapReportContent {
+interface SelfmapReportContent {
   header?: SelfmapReportHeaderModel;
   dimensionAxisLabels?: SelfmapDimensionAxisLabel[];
   dimensionLegend?: SelfmapDimensionLegendItem[];
@@ -56,3 +56,15 @@ export interface SelfmapReportContent {
   skills?: SelfmapSkillModel[];
   quote?: string;
 }
+
+export type {
+  SelfmapInsightTone,
+  SelfmapReportHeaderModel,
+  SelfmapDimensionLegendItem,
+  SelfmapDimensionAxisLabel,
+  InsightDisplayItem,
+  SelfmapInsightCardModel,
+  SelfmapCareerPathModel,
+  SelfmapSkillModel,
+  SelfmapReportContent,
+};

@@ -1,11 +1,11 @@
-export interface TestOption {
+interface TestOption {
   id: string;
   label?: string;
   text?: string;
   value?: number;
 }
 
-export interface TestQuestion {
+interface TestQuestion {
   id: string;
   dimension?: string;
   dimension_en?: string;
@@ -15,6 +15,15 @@ export interface TestQuestion {
   facet?: number;
   keyed?: string;
   text?: string;
+}
+
+interface SelectedAnswerPayload {
+  id: string;
+  value: number;
+  domain?: string;
+  facet?: number;
+  keyed?: string;
+  dimension_en?: string;
 }
 
 interface TestQuestionPanelProps {
@@ -69,4 +78,7 @@ export type {
   LegendRowItem,
   PairPercentageResult,
   InfoGlassCardProps,
+  SelectedAnswerPayload,
+  TestOption,
+  TestQuestion,
 };

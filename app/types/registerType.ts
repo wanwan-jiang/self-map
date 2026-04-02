@@ -37,9 +37,16 @@ interface UseRegisterFormReturn {
 }
 
 /** 注册表单向父级同步弹窗显示状态 */
-export interface RegisterShowUpdatePayload {
+interface RegisterShowUpdatePayload {
   show: boolean;
   message?: string;
 }
 
-export type { RegisterFormState, RegisterFormErrors, RegisterApiSuccess, RegisterApiFailBody, UseRegisterFormReturn };
+export type {
+  RegisterShowUpdatePayload,
+  RegisterFormState,
+  RegisterFormErrors,
+  RegisterApiSuccess,
+  RegisterApiFailBody,
+  UseRegisterFormReturn,
+};

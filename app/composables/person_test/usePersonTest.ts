@@ -1,20 +1,12 @@
 import type { TestQuestion } from "~/types/questionType";
 import { MBTI_TYPE_KEY, BIG_FIVE_TYPE_KEY } from "~/variables/variable";
+import type { SelectedAnswerPayload } from "~/types/questionType";
 /**
  * 与答案 Record 的键一致：优先业务 id，避免仅 MongoDB `_id` 时与 `?? ""` 查键不一致。
  */
 function getQuestionKey(question: TestQuestion | undefined): string {
   if (!question?.id) return "";
   return question.id;
-}
-
-export interface SelectedAnswerPayload {
-  id: string;
-  value: number;
-  domain?: string;
-  facet?: number;
-  keyed?: string;
-  dimension_en?: string;
 }
 
 export const usePersonTest = async (type: string) => {
