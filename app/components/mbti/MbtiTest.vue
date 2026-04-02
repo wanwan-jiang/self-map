@@ -1,6 +1,6 @@
 <template>
   <main class="flex-grow flex flex-col items-center justify-center pt-8 pb-12 px-6">
-    <MbtiProgress
+    <PersonProgress
       :current="currentNumber"
       :total="total"
       :progress-percent="progressPercent"

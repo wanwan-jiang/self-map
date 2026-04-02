@@ -126,10 +126,30 @@
 </template>
 
 <script setup lang="ts">
+import {
+  MBTI_TYPE_KEY,
+  MBTI_STATS_KEY,
+  MBTI_SUBMIT_EVENT,
+  BIG_FIVE_TYPE_KEY,
+  BIG_FIVE_STATS_KEY,
+  BIG_FIVE_SUBMIT_EVENT,
+} from "../../variables/variable";
+
+const props = defineProps<{
+  testType: string;
+}>();
+
 const onRetryTest = (): void => {
-  localStorage.removeItem('big_five_type');
-  localStorage.removeItem('big_five_stats');
-  window.dispatchEvent(new Event('big-five-submit-success-changed'));
+  if (props.testType === MBTI_TYPE_KEY) {
+    localStorage.removeItem(MBTI_TYPE_KEY);
+    localStorage.removeItem(MBTI_STATS_KEY);
+    window.dispatchEvent(new Event(MBTI_SUBMIT_EVENT));
+  } else if (props.testType === BIG_FIVE_TYPE_KEY) {
+    localStorage.removeItem(BIG_FIVE_TYPE_KEY);
+    localStorage.removeItem(BIG_FIVE_STATS_KEY);
+    window.dispatchEvent(new Event(BIG_FIVE_SUBMIT_EVENT));
+  }
+  //TODO
 };
 
 useHead({
