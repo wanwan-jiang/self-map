@@ -1,15 +1,15 @@
 import { defineMongooseModel } from "#nuxt/mongoose";
 
-interface MbtiResult {
+interface UserBigFiveResult {
   userId: string;
-  mbti: string;
   stats: Record<string, number>;
+  type: string;
   createdAt: Date;
 }
 
-export const UserResults = defineMongooseModel<MbtiResult>("userResults", {
+export const UserBigFiveResults = defineMongooseModel<UserBigFiveResult>("userbigfiveresults", {
   userId: { type: String, required: true },
-  mbti: { type: String, required: true },
   stats: { type: Object, required: true },
+  type: { type: String, required: true },
   createdAt: { type: Date, required: true },
 });
