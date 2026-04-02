@@ -8,7 +8,7 @@ interface MbtiResult {
   character: object;
 }
 
-export const MbtiResult = defineMongooseModel<MbtiResult>("results", {
+export const MbtiResult = defineMongooseModel<MbtiResult>("mbtiresults", {
   type: { type: String, required: true, unique: true },
   title: { type: String, required: true },
   desc: { type: String, required: true },

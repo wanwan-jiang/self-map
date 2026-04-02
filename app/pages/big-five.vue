@@ -1,32 +1,15 @@
 <template>
   <div class="min-h-screen flex flex-col selection:bg-primary/30">
     <AuthTopBar report-scene report-tab="test" />
-    <BigFiveFinish v-if="hasBigFiveType" />
-    <BigFiveTest v-else />
+    <BigFiveTest v-if="!hasType" />
+    <PersonFinish v-else :test-type="BIG_FIVE_TYPE_KEY" />
     <AuthFooterLinks />
   </div>
 </template>
 
 <script setup lang="ts">
-const hasBigFiveType = ref(false);
-const BIG_FIVE_TYPE_KEY = 'big_five_type';
-const BIG_FIVE_SUBMIT_EVENT = 'big-five-submit-success-changed';
+import { usePersonTestCompletion } from "~/composables/person_test/usePersonTestCompletion";
+import { BIG_FIVE_TYPE_KEY, BIG_FIVE_SUBMIT_EVENT } from "../variables/variable";
 
-const syncBigFiveTypeStatus = (): void => {
-  if (typeof window === 'undefined') {
-    return;
-  }
-  hasBigFiveType.value = Boolean(window.localStorage.getItem(BIG_FIVE_TYPE_KEY));
-};
-
-onMounted(() => {
-  syncBigFiveTypeStatus();
-  window.addEventListener('storage', syncBigFiveTypeStatus);
-  window.addEventListener(BIG_FIVE_SUBMIT_EVENT, syncBigFiveTypeStatus);
-});
-
-onUnmounted(() => {
-  window.removeEventListener('storage', syncBigFiveTypeStatus);
-  window.removeEventListener(BIG_FIVE_SUBMIT_EVENT, syncBigFiveTypeStatus);
-});
+const { hasType } = usePersonTestCompletion(BIG_FIVE_TYPE_KEY, BIG_FIVE_SUBMIT_EVENT);
 </script>

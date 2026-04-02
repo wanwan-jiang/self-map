@@ -1,32 +1,16 @@
 <template>
   <div class="min-h-screen flex flex-col selection:bg-primary/30">
     <AuthTopBar report-scene report-tab="test" />
-    <MbtiFinish v-if="hasMbtiType" />
-    <MbtiTest v-else />
+    <MbtiTest v-if="!hasType" />
+    <PersonFinish v-else :test-type="MBTI_TYPE_KEY" />
     <AuthFooterLinks />
   </div>
 </template>
 
 <script setup lang="ts">
-const hasMbtiType = ref(false);
-const MBTI_TYPE_KEY = 'mbti_type';
-const MBTI_SUBMIT_EVENT = 'mbti-submit-success-changed';
+import { usePersonTestCompletion } from "~/composables/person_test/usePersonTestCompletion";
+import { MBTI_TYPE_KEY, MBTI_SUBMIT_EVENT } from "../variables/variable";
 
-const syncMbtiTypeStatus = (): void => {
-  if (typeof window === 'undefined') {
-    return;
-  }
-  hasMbtiType.value = Boolean(window.localStorage.getItem(MBTI_TYPE_KEY));
-};
-
-onMounted(() => {
-  syncMbtiTypeStatus();
-  window.addEventListener('storage', syncMbtiTypeStatus);
-  window.addEventListener(MBTI_SUBMIT_EVENT, syncMbtiTypeStatus);
-});
-
-onUnmounted(() => {
-  window.removeEventListener('storage', syncMbtiTypeStatus);
-  window.removeEventListener(MBTI_SUBMIT_EVENT, syncMbtiTypeStatus);
-});
+//检测是否已提交
+const { hasType } = usePersonTestCompletion(MBTI_TYPE_KEY, MBTI_SUBMIT_EVENT);
 </script>

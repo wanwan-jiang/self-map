@@ -1,6 +1,6 @@
 <template>
   <main class="flex-grow flex flex-col items-center justify-center pt-8 pb-12 px-6">
-    <BigFiveProgress
+    <PersonProgress
       :current="currentNumber"
       :total="total"
       :progress-percent="progressPercent"
@@ -29,8 +29,10 @@
 
 <script setup lang="ts">
 import { saveUserMbtiResult as saveUserBigFiveResult } from "~/api/user/mbtiResults";
-import { useMbtiTest as useBigFiveTest } from "~/composables/user/useMbtiTest";
+import { useBigFiveTest } from "~/composables/user/useBigFiveTest";
 import { getAuthToken } from "~/utils/authToken";
+import { BIG_FIVE_TYPE_KEY } from "~/variables/variable";
+import { BIG_FIVE_SUBMIT_EVENT } from "~/variables/variable";
 
 const {
   total,
@@ -48,9 +50,6 @@ const {
   goPrev,
   goNext,
 } = await useBigFiveTest();
-
-const BIG_FIVE_TYPE_KEY = 'big_five_type';
-const BIG_FIVE_SUBMIT_EVENT = 'big-five-submit-success-changed';
 
 const handleSubmit = async (): Promise<void> => {
   if (typeof window === "undefined") {
@@ -122,10 +121,10 @@ const handleSubmit = async (): Promise<void> => {
     try {
       await saveUserBigFiveResult(bigFiveType, stats);
     } catch (error) {
-      console.error('保存 Big Five 结果失败', error);
+      console.error("保存 Big Five 结果失败", error);
     }
   }
-  window.localStorage.setItem('big_five_stats', JSON.stringify(stats));
+  window.localStorage.setItem("big_five_stats", JSON.stringify(stats));
   window.localStorage.setItem(BIG_FIVE_TYPE_KEY, bigFiveType);
 
   if (window.localStorage.getItem(BIG_FIVE_TYPE_KEY)) {
@@ -136,7 +135,7 @@ const handleSubmit = async (): Promise<void> => {
 };
 
 useHead({
-  title: 'SelfMap - Big Five 测试',
+  title: "SelfMap - Big Five 测试",
   htmlAttrs: {
     lang: "zh-Hans",
     class: "dark",

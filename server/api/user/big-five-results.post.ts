@@ -1,27 +1,15 @@
 import { z } from "zod";
-import { UserMbtiResults } from "../../db/user-mbti-results";
+import { UserBigFiveResults } from "../../db/user-bigfive-results";
 import { requireAuthUser } from "../../utils/requireAuthUser";
 
 const bodySchema = z.object({
-  mbti: z
-    .string()
-    .trim()
-    .length(4)
-    .regex(/^[EI][SN][TF][JP]$/i, "mbti 须为四字母类型"),
-  stats: z.object({
-    EI: z.number(),
-    E: z.number(),
-    I: z.number(),
-    SN: z.number(),
-    S: z.number(),
-    N: z.number(),
-    TF: z.number(),
-    T: z.number(),
-    F: z.number(),
-    JP: z.number(),
-    J: z.number(),
-    P: z.number(),
-  }),
+  stats: z.array(
+    z.object({
+      domain: z.string(),
+      percentile: z.number(),
+    }),
+  ),
+  type: z.string(),
 });
 
 interface SuccessBody {
@@ -29,14 +17,14 @@ interface SuccessBody {
   data: {
     id: string;
     userId: string;
-    mbti: string;
-    stats: Record<string, number>;
+    stats: object[];
+    type: string;
     createdAt: string;
   };
 }
 
 /**
- * @description 为当前登录用户写入一条 MBTI 测试结果（userId 以服务端会话为准，不信任客户端传入）。
+ * @description 为当前登录用户写入一条 Big Five 测试结果（userId 以服务端会话为准，不信任客户端传入）。
  */
 export default defineEventHandler(async (event): Promise<SuccessBody> => {
   const { userId } = await requireAuthUser(event);
@@ -59,12 +47,13 @@ export default defineEventHandler(async (event): Promise<SuccessBody> => {
     });
   }
 
-  const mbti = parsed.data.mbti.toUpperCase();
   const stats = parsed.data.stats;
-  const created = await UserMbtiResults.create({
+  const type = parsed.data.type;
+  console.log("type", type);
+  const created = await UserBigFiveResults.create({
     userId,
-    mbti,
     stats,
+    type,
     createdAt: new Date(),
   });
 
@@ -73,8 +62,8 @@ export default defineEventHandler(async (event): Promise<SuccessBody> => {
     data: {
       id: String(created._id),
       userId,
-      mbti,
       stats,
+      type,
       createdAt: created.createdAt.toISOString(),
     },
   };
