@@ -2,7 +2,7 @@ import { defineMongooseModel } from "#nuxt/mongoose";
 
 interface UserBigFiveResult {
   userId: string;
-  stats: Record<string, number>;
+  stats: object[];
   type: string;
   createdAt: Date;
 }

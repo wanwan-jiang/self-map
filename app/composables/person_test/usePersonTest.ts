@@ -8,7 +8,7 @@ function getQuestionKey(question: TestQuestion | undefined): string {
   return question.id;
 }
 
-interface SelectedAnswerPayload {
+export interface SelectedAnswerPayload {
   id: string;
   value: number;
   domain?: string;
@@ -76,7 +76,6 @@ export const usePersonTest = async (type: string) => {
     if (!canGoNext.value || !hasSelectedCurrent.value) return;
     currentIndex.value += 1;
   };
-
   return {
     total,
     currentNumber,

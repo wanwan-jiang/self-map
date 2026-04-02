@@ -1,4 +1,8 @@
-import type { UserMbtiResultSaveResponse, UserMbtiResultsListResponse, UserMbtiStats } from "../../types/userMbtiResultType";
+import type {
+  UserMbtiResultSaveResponse,
+  UserMbtiResultsListResponse,
+  UserMbtiStats,
+} from "../../types/userMbtiResultType";
 
 /**
  * @description 拉取当前登录用户的 MBTI 测试历史（依赖会话 Cookie + Bearer）。

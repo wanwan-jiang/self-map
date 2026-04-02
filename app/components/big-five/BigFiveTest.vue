@@ -28,11 +28,9 @@
 </template>
 
 <script setup lang="ts">
-import { saveUserMbtiResult as saveUserBigFiveResult } from "~/api/user/mbtiResults";
-import { getAuthToken } from "~/utils/authToken";
 import { BIG_FIVE_TYPE_KEY } from "~/variables/variable";
-import { BIG_FIVE_SUBMIT_EVENT } from "~/variables/variable";
 import { usePersonTest } from "~/composables/person_test/usePersonTest";
+import { usePersonSubmit } from "~/composables/person_test/usePersonSubmit";
 
 const {
   total,
@@ -44,94 +42,15 @@ const {
   canGoNext,
   isLastQuestion,
   hasSelectedCurrent,
-  selectedOptionId,
   answers,
+  selectedOptionId,
   selectOption,
   goPrev,
   goNext,
 } = await usePersonTest(BIG_FIVE_TYPE_KEY);
 
 const handleSubmit = async (): Promise<void> => {
-  if (typeof window === "undefined") {
-    return;
-  }
-
-  type Answer = { id: string; value: number; dimension_en?: string };
-
-  type AxisPair = "EI" | "SN" | "TF" | "JP";
-  type AxisLetter = "E" | "I" | "S" | "N" | "T" | "F" | "J" | "P";
-  type AxisKey = AxisPair | AxisLetter;
-  const stats: Record<AxisKey, number> = {
-    EI: 0,
-    E: 0,
-    I: 0,
-    SN: 0,
-    S: 0,
-    N: 0,
-    TF: 0,
-    T: 0,
-    F: 0,
-    JP: 0,
-    J: 0,
-    P: 0,
-  };
-
-  const axisPairByDimension = new Map<string, AxisPair>([
-    ["EI", "EI"],
-    ["SN", "SN"],
-    ["TF", "TF"],
-    ["JP", "JP"],
-  ]);
-
-  const bigFiveScoreToLetter = (pair: AxisPair, value: number): AxisLetter | undefined => {
-    if (value === 0) return undefined;
-
-    if (pair === "EI") return value > 0 ? "E" : "I";
-    if (pair === "SN") return value > 0 ? "S" : "N";
-    if (pair === "TF") return value > 0 ? "T" : "F";
-    // pair === 'JP'
-    return value > 0 ? "J" : "P";
-  };
-
-  for (const answer of Object.values(answers.value) as Answer[]) {
-    const dim = (answer.dimension_en ?? "").toUpperCase();
-    const pair = axisPairByDimension.get(dim);
-    if (pair === undefined) continue;
-
-    stats[pair] = stats[pair] + 1;
-
-    const picked = bigFiveScoreToLetter(pair, answer.value);
-    if (picked === undefined) continue;
-    stats[picked] = stats[picked] + 1;
-  }
-
-  const getFinalLetter = (pair: AxisPair, positive: AxisLetter, negative: AxisLetter): AxisLetter => {
-    // 按你的规则：正数 > 负数 => positive，否则 => negative（包含相等时）
-    return stats[positive] > stats[negative] ? positive : negative;
-  };
-
-  const ei = getFinalLetter("EI", "E", "I");
-  const sn = getFinalLetter("SN", "S", "N");
-  const tf = getFinalLetter("TF", "T", "F");
-  const jp = getFinalLetter("JP", "J", "P");
-
-  const bigFiveType = `${ei}${sn}${tf}${jp}`;
-
-  if (getAuthToken()) {
-    try {
-      await saveUserBigFiveResult(bigFiveType, stats);
-    } catch (error) {
-      console.error("保存 Big Five 结果失败", error);
-    }
-  }
-  window.localStorage.setItem("big_five_stats", JSON.stringify(stats));
-  window.localStorage.setItem(BIG_FIVE_TYPE_KEY, bigFiveType);
-
-  if (window.localStorage.getItem(BIG_FIVE_TYPE_KEY)) {
-    window.dispatchEvent(new Event(BIG_FIVE_SUBMIT_EVENT));
-  }
-
-  // window.alert("提交失败，请重新完成测评后再试。");
+  await usePersonSubmit(BIG_FIVE_TYPE_KEY, answers);
 };
 
 useHead({

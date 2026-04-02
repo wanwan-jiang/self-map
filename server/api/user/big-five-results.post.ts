@@ -2,13 +2,18 @@ import { z } from "zod";
 import { UserBigFiveResults } from "../../db/user-bigfive-results";
 import { requireAuthUser } from "../../utils/requireAuthUser";
 
+/** 与前端 `BigFiveStatItem` 一致：各维度汇总分与等级，非常模百分位。 */
+const bigFiveStatItemSchema = z.object({
+  domain: z.string(),
+  domainName: z.string(),
+  score: z.number(),
+  count: z.number(),
+  average: z.number(),
+  level: z.enum(["h", "n", "l"]),
+});
+
 const bodySchema = z.object({
-  stats: z.array(
-    z.object({
-      domain: z.string(),
-      percentile: z.number(),
-    }),
-  ),
+  stats: z.array(bigFiveStatItemSchema),
   type: z.string(),
 });
 
