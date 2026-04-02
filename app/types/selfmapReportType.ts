@@ -20,6 +20,12 @@ export interface SelfmapDimensionAxisLabel {
   title?: string;
   type?: string;
 }
+export interface InsightDisplayItem {
+  id: string;
+  title: string;
+  icon: string;
+  card: SelfmapInsightCardModel;
+}
 
 export interface SelfmapInsightCardModel {
   content: string;

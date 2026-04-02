@@ -1,16 +1,8 @@
 <script setup lang="ts">
-import type { BigFiveQuestion } from "~/types/bigFiveType";
+import type { TestQuestion } from "~/types/questionType";
+import type { TestQuestionPanelProps } from "~/types/questionType";
 
-interface Props {
-  question: BigFiveQuestion;
-  selectedOptionId?: string;
-  canGoPrev: boolean;
-  canGoNext: boolean;
-  isLastQuestion: boolean;
-  hasSelectedCurrent: boolean;
-}
-
-const props = defineProps<Props>();
+const props = defineProps<TestQuestionPanelProps>();
 
 const emit = defineEmits<{
   select: [payload: { id: string; value: number }];
@@ -47,7 +39,7 @@ const isActiveOption = (optionId: string): boolean => props.selectedOptionId ===
             : 'border-transparent hover:border-primary/40 hover:bg-surface-container-high'
         "
         type="button"
-        @click="emit('select', { id: option.id, value: option.value })"
+        @click="emit('select', { id: option.id, value: option.value ?? 0 })"
       >
         <div
           class="absolute -right-4 -top-4 w-20 h-20 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors"

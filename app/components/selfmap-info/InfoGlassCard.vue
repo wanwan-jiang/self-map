@@ -1,11 +1,7 @@
 <script setup lang="ts">
-interface Props {
-  paddingClass?: string;
-}
+import type { InfoGlassCardProps } from "~/types/questionType";
 
-withDefaults(defineProps<Props>(), {
-  paddingClass: "p-6",
-});
+const props = defineProps<InfoGlassCardProps>();
 </script>
 
 <template>

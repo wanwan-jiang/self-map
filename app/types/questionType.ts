@@ -16,3 +16,57 @@ export interface TestQuestion {
   keyed?: string;
   text?: string;
 }
+
+interface TestQuestionPanelProps {
+  question: TestQuestion;
+  selectedOptionId?: string;
+  canGoPrev: boolean;
+  canGoNext: boolean;
+  isLastQuestion: boolean;
+  hasSelectedCurrent: boolean;
+}
+
+interface PersonProgressProps {
+  current: number;
+  total: number;
+  progressPercent: number;
+  estimatedMinutesLeft: number;
+}
+
+interface AvatarItem {
+  src: string;
+  alt: string;
+}
+
+interface AxisLabelItem {
+  id: string;
+  text: string;
+  textToneClass: string;
+}
+
+interface LegendRowItem {
+  id: string;
+  dotTone: "primary" | "secondary" | "tertiary";
+  text: string;
+}
+
+interface PairPercentageResult {
+  dominantLabel: string;
+  dominantPercent: number;
+  leftPercent: number;
+  rightPercent: number;
+}
+
+interface InfoGlassCardProps {
+  paddingClass?: string;
+}
+
+export type {
+  TestQuestionPanelProps,
+  PersonProgressProps,
+  AvatarItem,
+  AxisLabelItem,
+  LegendRowItem,
+  PairPercentageResult,
+  InfoGlassCardProps,
+};

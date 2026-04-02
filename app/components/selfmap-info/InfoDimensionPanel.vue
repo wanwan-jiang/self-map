@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { SelfmapReportHeaderModel } from "../../types/selfmapReportType";
 import InfoGlassCard from "./InfoGlassCard.vue";
+import type { AxisLabelItem, LegendRowItem, PairPercentageResult } from "~/types/questionType";
 
 const props = defineProps<{
   model: SelfmapReportHeaderModel;
@@ -13,25 +14,6 @@ const AXIS_LABEL_LAYOUT_CLASSES = [
   "absolute -bottom-4 left-1/2 -translate-x-1/2 text-[10px] font-bold tracking-wider uppercase",
   "absolute top-1/2 -left-12 -translate-y-1/2 text-[10px] font-bold tracking-wider uppercase",
 ] as const;
-
-interface AxisLabelItem {
-  id: string;
-  text: string;
-  textToneClass: string;
-}
-
-interface LegendRowItem {
-  id: string;
-  dotTone: "primary" | "secondary" | "tertiary";
-  text: string;
-}
-
-interface PairPercentageResult {
-  dominantLabel: string;
-  dominantPercent: number;
-  leftPercent: number;
-  rightPercent: number;
-}
 
 const getPairPercentages = (
   leftScore: number,

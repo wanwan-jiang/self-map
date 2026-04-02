@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import type { SelfmapInsightCardModel } from "../../types/selfmapReportType";
 import InfoInsightCard from "./InfoInsightCard.vue";
-
-interface InsightDisplayItem {
-  id: string;
-  title: string;
-  icon: string;
-  card: SelfmapInsightCardModel;
-}
+import type { InsightDisplayItem } from "~/types/selfmapReportType";
 
 const props = withDefaults(
   defineProps<{
