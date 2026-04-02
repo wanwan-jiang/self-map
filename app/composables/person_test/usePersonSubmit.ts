@@ -10,7 +10,7 @@ export const usePersonSubmit = async (type: string, answers: Ref<Record<string, 
   if (typeof window === "undefined") {
     return;
   }
-  // console.log("answer", answers.value);
+  //TODO
   if (type === MBTI_TYPE_KEY) {
     if (typeof window === "undefined") {
       return;

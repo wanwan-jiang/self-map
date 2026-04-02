@@ -23,17 +23,17 @@ export default defineNuxtConfig({
       pathPrefix: false,
     },
     {
-      path: "~/components/mbti",
+      path: "~/components/person-test",
       pathPrefix: false,
     },
     {
       path: "~/components",
-      ignore: ["**/common/**", "**/register-login/**", "**/selfmap-info/**", "**/mbti/**"],
+      ignore: ["**/common/**", "**/register-login/**", "**/selfmap-info/**", "**/person-test/**"],
     },
   ],
   modules: ["@pinia/nuxt", "@nuxtjs/tailwindcss", "nuxt-mongoose", "nuxt-auth-utils"],
   runtimeConfig: {
-    qwenApiKey: import.meta.env.QWEN_API_KEY || '',
+    qwenApiKey: import.meta.env.QWEN_API_KEY || "",
   },
   css: ["~/assets/css/main.css"],
   mongoose: {

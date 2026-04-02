@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { TestQuestionPanelProps } from "~/types/questionType";
-import { MBTI_TYPE_KEY, BIG_FIVE_TYPE_KEY } from "~/variables/variable";
+import { MBTI_TYPE_KEY, BIG_FIVE_TYPE_KEY, RIASEC_TYPE_KEY, ENNEAGRAM_TYPE_KEY } from "~/variables/variable";
 
 const props = defineProps<TestQuestionPanelProps>();
 
@@ -29,7 +29,10 @@ const isActiveOption = (optionId: string): boolean => props.selectedOptionId ===
     </div>
 
     <!-- 两题 -->
-    <div v-if="props.type === MBTI_TYPE_KEY" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div
+      v-if="props.type === MBTI_TYPE_KEY || props.type === ENNEAGRAM_TYPE_KEY"
+      class="grid grid-cols-1 md:grid-cols-2 gap-6"
+    >
       <button
         v-for="option in question.options"
         :key="option.id"
@@ -62,7 +65,10 @@ const isActiveOption = (optionId: string): boolean => props.selectedOptionId ===
     </div>
 
     <!-- 五题 -->
-    <div v-else-if="props.type === BIG_FIVE_TYPE_KEY" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+    <div
+      v-else-if="props.type === BIG_FIVE_TYPE_KEY || props.type === RIASEC_TYPE_KEY"
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4"
+    >
       <button
         v-for="option in question.options"
         :key="option.id"

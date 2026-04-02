@@ -7,7 +7,7 @@ export async function saveUserBigFiveResult(
   type: string,
   stats: BigFiveStatItem[],
 ): Promise<UserBigFiveResultSaveResponse> {
-  return await $fetch<UserBigFiveResultSaveResponse>("/api/user/big-five-results", {
+  return await $fetch<UserBigFiveResultSaveResponse>("/api/user-test/big-five-results", {
     method: "POST",
     body: { type, stats },
   });

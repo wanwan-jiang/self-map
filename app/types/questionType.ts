@@ -14,6 +14,8 @@ interface TestQuestion {
   domain?: string;
   facet?: number;
   keyed?: string;
+  code?: string;
+  t?: string;
 }
 
 interface SelectedAnswerPayload {
@@ -23,6 +25,8 @@ interface SelectedAnswerPayload {
   facet?: number;
   keyed?: string;
   dimension_en?: string;
+  t?: string;
+  code?: string;
 }
 
 interface TestQuestionPanelProps {

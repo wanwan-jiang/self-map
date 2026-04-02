@@ -137,7 +137,7 @@ onMounted(async () => {
   const message = `你好，分析下我的MBTI:${mbtiType}的报告，并给出职业规划建议。最后不要出现任何其他内容，只返回职业规划建议。`;
   const messageTitle = `请给出三点${mbtiType}的核心赋能技能。严格按三行输出，每行格式：标题|描述。标题6个字以内，描述16个字以内，不要输出其他内容。`;
   try {
-    submitResult.value = await $fetch<SelfmapReportHeaderModel>("/api/mbti-test/result", {
+    submitResult.value = await $fetch<SelfmapReportHeaderModel>("/api/person-info/mbti-info", {
       method: "POST",
       body: {
         mbtiType,

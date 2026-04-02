@@ -1,6 +1,7 @@
 import type { TestQuestion } from "~/types/questionType";
-import { MBTI_TYPE_KEY, BIG_FIVE_TYPE_KEY } from "~/variables/variable";
+import { MBTI_TYPE_KEY, BIG_FIVE_TYPE_KEY, RIASEC_TYPE_KEY, ENNEAGRAM_TYPE_KEY } from "~/variables/variable";
 import type { SelectedAnswerPayload } from "~/types/questionType";
+
 /**
  * 与答案 Record 的键一致：优先业务 id，避免仅 MongoDB `_id` 时与 `?? ""` 查键不一致。
  */
@@ -13,9 +14,13 @@ export const usePersonTest = async (type: string) => {
   let questions: TestQuestion[] = [];
   //TODO
   if (type === MBTI_TYPE_KEY) {
-    questions = await $fetch<TestQuestion[]>("/api/mbti-test/mbti");
+    questions = await $fetch<TestQuestion[]>("/api/person-test/mbti");
   } else if (type === BIG_FIVE_TYPE_KEY) {
-    questions = await $fetch<TestQuestion[]>("/api/mbti-test/big-five");
+    questions = await $fetch<TestQuestion[]>("/api/person-test/big-five");
+  } else if (type === RIASEC_TYPE_KEY) {
+    questions = await $fetch<TestQuestion[]>("/api/person-test/riasec");
+  } else if (type === ENNEAGRAM_TYPE_KEY) {
+    questions = await $fetch<TestQuestion[]>("/api/person-test/enneagram");
   }
 
   const total = questions.length;
@@ -44,6 +49,7 @@ export const usePersonTest = async (type: string) => {
   const selectOption = (payload: SelectedAnswerPayload): void => {
     const key = getQuestionKey(currentQuestion.value);
     if (!key) return;
+    // TODO
     if (type === MBTI_TYPE_KEY) {
       answers.value[key] = { ...payload, dimension_en: currentQuestion.value?.dimension_en ?? "" };
     } else if (type === BIG_FIVE_TYPE_KEY) {
@@ -53,8 +59,17 @@ export const usePersonTest = async (type: string) => {
         facet: currentQuestion.value?.facet ?? 0,
         keyed: currentQuestion.value?.keyed ?? "",
       };
+    } else if (type === RIASEC_TYPE_KEY) {
+      answers.value[key] = {
+        ...payload,
+        t: currentQuestion.value?.t ?? "",
+      };
+    } else if (type === ENNEAGRAM_TYPE_KEY) {
+      answers.value[key] = {
+        ...payload,
+        code: currentQuestion.value?.code ?? "",
+      };
     }
-    // TODO
 
     console.log("answers.value", answers.value);
   };
@@ -68,6 +83,7 @@ export const usePersonTest = async (type: string) => {
     if (!canGoNext.value || !hasSelectedCurrent.value) return;
     currentIndex.value += 1;
   };
+
   return {
     total,
     currentNumber,
