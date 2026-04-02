@@ -1,4 +1,4 @@
-import { UserResults } from "../../db/user-results";
+import { UserMbtiResults } from "../../db/user-mbti-results";
 import { requireAuthUser } from "../../utils/requireAuthUser";
 
 interface MbtiResultItem {
@@ -22,10 +22,7 @@ interface SuccessBody {
 export default defineEventHandler(async (event): Promise<SuccessBody> => {
   const { userId } = await requireAuthUser(event);
 
-  const docs = await UserResults.find({ userId })
-    .sort({ createdAt: -1 })
-    .lean()
-    .exec();
+  const docs = await UserMbtiResults.find({ userId }).sort({ createdAt: -1 }).lean().exec();
 
   const items: MbtiResultItem[] = docs.map((doc) => ({
     id: String(doc._id),
