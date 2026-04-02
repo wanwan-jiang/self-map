@@ -7,7 +7,8 @@
       :estimated-minutes-left="estimatedMinutesLeft"
     />
 
-    <BigFiveQuestionPanel
+    <PersonQuestionPanel
+      :type="BIG_FIVE_TYPE_KEY"
       v-if="currentQuestion"
       :question="currentQuestion"
       :selected-option-id="selectedOptionId"

@@ -7,7 +7,8 @@
       :estimated-minutes-left="estimatedMinutesLeft"
     />
 
-    <MbtiQuestionPanel
+    <PersonQuestionPanel
+      :type="MBTI_TYPE_KEY"
       v-if="currentQuestion"
       :question="currentQuestion"
       :selected-option-id="selectedOptionId"

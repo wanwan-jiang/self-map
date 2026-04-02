@@ -4,7 +4,7 @@ import { saveUserMbtiResult } from "~/api/user/mbtiResults";
 import { getAuthToken } from "~/utils/authToken";
 import type { BigFiveDomainBucket, BigFiveStatItem } from "~/types/userBigFiveResultType";
 import { BIG_FIVE_STATS_KEY } from "~/variables/variable";
-import type { SelectedAnswerPayload } from "~/composables/person_test/usePersonTest";
+import type { SelectedAnswerPayload } from "~/types/questionType";
 
 export const usePersonSubmit = async (type: string, answers: Ref<Record<string, SelectedAnswerPayload>>) => {
   if (typeof window === "undefined") {

@@ -14,7 +14,6 @@ interface TestQuestion {
   domain?: string;
   facet?: number;
   keyed?: string;
-  text?: string;
 }
 
 interface SelectedAnswerPayload {
@@ -27,6 +26,7 @@ interface SelectedAnswerPayload {
 }
 
 interface TestQuestionPanelProps {
+  type: string;
   question: TestQuestion;
   selectedOptionId?: string;
   canGoPrev: boolean;
