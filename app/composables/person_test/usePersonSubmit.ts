@@ -6,13 +6,87 @@ import {
   RIASEC_TYPE_KEY,
   RIASEC_STATS_KEY,
   RIASEC_SUBMIT_EVENT,
+  ENNEAGRAM_TYPE_KEY,
+  ENNEAGRAM_STATS_KEY,
+  ENNEAGRAM_SUBMIT_EVENT,
 } from "~/variables/variable";
-import { saveUserBigFiveResult, saveUserMbtiResult, saveUserRiasecResult } from "~/api/user/personResults";
+import {
+  saveUserBigFiveResult,
+  saveUserMbtiResult,
+  saveUserRiasecResult,
+  saveUserEnneagramResult,
+} from "~/api/user/personResults";
 import { getAuthToken } from "~/utils/authToken";
 import type { BigFiveDomainBucket, BigFiveStatItem } from "~/types/userBigFiveResultType";
 import { BIG_FIVE_STATS_KEY } from "~/variables/variable";
 import type { SelectedAnswerPayload } from "~/types/questionType";
 import type { RiasecDimensionScore, UserRiasecStats } from "~/types/userRiasecResultType";
+import type { UserEnneagramStats } from "~/types/userEnneagramResultType";
+
+/** RHETI Sample：九题组字母 A–I 与九型编号对应（与桌面参考稿 `typeMap` 一致） */
+const ENNEAGRAM_LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H", "I"] as const;
+type EnneagramLetter = (typeof ENNEAGRAM_LETTERS)[number];
+
+const ENNEAGRAM_LETTER_SET = new Set<string>(ENNEAGRAM_LETTERS);
+
+const ENNEAGRAM_LETTER_TO_TYPE_NO: Record<EnneagramLetter, number> = {
+  A: 9,
+  B: 6,
+  C: 3,
+  D: 1,
+  E: 4,
+  F: 2,
+  G: 8,
+  H: 5,
+  I: 7,
+};
+
+function createEmptyEnneagramScores(): Record<EnneagramLetter, number> {
+  return { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, G: 0, H: 0, I: 0 };
+}
+
+/**
+ * 每题 `code` 前两位为两个人格字母；选第一项（value 0）给第一字母 +1，选第二项（value 1）给第二字母 +1。
+ * 主型：得分最高者；同分按九型编号升序；多人并列最高时 `primaryType` 为编号逗号拼接（如 `4,7`）。
+ */
+function computeEnneagramScores(payloads: SelectedAnswerPayload[]): {
+  stats: Record<EnneagramLetter, number>;
+  primaryType: string;
+} {
+  const stats = createEmptyEnneagramScores();
+  for (const answer of payloads) {
+    const code = (answer.code ?? "").trim().toUpperCase();
+    if (code.length < 2) continue;
+    const pair = code.slice(0, 2);
+    const a = pair.charAt(0);
+    const b = pair.charAt(1);
+    if (!ENNEAGRAM_LETTER_SET.has(a) || !ENNEAGRAM_LETTER_SET.has(b)) continue;
+    const first = a as EnneagramLetter;
+    const second = b as EnneagramLetter;
+    const v = Number(answer.value);
+    if (v !== 0 && v !== 1) continue;
+    const target = v === 0 ? first : second;
+    stats[target] += 1;
+  }
+
+  const rows = ENNEAGRAM_LETTERS.map((letter) => ({
+    letter,
+    score: stats[letter],
+    no: ENNEAGRAM_LETTER_TO_TYPE_NO[letter],
+  }));
+  rows.sort((x, y) => {
+    if (y.score !== x.score) return y.score - x.score;
+    return x.no - y.no;
+  });
+
+  const topScore = rows[0]?.score ?? 0;
+  const primaryType = rows
+    .filter((r) => r.score === topScore)
+    .map((r) => String(r.no))
+    .join(",");
+
+  return { stats, primaryType };
+}
 
 export const usePersonSubmit = async (type: string, answers: Ref<Record<string, SelectedAnswerPayload>>) => {
   if (typeof window === "undefined") {
@@ -229,5 +303,29 @@ export const usePersonSubmit = async (type: string, answers: Ref<Record<string, 
     window.localStorage.setItem(RIASEC_STATS_KEY, JSON.stringify(stats));
     window.localStorage.setItem(RIASEC_TYPE_KEY, type);
     window.dispatchEvent(new Event(RIASEC_SUBMIT_EVENT));
+  } else if (type === ENNEAGRAM_TYPE_KEY) {
+    const payloads = Object.values(answers.value);
+    if (payloads.length === 0) {
+      window.alert("提交失败，请重新完成测评后再试。");
+      return;
+    }
+    const { stats: enneagramStats, primaryType } = computeEnneagramScores(payloads);
+    const totalPoints = ENNEAGRAM_LETTERS.reduce((sum, L) => sum + enneagramStats[L], 0);
+    if (totalPoints === 0) {
+      window.alert("提交失败，请重新完成测评后再试。");
+      return;
+    }
+    const statsForApi: UserEnneagramStats = enneagramStats;
+
+    if (getAuthToken()) {
+      try {
+        await saveUserEnneagramResult(primaryType, statsForApi);
+      } catch (error) {
+        console.error("保存九型人格结果失败", error);
+      }
+    }
+    window.localStorage.setItem(ENNEAGRAM_STATS_KEY, JSON.stringify(enneagramStats));
+    window.localStorage.setItem(ENNEAGRAM_TYPE_KEY, primaryType);
+    window.dispatchEvent(new Event(ENNEAGRAM_SUBMIT_EVENT));
   }
 };
