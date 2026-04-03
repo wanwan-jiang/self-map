@@ -1,13 +1,15 @@
 <template>
-  <section class="md:col-span-5">
-    <div class="big-five-panel rounded-lg p-8 flex flex-col justify-center min-h-[450px]">
+  <section class="md:col-span-7">
+    <div class="big-five-panel rounded-lg p-8 flex flex-col justify-center min-h-[500px]">
       <div class="flex justify-between items-center mb-8">
         <h2 class="text-2xl font-bold">维度分布</h2>
       </div>
-      <div class="relative flex-grow flex items-center justify-center">
+      <div class="relative flex-grow flex items-center justify-center overflow-visible min-h-0">
         <div class="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent rounded-full" />
-        <div class="relative mx-auto flex aspect-square w-full max-w-[320px] items-center justify-center">
-          <svg class="absolute inset-0 h-full w-full" viewBox="0 0 100 100">
+        <div
+          class="relative mx-auto flex aspect-square w-full max-w-[min(100%,440px)] items-center justify-center overflow-visible"
+        >
+          <svg class="absolute inset-0 h-full w-full" viewBox="0 0 100 100" aria-hidden="true">
             <circle cx="50" cy="50" r="40" fill="none" class="stroke-outline-variant/50" stroke-width="0.5" />
             <circle cx="50" cy="50" r="30" fill="none" class="stroke-outline-variant/50" stroke-width="0.5" />
             <circle cx="50" cy="50" r="20" fill="none" class="stroke-outline-variant/50" stroke-width="0.5" />
@@ -25,37 +27,24 @@
             <polygon
               class="fill-primary/20 stroke-primary [stroke-linejoin:round]"
               :points="dimensionPolygonPoints"
-              stroke-width="1"
+              stroke-width="1.25"
             />
           </svg>
           <div
             v-for="(item, i) in axisLabelsForChart"
             :key="item.id"
-            class="absolute left-1/2 top-1/2 origin-center pointer-events-none"
-            :style="{
-              transform: `rotate(${-90 + i * 72}deg) translateY(-7.5rem)`,
-            }"
+            class="absolute pointer-events-none z-10"
+            :style="axisLabelOuterStyles[i]"
           >
             <span
-              class="block max-w-[5.5rem] text-center text-[10px] font-bold leading-tight tracking-tight"
+              class="inline-block whitespace-nowrap text-center text-[11px] sm:text-xs font-bold leading-tight tracking-tight"
               :class="item.textToneClass"
-              :style="{ transform: `rotate(${90 - i * 72}deg)` }"
             >
               {{ item.text }}
             </span>
           </div>
         </div>
       </div>
-      <!-- <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-        <div
-          v-for="row in legendRows"
-          :key="row.id"
-          class="flex items-center gap-2 rounded-xl border border-outline-variant/10 bg-surface-container-low p-2"
-        >
-          <div class="h-1.5 w-1.5 shrink-0 rounded-full" :class="dotClass(row.dotTone)" />
-          <span class="text-xs font-medium text-on-surface-variant">{{ row.text }}</span>
-        </div>
-      </div> -->
     </div>
   </section>
 </template>
@@ -101,7 +90,7 @@ const domainScorePercent = (stats: Record<string, number>, key: string): number 
   return Math.max(0, Math.min(100, v));
 };
 
-/** 五轴放射线终点（viewBox 0–100，中心 50,50） */
+/** 五轴放射线终点（viewBox 0–100，中心 50,50，与外圈 r=40 一致） */
 const radialLineEnds = computed(() => {
   const n = 5;
   const r = 40;
@@ -110,6 +99,27 @@ const radialLineEnds = computed(() => {
     return {
       x2: 50 + r * Math.cos(angle),
       y2: 50 + r * Math.sin(angle),
+    };
+  });
+});
+
+/**
+ * 轴标签置于各轴最外端：与 SVG 同一坐标系（viewBox 0–100），
+ * 外圈同心圆最大 r=40；标签锚点半径明显大于 40，避免文字仍落在圆内。
+ */
+const axisLabelOuterStyles = computed(() => {
+  const n = 5;
+  const rGridOuter = 40;
+  const labelOffset = 8;
+  const rOuter = rGridOuter + labelOffset;
+  return Array.from({ length: n }, (_, i) => {
+    const angle = -Math.PI / 2 + (2 * Math.PI * i) / n;
+    const x = 50 + rOuter * Math.cos(angle);
+    const y = 50 + rOuter * Math.sin(angle);
+    return {
+      left: `${x}%`,
+      top: `${y}%`,
+      transform: "translate(-50%, -50%)",
     };
   });
 });
