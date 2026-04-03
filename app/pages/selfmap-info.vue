@@ -12,18 +12,20 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12" v-if="isBigFive">
         <InfoDimensionBigFivePanel :model="submitResult" />
-        <InfoPercentageSection :cards="submitResult.character" />
+        <InfoPercentageBigFiveSection :cards="submitResult.character" />
+        <InfoEachBigFiveScore :model="submitResult" />
       </div>
 
-      <!-- <div class="grid grid-cols-1 md:grid-cols-12 gap-6" v-if="isRiasec">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6" v-if="isRiasec">
         <InfoDimensionRiasecPanel :model="submitResult" />
-        <InfoInsightsSection :cards="submitResult.character" />
+        <InfoPercentageRiasecSection :cards="submitResult.character" />
+        <InfoEachRiasecScore :model="submitResult" />
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-6" v-if="isEnneagram">
+      <!-- <div class="grid grid-cols-1 md:grid-cols-12 gap-6" v-if="isEnneagram">
         <InfoDimensionEnneagramPanel :model="submitResult" />
         <InfoInsightsSection :cards="submitResult.character" />
-      </div> -->
+      </div>  -->
 
       <InfoCareerNavigation
         :image-url="report.careerImageUrl ?? ''"
