@@ -1,19 +1,32 @@
 import { UserMbtiResults } from "../../db/user-mbti-results";
 import { requireAuthUser } from "../../utils/requireAuthUser";
 
+interface UserMbtiStats {
+  EI: number;
+  E: number;
+  I: number;
+  SN: number;
+  S: number;
+  N: number;
+  TF: number;
+  T: number;
+  F: number;
+  JP: number;
+  J: number;
+  P: number;
+}
+
 interface MbtiResultItem {
   id: string;
   userId: string;
-  mbti: string;
-  stats: Record<string, number>;
+  type: string;
+  stats: UserMbtiStats;
   createdAt: string;
 }
 
 interface SuccessBody {
   success: true;
-  data: {
-    items: MbtiResultItem[];
-  };
+  data: MbtiResultItem[];
 }
 
 /**
@@ -27,13 +40,13 @@ export default defineEventHandler(async (event): Promise<SuccessBody> => {
   const items: MbtiResultItem[] = docs.map((doc) => ({
     id: String(doc._id),
     userId: doc.userId,
-    mbti: doc.mbti,
+    type: doc.type,
     stats: doc.stats,
     createdAt: doc.createdAt instanceof Date ? doc.createdAt.toISOString() : String(doc.createdAt),
   }));
 
   return {
     success: true,
-    data: { items },
+    data: items,
   };
 });

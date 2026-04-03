@@ -67,7 +67,7 @@
 
         <div class="mt-6 flex flex-col items-center gap-6 w-full">
           <NuxtLink
-            to="/selfmap-info"
+            :to="reportSelfmapLink"
             class="group relative px-12 py-5 w-full max-w-xs rounded-full bg-primary-container text-on-primary-container font-bold text-lg overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(150,149,255,0.3)]"
           >
             <span class="relative z-10 flex items-center justify-center gap-2">
@@ -133,11 +133,34 @@ import {
   BIG_FIVE_TYPE_KEY,
   BIG_FIVE_STATS_KEY,
   BIG_FIVE_SUBMIT_EVENT,
+  RIASEC_TYPE_KEY,
+  ENNEAGRAM_TYPE_KEY,
 } from "../../variables/variable";
 
 const props = defineProps<{
   testType: string;
 }>();
+
+const route = useRoute();
+
+/** 根据完成页所在测评路由，携带对应 type 查询参数进入报告页 */
+const reportSelfmapLink = computed(() => {
+  const path = route.path;
+  const type =
+    path === "/mbti"
+      ? MBTI_TYPE_KEY
+      : path === "/big-five"
+        ? BIG_FIVE_TYPE_KEY
+        : path === "/riasec"
+          ? RIASEC_TYPE_KEY
+          : path === "/enneagram"
+            ? ENNEAGRAM_TYPE_KEY
+            : props.testType;
+  return {
+    path: "/selfmap-info",
+    query: { type },
+  };
+});
 
 const onRetryTest = (): void => {
   if (props.testType === MBTI_TYPE_KEY) {

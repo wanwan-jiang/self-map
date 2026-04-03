@@ -22,6 +22,7 @@ export default defineNuxtConfig({
       path: "~/components/selfmap-info",
       pathPrefix: false,
     },
+
     {
       path: "~/components/person-test",
       pathPrefix: false,
