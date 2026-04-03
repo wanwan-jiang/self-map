@@ -1,11 +1,11 @@
 <template>
   <AuthTopBar />
-  <main class="pt-32 pb-24 px-8 max-w-7xl mx-auto">
+  <main class="pt-8 pb-24 px-8 max-w-7xl mx-auto">
     <!-- Hero Section -->
-    <section class="mb-20 text-left max-w-3xl">
-      <h1 class="text-5xl md:text-7xl font-headline font-extrabold tracking-tight mb-6 text-on-surface leading-tight">
+    <section class="mb-10 text-left max-w-3xl">
+      <h3 class="text-3xl md:text-4xl font-headline font-extrabold tracking-tight mb-6 text-on-surface leading-tight">
         探索测评
-      </h1>
+      </h3>
       <p class="text-lg md:text-xl text-on-surface-variant leading-relaxed font-light">
         通过 AI 赋能的深度测评，精准解构您的性格图谱与职业潜能。开启您的认知觉醒之旅。
       </p>
@@ -38,6 +38,7 @@
             <span class="text-sm font-label text-on-surface/60">预计用时 15 分钟</span>
           </div>
           <button
+            @click="mbtiTest"
             class="px-8 py-3 rounded-full bg-primary text-on-primary font-bold text-lg transition-all hover:shadow-[0_0_25px_rgba(165,165,255,0.6)] active:scale-95"
           >
             立即测评
@@ -70,6 +71,7 @@
             <span class="text-sm font-label text-on-surface/60">预计用时 12 分钟</span>
           </div>
           <button
+            @click="bigFiveTest"
             class="px-8 py-3 rounded-full border border-secondary/50 text-secondary font-bold text-lg hover:bg-secondary/10 transition-all active:scale-95"
           >
             深度解析
@@ -102,6 +104,7 @@
             <span class="text-sm font-label text-on-surface/60">预计用时 10 分钟</span>
           </div>
           <button
+            @click="riasecTest"
             class="px-8 py-3 rounded-full border border-tertiary/50 text-tertiary font-bold text-lg hover:bg-tertiary/10 transition-all active:scale-95"
           >
             进入测试
@@ -134,6 +137,7 @@
             <span class="text-sm font-label text-on-surface/60">预计用时 20 分钟</span>
           </div>
           <button
+            @click="enneagramTest"
             class="px-8 py-3 rounded-full bg-surface-container-highest border border-outline-variant/30 text-on-surface font-bold text-lg hover:border-primary/50 transition-all active:scale-95"
           >
             开始探索
@@ -148,7 +152,6 @@
       <div
         class="absolute inset-0 z-0 opacity-20"
         data-alt="abstract cosmic mesh of violet and blue glowing lines on a black background representing neural networks"
-        :style="ctaBackgroundStyle"
       ></div>
       <div
         class="relative z-10 p-12 md:p-20 flex flex-col md:flex-row items-center justify-between gap-12 bg-gradient-to-r from-surface-container-low to-transparent"
@@ -175,20 +178,28 @@
       </div>
     </section>
   </main>
-  <AuthFooter />
+  <AuthFooterLinks />
 </template>
 
 <script setup lang="ts">
-/** 与 aaa.html 中该区块内联 style 的 background-image 一致 */
-const ctaBackgroundStyle = {
-  backgroundImage:
-    "url(https://lh3.googleusercontent.com/aida-public/AB6AXuALhBA5J_rEuwtqCECZrN0dLGEWYQjKUA-irgCloKIgZfrCntXaSSQDYyqV_QYE9HNMk8ZYZqFlqszQBfS4-l_tXuc1fqCPKrZgCt1MsPH7FiqhPKk6-kRa_lcpbLpHXTy83OhioZvNdovuQpltabJpU8DITuscg9UTVlpq2fMy4qwUOwMjUaHzbR--m--aGZlx9ooNWs_DgcC2PO1Uzls9FMn1nN3sfHntCH6CZtrcT31iVma26aiVxmqNw6WraQlvDnC3xxRT-S_J)",
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-} as const;
+const mbtiTest = () => {
+  navigateTo("/mbti");
+};
+
+const bigFiveTest = () => {
+  navigateTo("/big-five");
+};
+
+const riasecTest = () => {
+  navigateTo("/riasec");
+};
+
+const enneagramTest = () => {
+  navigateTo("/enneagram");
+};
 
 useHead({
-  title: "探索测评 - The Cognitive Luminous",
+  title: "SelfMao - 测评看板",
   htmlAttrs: {
     lang: "zh-Hans",
     class: "dark",

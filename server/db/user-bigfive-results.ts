@@ -1,8 +1,15 @@
 import { defineMongooseModel } from "#nuxt/mongoose";
 
+interface UserBigFiveStats {
+  domain: string;
+  average: number;
+  level: "h" | "n" | "l";
+}
+
 interface UserBigFiveResult {
+  id: string;
   userId: string;
-  stats: object[];
+  stats: UserBigFiveStats;
   type: string;
   createdAt: Date;
 }

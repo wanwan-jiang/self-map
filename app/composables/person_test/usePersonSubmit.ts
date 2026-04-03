@@ -1,6 +1,6 @@
 import { MBTI_TYPE_KEY, MBTI_SUBMIT_EVENT, BIG_FIVE_TYPE_KEY, BIG_FIVE_SUBMIT_EVENT } from "~/variables/variable";
-import { saveUserBigFiveResult } from "~/api/user/big-five-results";
-import { saveUserMbtiResult } from "~/api/user/mbtiResults";
+import { saveUserBigFiveResult } from "~/api/user/personResults";
+import { saveUserMbtiResult } from "~/api/user/personResults";
 import { getAuthToken } from "~/utils/authToken";
 import type { BigFiveDomainBucket, BigFiveStatItem } from "~/types/userBigFiveResultType";
 import { BIG_FIVE_STATS_KEY } from "~/variables/variable";
@@ -89,17 +89,15 @@ export const usePersonSubmit = async (type: string, answers: Ref<Record<string, 
     if (window.localStorage.getItem(MBTI_TYPE_KEY)) {
       window.dispatchEvent(new Event(MBTI_SUBMIT_EVENT));
     }
-
-    // window.alert("提交失败，请重新完成测评后再试。");
   } else if (type === BIG_FIVE_TYPE_KEY) {
-    const rawAnswers = Object.values(answers.value) as SelectedAnswerPayload[];
-    const answeredAnswers = rawAnswers.filter((item) => item.domain && item.facet);
-    if (answeredAnswers.length === 0) {
-      window.alert("提交失败，请重新完成测评后再试。");
-      return;
-    }
+    // const rawAnswers = Object.values(answers.value) as SelectedAnswerPayload[];
+    // const answeredAnswers = rawAnswers.filter((item) => item.domain && item.facet);
+    // if (answeredAnswers.length === 0) {
+    //   window.alert("提交失败，请重新完成测评后再试。");
+    //   return;
+    // }
     const buckets: Record<string, BigFiveDomainBucket> = {};
-    for (const answer of answeredAnswers) {
+    for (const answer of Object.values(answers.value)) {
       const domain = answer.domain ?? "";
       const facet = Number(answer.facet ?? 0);
       const base = Number(answer.value);
@@ -138,9 +136,9 @@ export const usePersonSubmit = async (type: string, answers: Ref<Record<string, 
         const average = (bucket?.score ?? 0) / (bucket?.count ?? 0);
         return {
           domain,
-          domainName: domainNameMap[domain],
-          score: bucket?.score ?? 0,
-          count: bucket?.count ?? 0,
+          // domainName: domainNameMap[domain],
+          // score: bucket?.score ?? 0,
+          // count: bucket?.count ?? 0,
           average,
           level: getLevel(average),
         };

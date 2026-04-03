@@ -3,11 +3,9 @@ import { UserBigFiveResults } from "../../db/user-bigfive-results";
 import { requireAuthUser } from "../../utils/requireAuthUser";
 
 /** 与前端 `BigFiveStatItem` 一致：各维度汇总分与等级，非常模百分位。 */
+
 const bigFiveStatItemSchema = z.object({
   domain: z.string(),
-  domainName: z.string(),
-  score: z.number(),
-  count: z.number(),
   average: z.number(),
   level: z.enum(["h", "n", "l"]),
 });
@@ -17,12 +15,18 @@ const bodySchema = z.object({
   type: z.string(),
 });
 
+interface BigFiveStatItem {
+  domain: string;
+  average: number;
+  level: "h" | "n" | "l";
+}
+
 interface SuccessBody {
   success: true;
   data: {
     id: string;
     userId: string;
-    stats: object[];
+    stats: BigFiveStatItem[];
     type: string;
     createdAt: string;
   };
@@ -54,7 +58,6 @@ export default defineEventHandler(async (event): Promise<SuccessBody> => {
 
   const stats = parsed.data.stats;
   const type = parsed.data.type;
-  console.log("type", type);
   const created = await UserBigFiveResults.create({
     userId,
     stats,
