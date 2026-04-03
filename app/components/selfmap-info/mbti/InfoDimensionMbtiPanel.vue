@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { SelfmapReportHeaderModel } from "../../types/selfmapReportType";
-import InfoGlassCard from "./InfoGlassCard.vue";
+import type { SelfmapReportHeaderModel } from "~/types/selfmapReportType";
 import type { AxisLabelItem, LegendRowItem, PairPercentageResult } from "~/types/questionType";
 
 const props = defineProps<{
@@ -126,7 +125,7 @@ const dotClass = (tone: LegendRowItem["dotTone"]): string => {
 
 <template>
   <section class="md:col-span-5">
-    <InfoGlassCard padding-class="p-8 flex flex-col justify-center min-h-[450px]">
+    <div class="big-five-panel rounded-lg p-8 flex flex-col justify-center min-h-[450px]">
       <div class="flex justify-between items-center mb-8">
         <h2 class="text-2xl font-bold">维度分布</h2>
         <!-- <span class="material-symbols-outlined text-on-surface-variant">info</span> -->
@@ -166,6 +165,13 @@ const dotClass = (tone: LegendRowItem["dotTone"]): string => {
           <span class="text-xs font-medium text-on-surface-variant">{{ row.text }}</span>
         </div>
       </div>
-    </InfoGlassCard>
+    </div>
   </section>
 </template>
+<style scoped>
+.big-five-panel {
+  background: rgba(32, 38, 47, 0.4);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(68, 72, 79, 0.15);
+}
+</style>

@@ -54,12 +54,21 @@ const isReportScene = computed<boolean>(() => {
   );
 });
 
-const activeTab = computed<"test" | "report">(() => {
-  return route.path === "/selfmap-info" ? "report" : "test";
+/** 顶栏「测评 / 看板 / 报告」当前高亮项 */
+const navHighlight = computed<"test" | "board" | "report">(() => {
+  if (route.path === "/selfmap-info") {
+    return "report";
+  }
+  if (route.path === "/test-board") {
+    return "board";
+  }
+  return "test";
 });
 
 const reportTabLinkClass = computed(() =>
-  activeTab.value === "report" ? "border-b-2 border-primary pb-1 text-primary" : "text-slate-400 hover:text-slate-100",
+  navHighlight.value === "report"
+    ? "border-b-2 border-primary pb-1 text-primary"
+    : "text-slate-400 hover:text-slate-100",
 );
 
 const onReportTabBlockedClick = (): void => {
@@ -85,16 +94,28 @@ const onReportTabBlockedClick = (): void => {
 
         <div v-if="isReportScene" class="hidden md:flex gap-6">
           <NuxtLink
+            to="/test-board"
+            class="font-medium transition-colors duration-300"
+            :class="
+              navHighlight === 'board'
+                ? 'border-b-2 border-primary pb-1 text-primary'
+                : 'text-slate-400 hover:text-slate-100'
+            "
+          >
+            看板
+          </NuxtLink>
+          <NuxtLink
             to="/mbti"
             class="font-medium transition-colors duration-300"
             :class="
-              activeTab === 'test'
+              navHighlight === 'test'
                 ? 'border-b-2 border-primary pb-1 text-primary'
                 : 'text-slate-400 hover:text-slate-100'
             "
           >
             测评
           </NuxtLink>
+
           <button
             type="button"
             class="font-medium transition-colors duration-300"
