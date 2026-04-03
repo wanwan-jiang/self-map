@@ -16,9 +16,6 @@ interface BigFiveDomainBucket {
 }
 interface BigFiveStatItem {
   domain: string;
-  domainName: string;
-  score: number;
-  count: number;
   average: number;
   level: "h" | "n" | "l";
 }
@@ -31,9 +28,24 @@ interface UserBigFiveResultItem {
   createdAt: string;
 }
 
+/** POST 写入单条大五结果 */
 interface UserBigFiveResultSaveResponse {
   success: true;
   data: UserBigFiveResultItem;
 }
 
-export type { BigFiveAnswer, BigFiveDomainBucket, BigFiveFacetBucket, BigFiveStatItem, UserBigFiveResultSaveResponse };
+/** GET 拉取大五历史列表（与 latest-mbti-results 一致：`data` 为数组） */
+interface UserBigFiveResultsListResponse {
+  success: true;
+  data: UserBigFiveResultItem[];
+}
+
+export type {
+  BigFiveAnswer,
+  BigFiveDomainBucket,
+  BigFiveFacetBucket,
+  BigFiveStatItem,
+  UserBigFiveResultSaveResponse,
+  UserBigFiveResultsListResponse,
+  UserBigFiveResultItem,
+};

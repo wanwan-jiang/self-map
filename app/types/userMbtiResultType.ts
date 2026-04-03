@@ -1,3 +1,16 @@
+interface UserMbtiResultSaveResponse {
+  success: true;
+  data: UserMbtiResultItem;
+}
+
+interface UserMbtiResultItem {
+  id: string;
+  userId: string;
+  type: string;
+  stats: UserMbtiStats;
+  createdAt: string;
+}
+
 interface UserMbtiStats {
   EI: number;
   E: number;
@@ -13,24 +26,9 @@ interface UserMbtiStats {
   P: number;
 }
 
-interface UserMbtiResultItem {
-  id: string;
-  userId: string;
-  mbti: string;
-  stats: UserMbtiStats;
-  createdAt: string;
-}
-
 interface UserMbtiResultsListResponse {
   success: true;
-  data: {
-    items: UserMbtiResultItem[];
-  };
-}
-
-interface UserMbtiResultSaveResponse {
-  success: true;
-  data: UserMbtiResultItem;
+  data: UserMbtiResultItem[];
 }
 
 export type { UserMbtiStats, UserMbtiResultItem, UserMbtiResultsListResponse, UserMbtiResultSaveResponse };
