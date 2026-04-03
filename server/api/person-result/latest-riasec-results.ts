@@ -5,7 +5,7 @@ interface RiasecResultItem {
   id: string;
   userId: string;
   type: string;
-  stats: Record<string, number>;
+  stats: Record<string, { score: number; max: number }>;
   createdAt: string;
 }
 
@@ -26,7 +26,7 @@ export default defineEventHandler(async (event): Promise<SuccessBody> => {
     id: String(doc._id),
     userId: doc.userId,
     type: doc.type,
-    stats: doc.stats as Record<string, number>,
+    stats: doc.stats as Record<string, { score: number; max: number }>,
     createdAt: doc.createdAt instanceof Date ? doc.createdAt.toISOString() : String(doc.createdAt),
   }));
 

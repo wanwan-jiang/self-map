@@ -2,9 +2,14 @@ import { z } from "zod";
 import { UserRiasecResults } from "../../db/user-riasec-results";
 import { requireAuthUser } from "../../utils/requireAuthUser";
 
+const riasecDimensionSchema = z.object({
+  score: z.number(),
+  max: z.number(),
+});
+
 const bodySchema = z.object({
   type: z.string().trim().min(1, "type 不能为空"),
-  stats: z.record(z.string(), z.number()),
+  stats: z.record(z.string(), riasecDimensionSchema),
 });
 
 interface SuccessBody {
@@ -13,7 +18,7 @@ interface SuccessBody {
     id: string;
     userId: string;
     type: string;
-    stats: Record<string, number>;
+    stats: Record<string, { score: number; max: number }>;
     createdAt: string;
   };
 }

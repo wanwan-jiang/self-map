@@ -135,6 +135,10 @@ import {
   BIG_FIVE_SUBMIT_EVENT,
   RIASEC_TYPE_KEY,
   ENNEAGRAM_TYPE_KEY,
+  RIASEC_STATS_KEY,
+  RIASEC_SUBMIT_EVENT,
+  ENNEAGRAM_STATS_KEY,
+  ENNEAGRAM_SUBMIT_EVENT,
 } from "../../variables/variable";
 
 const props = defineProps<{
@@ -171,8 +175,15 @@ const onRetryTest = (): void => {
     localStorage.removeItem(BIG_FIVE_TYPE_KEY);
     localStorage.removeItem(BIG_FIVE_STATS_KEY);
     window.dispatchEvent(new Event(BIG_FIVE_SUBMIT_EVENT));
+  } else if (props.testType === RIASEC_TYPE_KEY) {
+    localStorage.removeItem(RIASEC_TYPE_KEY);
+    localStorage.removeItem(RIASEC_STATS_KEY);
+    window.dispatchEvent(new Event(RIASEC_SUBMIT_EVENT));
+  } else if (props.testType === ENNEAGRAM_TYPE_KEY) {
+    localStorage.removeItem(ENNEAGRAM_TYPE_KEY);
+    localStorage.removeItem(ENNEAGRAM_STATS_KEY);
+    window.dispatchEvent(new Event(ENNEAGRAM_SUBMIT_EVENT));
   }
-  //TODO
 };
 
 useHead({

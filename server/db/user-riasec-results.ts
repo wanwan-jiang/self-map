@@ -1,9 +1,14 @@
 import { defineMongooseModel } from "#nuxt/mongoose";
 
+interface RiasecDimensionScore {
+  score: number;
+  max: number;
+}
+
 interface UserRiasecResult {
   userId: string;
   type: string;
-  stats: Record<string, number>;
+  stats: Record<string, RiasecDimensionScore>;
   createdAt: Date;
 }
 

@@ -1,10 +1,18 @@
-import { MBTI_TYPE_KEY, MBTI_SUBMIT_EVENT, BIG_FIVE_TYPE_KEY, BIG_FIVE_SUBMIT_EVENT } from "~/variables/variable";
-import { saveUserBigFiveResult } from "~/api/user/personResults";
-import { saveUserMbtiResult } from "~/api/user/personResults";
+import {
+  MBTI_TYPE_KEY,
+  MBTI_SUBMIT_EVENT,
+  BIG_FIVE_TYPE_KEY,
+  BIG_FIVE_SUBMIT_EVENT,
+  RIASEC_TYPE_KEY,
+  RIASEC_STATS_KEY,
+  RIASEC_SUBMIT_EVENT,
+} from "~/variables/variable";
+import { saveUserBigFiveResult, saveUserMbtiResult, saveUserRiasecResult } from "~/api/user/personResults";
 import { getAuthToken } from "~/utils/authToken";
 import type { BigFiveDomainBucket, BigFiveStatItem } from "~/types/userBigFiveResultType";
 import { BIG_FIVE_STATS_KEY } from "~/variables/variable";
 import type { SelectedAnswerPayload } from "~/types/questionType";
+import type { RiasecDimensionScore, UserRiasecStats } from "~/types/userRiasecResultType";
 
 export const usePersonSubmit = async (type: string, answers: Ref<Record<string, SelectedAnswerPayload>>) => {
   if (typeof window === "undefined") {
@@ -158,5 +166,68 @@ export const usePersonSubmit = async (type: string, answers: Ref<Record<string, 
     if (window.localStorage.getItem(BIG_FIVE_TYPE_KEY)) {
       window.dispatchEvent(new Event(BIG_FIVE_SUBMIT_EVENT));
     }
+  } else if (type === RIASEC_TYPE_KEY) {
+    /** 霍兰德六维编码，与题库 `t` 字段一致 */
+    const RIASEC_KEYS = ["R", "I", "A", "S", "E", "C"] as const;
+    type RiasecLetter = (typeof RIASEC_KEYS)[number];
+
+    /** 单题 1–5 分，每题满分 */
+    const RIASEC_PER_QUESTION_MAX = 5;
+
+    function createEmptyRiasecDimensionStats(): Record<RiasecLetter, RiasecDimensionScore> {
+      return {
+        R: { score: 0, max: 0 },
+        I: { score: 0, max: 0 },
+        A: { score: 0, max: 0 },
+        S: { score: 0, max: 0 },
+        E: { score: 0, max: 0 },
+        C: { score: 0, max: 0 },
+      };
+    }
+
+    /**
+     * 各题分值累加到对应类型 `score`；该类型 `max` 累加本题满分（当前量表每题最高为 5）。
+     * Holland 三字码：按 `score` 降序取前三维（同分按字母序）。
+     */
+    function computeRiasecScores(payloads: SelectedAnswerPayload[]): {
+      stats: Record<RiasecLetter, RiasecDimensionScore>;
+      type: string;
+    } {
+      const stats = createEmptyRiasecDimensionStats();
+      for (const answer of payloads) {
+        const raw = (answer.t ?? "").trim().toUpperCase();
+        if (raw.length !== 1) continue;
+        const letter = raw as RiasecLetter;
+        if (!RIASEC_KEYS.includes(letter)) continue;
+        const v = Number(answer.value);
+        if (!Number.isFinite(v)) continue;
+        stats[letter].score += v;
+        stats[letter].max += RIASEC_PER_QUESTION_MAX;
+      }
+      const rank = Object.entries(stats).sort((a, b) => {
+        const diff = b[1].score - a[1].score;
+        if (diff !== 0) return diff;
+        return a[0].localeCompare(b[0]);
+      });
+      const top3 = rank.slice(0, 3).map(([k]) => k);
+      return { stats, type: top3.join("") };
+    }
+    const payloads = Object.values(answers.value);
+    if (payloads.length === 0) {
+      window.alert("提交失败，请重新完成测评后再试。");
+      return;
+    }
+    const { stats, type } = computeRiasecScores(payloads);
+
+    if (getAuthToken()) {
+      try {
+        await saveUserRiasecResult(type, stats);
+      } catch (error) {
+        console.error("保存 RIASEC 结果失败", error);
+      }
+    }
+    window.localStorage.setItem(RIASEC_STATS_KEY, JSON.stringify(stats));
+    window.localStorage.setItem(RIASEC_TYPE_KEY, type);
+    window.dispatchEvent(new Event(RIASEC_SUBMIT_EVENT));
   }
 };
