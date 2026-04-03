@@ -5,10 +5,10 @@ const viewReportError = ref(false);
 const route = useRoute();
 
 const hasMbtiType = ref(false);
-const MBTI_TYPE_KEY = 'mbti_type';
-const MBTI_SUBMIT_EVENT = 'mbti-submit-success-changed';
+const MBTI_TYPE_KEY = "mbti_type";
+const MBTI_SUBMIT_EVENT = "mbti-submit-success-changed";
 // SSR 期间没有 localStorage，避免导致页面 500
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   hasMbtiType.value = Boolean(window.localStorage.getItem(MBTI_TYPE_KEY));
 }
 /** 与 localStorage 中的 token 同步，用于顶栏登录态展示 */
@@ -31,20 +31,27 @@ function syncMbtiTypeFromStorage(): void {
 onMounted(() => {
   syncAuthTokenFromStorage();
   syncMbtiTypeFromStorage();
-  window.addEventListener('storage', syncAuthTokenFromStorage);
-  window.addEventListener('storage', syncMbtiTypeFromStorage);
+  window.addEventListener("storage", syncAuthTokenFromStorage);
+  window.addEventListener("storage", syncMbtiTypeFromStorage);
   window.addEventListener(MBTI_SUBMIT_EVENT, syncMbtiTypeFromStorage);
 });
 
 onUnmounted(() => {
-  window.removeEventListener('storage', syncAuthTokenFromStorage);
-  window.removeEventListener('storage', syncMbtiTypeFromStorage);
+  window.removeEventListener("storage", syncAuthTokenFromStorage);
+  window.removeEventListener("storage", syncMbtiTypeFromStorage);
   window.removeEventListener(MBTI_SUBMIT_EVENT, syncMbtiTypeFromStorage);
 });
 
 watch(() => route.fullPath, syncAuthTokenFromStorage);
 const isReportScene = computed<boolean>(() => {
-  return route.path === "/mbti" || route.path === "/mbti-test" || route.path === "/selfmap-info";
+  return (
+    route.path === "/mbti" ||
+    route.path === "/big-five" ||
+    route.path === "/riasec" ||
+    route.path === "/enneagram" ||
+    route.path === "/selfmap-info" ||
+    route.path === "/test-board"
+  );
 });
 
 const activeTab = computed<"test" | "report">(() => {
@@ -57,7 +64,7 @@ const reportTabLinkClass = computed(() =>
 
 const onReportTabBlockedClick = (): void => {
   if (hasMbtiType.value) {
-    void navigateTo('/selfmap-info');
+    void navigateTo("/selfmap-info");
     return;
   }
   viewReportError.value = true;
