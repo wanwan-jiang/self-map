@@ -1,27 +1,10 @@
 import { z } from "zod";
-import { UserMbtiResults } from "../../db/user-mbti-results";
+import { UserEnneagramResults } from "../../db/user-enneagram-results";
 import { requireAuthUser } from "../../utils/requireAuthUser";
 
 const bodySchema = z.object({
-  mbti: z
-    .string()
-    .trim()
-    .length(4)
-    .regex(/^[EI][SN][TF][JP]$/i, "mbti 须为四字母类型"),
-  stats: z.object({
-    EI: z.number(),
-    E: z.number(),
-    I: z.number(),
-    SN: z.number(),
-    S: z.number(),
-    N: z.number(),
-    TF: z.number(),
-    T: z.number(),
-    F: z.number(),
-    JP: z.number(),
-    J: z.number(),
-    P: z.number(),
-  }),
+  type: z.string().trim().min(1, "type 不能为空"),
+  stats: z.record(z.string(), z.number()),
 });
 
 interface SuccessBody {
@@ -29,14 +12,14 @@ interface SuccessBody {
   data: {
     id: string;
     userId: string;
-    mbti: string;
+    type: string;
     stats: Record<string, number>;
     createdAt: string;
   };
 }
 
 /**
- * @description 为当前登录用户写入一条 MBTI 测试结果（userId 以服务端会话为准，不信任客户端传入）。
+ * @description 为当前登录用户写入一条九型人格测试结果（userId 以服务端会话为准）。
  */
 export default defineEventHandler(async (event): Promise<SuccessBody> => {
   const { userId } = await requireAuthUser(event);
@@ -59,11 +42,11 @@ export default defineEventHandler(async (event): Promise<SuccessBody> => {
     });
   }
 
-  const mbti = parsed.data.mbti.toUpperCase();
+  const type = parsed.data.type;
   const stats = parsed.data.stats;
-  const created = await UserMbtiResults.create({
+  const created = await UserEnneagramResults.create({
     userId,
-    mbti,
+    type,
     stats,
     createdAt: new Date(),
   });
@@ -73,7 +56,7 @@ export default defineEventHandler(async (event): Promise<SuccessBody> => {
     data: {
       id: String(created._id),
       userId,
-      mbti,
+      type,
       stats,
       createdAt: created.createdAt.toISOString(),
     },
