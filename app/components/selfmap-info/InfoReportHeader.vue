@@ -1,15 +1,3 @@
-<script setup lang="ts">
-import type { SelfmapReportHeaderModel } from "../../types/selfmapReportType";
-
-defineProps<{
-  model: SelfmapReportHeaderModel;
-}>();
-
-const emit = defineEmits<{
-  "retry-test": [];
-}>();
-</script>
-
 <template>
   <header class="mb-16 relative">
     <div class="absolute -top-20 -left-20 w-64 h-64 bg-primary/20 rounded-full blur-[100px]"></div>
@@ -20,13 +8,15 @@ const emit = defineEmits<{
         >
           MBTI 专业深度解析
         </span>
-        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-4">
-          你的性格类型是：
-          <span class="text-primary text-glow">{{ model.type }} - {{ model.title }}</span>
-        </h1>
-        <p class="text-on-surface-variant text-lg leading-relaxed">
-          {{ model.desc }}
-        </p>
+        <template v-if="isMbti">
+          <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-4">
+            你的性格类型是：
+            <span class="text-primary text-glow">{{ model.type }} - {{ model.title }}</span>
+          </h1>
+          <p class="text-on-surface-variant text-lg leading-relaxed">
+            {{ model.desc }}
+          </p>
+        </template>
       </div>
       <div class="flex gap-4">
         <button
@@ -41,6 +31,25 @@ const emit = defineEmits<{
     </div>
   </header>
 </template>
+
+<script setup lang="ts">
+import { MBTI_STATS_KEY } from "~/variables/variable";
+import type { SelfmapReportHeaderModel } from "../../types/selfmapReportType";
+import { MBTI_TYPE_KEY } from "~/variables/variable";
+
+defineProps<{
+  model: SelfmapReportHeaderModel;
+}>();
+
+const emit = defineEmits<{
+  "retry-test": [];
+}>();
+
+const route = useRoute();
+const type = route.query.type as string;
+
+const isMbti = computed(() => type === MBTI_TYPE_KEY);
+</script>
 
 <style scoped>
 .text-glow {
