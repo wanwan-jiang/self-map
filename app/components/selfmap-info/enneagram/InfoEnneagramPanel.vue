@@ -80,6 +80,11 @@
 
 <script setup lang="ts">
 import type { SelfmapReportHeaderModel } from "../../../types/selfmapReportType";
+import {
+  ENNEAGRAM_LETTERS,
+  type EnneagramLetter,
+  getEnneagramRingSegmentStyle,
+} from "../../../utils/enneagramRingPalette";
 
 /**
  * @description 九型环图：总分 = 各字母 A–I 得分之和（如 36 题×每题 1 分）；整圈 360° 按得分比例切分，每段 `d` 为对应圆心角的圆弧。
@@ -103,10 +108,6 @@ const R = 140;
 /** 标签放在弧中点外侧（圆环外沿约 R+12≈152，略大则文字更靠外） */
 const LABEL_R = 186;
 
-/** 与 `usePersonSubmit`、参考稿 `typeMap` 一致；环上顺序为 A→B→…→I */
-const ENNEAGRAM_LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H", "I"] as const;
-type EnneagramLetter = (typeof ENNEAGRAM_LETTERS)[number];
-
 const ENNEAGRAM_LETTER_TO_TYPE_NO: Record<EnneagramLetter, number> = {
   A: 9,
   B: 6,
@@ -129,18 +130,6 @@ const TYPE_NO_LABEL: Record<number, string> = {
   7: "活跃型",
   8: "领袖型",
   9: "和平型",
-};
-
-const STROKE_BY_LETTER: Record<EnneagramLetter, { strokeValue: string; opacity: number }> = {
-  A: { strokeValue: "url(#enneagram-grad-1)", opacity: 1 },
-  B: { strokeValue: "#ff86c3", opacity: 0.9 },
-  C: { strokeValue: "url(#enneagram-grad-2)", opacity: 1 },
-  D: { strokeValue: "#7858f6", opacity: 1 },
-  E: { strokeValue: "#50e1f9", opacity: 1 },
-  F: { strokeValue: "#b2a1ff", opacity: 1 },
-  G: { strokeValue: "#ff73b7", opacity: 0.8 },
-  H: { strokeValue: "url(#enneagram-grad-1)", opacity: 1 },
-  I: { strokeValue: "#54e3fc", opacity: 1 },
 };
 
 /**
@@ -306,7 +295,7 @@ const ringSegments = computed(() => {
     }
     const labelPt = polarDeg(CX, CY, LABEL_R, midDeg);
     const no = ENNEAGRAM_LETTER_TO_TYPE_NO[letter];
-    const strokeMeta = STROKE_BY_LETTER[letter];
+    const style = getEnneagramRingSegmentStyle(letter);
     out.push({
       letter,
       name: TYPE_NO_LABEL[no] ?? letter,
@@ -317,9 +306,9 @@ const ringSegments = computed(() => {
       pathD,
       labelX: round2(labelPt.x),
       labelY: round2(labelPt.y),
-      strokeValue: strokeMeta.strokeValue,
-      labelFill: strokeMeta.strokeValue,
-      opacity: strokeMeta.opacity,
+      strokeValue: style.stroke,
+      labelFill: style.stroke,
+      opacity: style.opacity,
     });
     cursorDeg = endDeg;
   }

@@ -17,7 +17,7 @@
           <div class="flex items-center gap-4 min-w-0 flex-1">
             <div
               class="w-10 h-10 shrink-0 rounded-full flex items-center justify-center font-bold text-sm"
-              :class="badgeToneClass(idx)"
+              :style="badgeStyleForLetter(item.tags.letter)"
             >
               {{ item.tags.no }}
             </div>
@@ -26,7 +26,10 @@
               <div class="text-[10px] text-on-surface-variant line-clamp-2">{{ item.tags.desc || item.content }}</div>
             </div>
           </div>
-          <div class="shrink-0 ml-2 font-headline font-bold text-sm" :class="percentToneClass(idx)">
+          <div
+            class="shrink-0 ml-2 font-headline font-bold text-sm"
+            :style="percentStyleForLetter(item.tags.letter)"
+          >
             {{ item.tags.percentLabel }}
           </div>
         </div>
@@ -43,6 +46,7 @@
 
 <script setup lang="ts">
 import type { SelfmapReportHeaderModel } from "../../../types/selfmapReportType";
+import { getEnneagramUiHexForLetter } from "../../../utils/enneagramRingPalette";
 
 /**
  * @description 展示 `enneagram-info` 返回的 `character`：前三名及第三名同分并列项。
@@ -82,18 +86,19 @@ const rowToneClass = (idx: number): string => {
   return "bg-surface-container-low/50 opacity-90";
 };
 
-const badgeToneClass = (idx: number): string => {
-  const tones = [
-    "bg-primary text-on-primary",
-    "bg-tertiary text-on-tertiary",
-    "bg-secondary text-on-secondary",
-  ];
-  return tones[idx % tones.length] ?? "bg-outline text-on-surface";
+/**
+ * @description 与 `InfoEnneagramPanel` 同字母弧段代表色一致（实心圆底 + 高对比字色）。
+ */
+const badgeStyleForLetter = (letter: string | undefined): Record<string, string> => {
+  const hex = getEnneagramUiHexForLetter(letter ?? "");
+  return {
+    backgroundColor: hex,
+    color: "#f1f3fc",
+  };
 };
 
-const percentToneClass = (idx: number): string => {
-  const tones = ["text-primary", "text-tertiary", "text-secondary"];
-  return tones[idx % tones.length] ?? "text-on-surface-variant";
+const percentStyleForLetter = (letter: string | undefined): Record<string, string> => {
+  return { color: getEnneagramUiHexForLetter(letter ?? "") };
 };
 </script>
 
