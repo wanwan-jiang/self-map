@@ -41,17 +41,17 @@
 import type { SelfmapReportHeaderModel, SelfmapSkillModel } from "../../../types/selfmapReportType";
 
 /**
- * @description 大五报告侧栏：AI 人物身份标题 + 个性成长建议正文 + 技能亮点（前两则）。
+ * @description 霍兰德报告侧栏：AI 人物身份标题 + 职业发展建议正文 + 技能亮点（前两则）。
  */
 defineOptions({
-  name: "InfoPercentageBigFiveSection",
+  name: "InfoPercentageRiasecSection",
 });
 
 const props = defineProps<{
   model?: SelfmapReportHeaderModel;
-  /** 大五专用：`messageHead` 流式输出，个性化人物身份（约 6 字内） */
+  /** `messageHead` 流式输出，个性化人物身份（约 6 字内） */
   aiIdentityHeadline?: string;
-  /** 个性成长建议等正文流式输出 */
+  /** 职业发展建议等正文流式输出 */
   aiCareerText?: string;
   /** 技能列表；取前 2 条作为亮点卡片 */
   aiSkills?: SelfmapSkillModel[];
@@ -75,37 +75,15 @@ const sectionHeadline = computed(() => {
       return six;
     }
   }
-  return props.model?.title?.trim() || "大五人格 · AI 解读";
+  return props.model?.title?.trim() || "霍兰德 · AI 解读";
 });
 
 const careerBody = computed(() => {
   const t = props.aiCareerText?.trim();
-  return t && t.length > 0 ? t : "个性成长建议生成中，请稍候或刷新页面重试。";
+  return t && t.length > 0 ? t : "职业发展建议生成中，请稍候或刷新页面重试。";
 });
 
 const highlightSkills = computed(() => (props.aiSkills ?? []).slice(0, 2));
-
-useHead({
-  title: "测评报告 - SelfMap",
-  htmlAttrs: {
-    lang: "zh-CN",
-    class: "dark",
-  },
-  meta: [{ charset: "utf-8" }, { name: "viewport", content: "width=device-width, initial-scale=1.0" }],
-  bodyAttrs: {
-    class: "bg-background text-on-surface font-body selection:bg-primary/30",
-  },
-  link: [
-    {
-      rel: "stylesheet",
-      href: "https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap",
-    },
-    {
-      rel: "stylesheet",
-      href: "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap",
-    },
-  ],
-});
 </script>
 
 <style scoped>

@@ -100,6 +100,19 @@ export async function fetchUserLatestRiasecResults(): Promise<UserRiasecResultsL
   });
 }
 
+export async function fetchUserRiasecInfo(
+  hollandType: string,
+  stats: UserRiasecStats,
+): Promise<SelfmapReportHeaderModel> {
+  return await $fetch<SelfmapReportHeaderModel>("/api/person-info/riasec-info", {
+    method: "POST",
+    body: {
+      type: hollandType,
+      stats,
+    },
+  });
+}
+
 /**
  * @description 提交一条九型人格结果到服务端
  */

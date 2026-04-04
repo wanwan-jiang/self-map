@@ -17,7 +17,7 @@ interface SelfmapReportHeaderModel {
   title?: string;
   type?: string;
   character?: SelfmapInsightCardModel[] | Record<string, SelfmapInsightCardModel>;
-  /** 大五报告：各 domain 按测评 level 在库中解析的说明 */
+  /** 大五 / 霍兰德：各 domain 按相对强度档在库中解析的说明（`average` 在大五为 1–5 均分；霍兰德为 0–100 相对强度） */
   domainLevelDescriptions?: SelfmapBigFiveDomainLevelDescription[];
 }
 
