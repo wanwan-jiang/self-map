@@ -41,6 +41,12 @@
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6" v-if="isEnneagram">
         <InfoEnneagramPanel :model="submitResult" />
         <InfoEnneagramRanking :model="submitResult" />
+        <InfoEnneagramAI
+          :awareness-text="enneagramPillarTexts.awareness"
+          :embodiment-text="enneagramPillarTexts.embodiment"
+          :connection-text="enneagramPillarTexts.connection"
+          :growth-suggestion-text="resultQwenMbti"
+        />
       </div>
     </main>
 
@@ -102,6 +108,16 @@ const resultQwenMbti = ref<string>("");
 /** 大五：`messageHead` 流式结果，作侧栏标题（个性化人物身份，约 6 字内） */
 const bigFiveAiIdentityHeadline = ref<string>("");
 const aiSkills = ref<SelfmapSkillModel[]>([]);
+/** 九型：`messageTitle` 流式解析为「认知觉察 / 能量具身 / 深度链接」三段，供 `InfoEnneagramAI` 展示 */
+const enneagramPillarTexts = ref<{
+  awareness: string;
+  embodiment: string;
+  connection: string;
+}>({
+  awareness: "",
+  embodiment: "",
+  connection: "",
+});
 let message = ref<string>("");
 let messageTitle = ref<string>("");
 let messageHead = ref<string>("");
@@ -149,6 +165,45 @@ const parseSkillsFromStreamText = (fullText: string): SelfmapSkillModel[] => {
   }
 
   return parsed;
+};
+
+/**
+ * @description 解析九型「三点赋能」流式全文，约定格式含 `认知觉察：…` `能量具身：…` `深度链接：…`（支持中英文冒号与换行）。
+ */
+const parseEnneagramTriplePillars = (
+  fullText: string,
+): {
+  awareness: string;
+  embodiment: string;
+  connection: string;
+} => {
+  const empty = { awareness: "", embodiment: "", connection: "" };
+  const raw = fullText.replace(/\r\n/g, "\n").trim();
+  if (!raw) {
+    return empty;
+  }
+  const labels = ["认知觉察", "能量具身", "深度链接"] as const;
+  const out = { ...empty };
+  const keys = ["awareness", "embodiment", "connection"] as const;
+
+  for (let i = 0; i < labels.length; i++) {
+    const label = labels[i] as (typeof labels)[number];
+    const key = keys[i] as (typeof keys)[number];
+    const nextLabel: (typeof labels)[number] | undefined = labels[i + 1];
+    const idx = raw.indexOf(label);
+    if (idx === -1) {
+      continue;
+    }
+    let after = raw.slice(idx + label.length).replace(/^[：:\s]+/, "");
+    if (nextLabel !== undefined) {
+      const nextIdx = after.indexOf(nextLabel);
+      if (nextIdx >= 0) {
+        after = after.slice(0, nextIdx);
+      }
+    }
+    out[key] = after.replace(/[。．]+$/u, "").trim();
+  }
+  return out;
 };
 
 onMounted(async () => {
@@ -433,22 +488,22 @@ onMounted(async () => {
         }
         try {
           submitResult.value = await fetchUserEnneagramInfo(stats, hollandType);
-          message.value = `你好，我的九型人格测评主型为 ${submitResult.value.type ?? hollandType}，请结合报告给出成长建议(150字以内)。最后不要出现任何其他内容，只返回建议。`;
-          messageTitle.value = `请根据我的九型人格测评给出三点核心赋能技能。严格按三行输出，每行格式：标题|描述。标题6个字以内，描述16个字以内，不要输出其他内容。`;
+          const typeLabel = submitResult.value.type ?? hollandType;
+          messageTitle.value = `请根据我的九型人格 ${typeLabel} 测评给出认知觉察、能量具身、深度链接三点核心赋能技能。每点描述40-60个字以内，必须严格连续输出三句，格式示例：认知觉察：……。能量具身：……。深度链接：……。不要输出其他内容。`;
+          message.value = `你好，我的九型人格测评主型为 ${typeLabel}。报告摘要：${submitResult.value.desc ?? ""}。请结合以上给出成长建议(150字以内)。最后不要出现任何其他内容，只返回建议。`;
 
+          enneagramPillarTexts.value = { awareness: "", embodiment: "", connection: "" };
           resultQwenMbti.value = "";
+
+          await askQwenStream(messageTitle.value, (_delta, fullText) => {
+            enneagramPillarTexts.value = parseEnneagramTriplePillars(fullText);
+          });
+
           await askQwenStream(message.value, (_delta, fullText) => {
             resultQwenMbti.value = fullText;
           });
 
           aiSkills.value = [];
-          await askQwenStream(messageTitle.value, (_delta, fullText) => {
-            aiSkills.value = parseSkillsFromStreamText(fullText);
-          });
-
-          if (aiSkills.value.length === 0) {
-            aiSkills.value = report.skills ?? [];
-          }
         } catch (error) {
           submitError.value = "获取九型人格报告失败，请稍后重试。";
           console.error("获取九型人格报告失败", error);

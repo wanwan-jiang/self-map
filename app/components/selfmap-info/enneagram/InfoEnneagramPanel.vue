@@ -13,25 +13,11 @@
           preserveAspectRatio="xMidYMid meet"
         >
           <defs>
-            <linearGradient
-              id="enneagram-grad-1"
-              gradientUnits="userSpaceOnUse"
-              x1="48"
-              y1="48"
-              x2="352"
-              y2="352"
-            >
+            <linearGradient id="enneagram-grad-1" gradientUnits="userSpaceOnUse" x1="48" y1="48" x2="352" y2="352">
               <stop offset="0%" stop-color="#7858f6" stop-opacity="1" />
               <stop offset="100%" stop-color="#b2a1ff" stop-opacity="1" />
             </linearGradient>
-            <linearGradient
-              id="enneagram-grad-2"
-              gradientUnits="userSpaceOnUse"
-              x1="320"
-              y1="80"
-              x2="80"
-              y2="320"
-            >
+            <linearGradient id="enneagram-grad-2" gradientUnits="userSpaceOnUse" x1="320" y1="80" x2="80" y2="320">
               <stop offset="0%" stop-color="#50e1f9" stop-opacity="1" />
               <stop offset="100%" stop-color="#40d5ee" stop-opacity="1" />
             </linearGradient>
