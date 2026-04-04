@@ -1,4 +1,5 @@
 import type { BigFiveStatItem } from "./userBigFiveResultType";
+import type { RiasecDimensionScore } from "./userRiasecResultType";
 
 type SelfmapInsightTone = "primary" | "secondary" | "tertiary";
 
@@ -12,7 +13,7 @@ interface SelfmapBigFiveDomainLevelDescription {
 
 interface SelfmapReportHeaderModel {
   desc?: string;
-  stats?: Record<string, number> | BigFiveStatItem[];
+  stats?: Record<string, number> | BigFiveStatItem[] | Record<string, RiasecDimensionScore>;
   title?: string;
   type?: string;
   character?: SelfmapInsightCardModel[] | Record<string, SelfmapInsightCardModel>;
@@ -28,7 +29,7 @@ interface SelfmapDimensionLegendItem {
 
 interface SelfmapDimensionAxisLabel {
   desc?: string;
-  stats?: Record<string, number> | BigFiveStatItem[];
+  stats?: Record<string, number> | BigFiveStatItem[] | Record<string, RiasecDimensionScore>;
   title?: string;
   type?: string;
 }

@@ -1,6 +1,6 @@
 <template>
   <section class="md:col-span-7">
-    <div class="big-five-panel rounded-lg p-8 flex flex-col justify-center min-h-[500px]">
+    <div class="riasec-panel rounded-lg p-8 flex flex-col justify-center min-h-[500px]">
       <div class="flex justify-between items-center mb-8">
         <h2 class="text-2xl font-bold">维度分布</h2>
       </div>
@@ -33,11 +33,11 @@
           <div
             v-for="(item, i) in axisLabelsForChart"
             :key="item.id"
-            class="absolute pointer-events-none z-10"
+            class="absolute pointer-events-none z-10 flex max-w-[40%] sm:max-w-[36%] items-center justify-center"
             :style="axisLabelOuterStyles[i]"
           >
             <span
-              class="inline-block whitespace-nowrap text-center text-[11px] sm:text-xs font-bold leading-tight tracking-tight"
+              class="inline-block text-center text-[9px] sm:text-[10px] font-bold leading-none tracking-tight whitespace-nowrap"
               :class="item.textToneClass"
             >
               {{ item.text }}
@@ -52,19 +52,26 @@
 <script setup lang="ts">
 import type { SelfmapReportHeaderModel } from "../../../types/selfmapReportType";
 import type { AxisLabelItem, LegendRowItem } from "~/types/questionType";
+import type { RiasecDimensionScore } from "~/types/userRiasecResultType";
 
 const props = defineProps<{
   model: SelfmapReportHeaderModel;
 }>();
 
-/** OCEAN 五维：字母 → 中文名 */
-const BIG_FIVE_DOMAINS = [
-  { id: "O", name: "经验开放性" },
-  { id: "C", name: "尽责性" },
-  { id: "E", name: "外向性" },
-  { id: "A", name: "亲和性" },
-  { id: "N", name: "神经质" },
-] as const;
+/** 与题库、提交逻辑一致：R → I → A → S → E → C（逆时针自顶轴起） */
+const RIASEC_AXES_ORDER = ["R", "I", "A", "S", "E", "C"] as const;
+
+type RiasecLetter = (typeof RIASEC_AXES_ORDER)[number];
+
+/** 霍兰德六型全称（与参考稿 TYPE_LABEL 一致） */
+const RIASEC_TYPE_LABEL: Record<RiasecLetter, string> = {
+  R: "R 现实型",
+  I: "I 研究型",
+  A: "A 艺术型",
+  S: "S 社会型",
+  E: "E 企业型",
+  C: "C 常规型",
+};
 
 const TONE_CLASSES = [
   "text-primary",
@@ -72,30 +79,47 @@ const TONE_CLASSES = [
   "text-tertiary",
   "text-on-surface",
   "text-primary-dim",
+  "text-secondary",
 ] as const;
 
-/**
- * 将 `model.stats` 中各域分值转为 0–100（用于雷达半径）。
- * 支持：已是 0–100；或 1–5 量表（典型大五平均分）。
- */
-const domainScorePercent = (stats: Record<string, number>, key: string): number => {
-  const raw = stats[key];
-  if (raw === undefined || raw === null || Number.isNaN(Number(raw))) {
-    return 0;
+const isRiasecStatsRecord = (
+  stats: SelfmapReportHeaderModel["stats"],
+): stats is Record<string, RiasecDimensionScore> => {
+  if (!stats || typeof stats !== "object" || Array.isArray(stats)) {
+    return false;
   }
-  const v = Number(raw);
-  if (v >= 0 && v <= 5) {
-    return Math.max(0, Math.min(100, ((v - 1) / 4) * 100));
-  }
-  return Math.max(0, Math.min(100, v));
+  const rec = stats as Record<string, unknown>;
+  const sample = rec.R ?? rec.r ?? rec.I ?? rec.A;
+  return typeof sample === "object" && sample !== null && "score" in sample && "max" in sample;
 };
 
-/** 五轴放射线终点（viewBox 0–100，中心 50,50，与外圈 r=40 一致） */
+/**
+ * @description 单维得分占该维满分的比例 → 0–100，供雷达半径与标签。
+ */
+const riasecDimensionPercent = (stats: SelfmapReportHeaderModel["stats"], letter: RiasecLetter): number => {
+  if (!isRiasecStatsRecord(stats)) {
+    return 0;
+  }
+  const key = letter.toUpperCase();
+  const cell = stats[key] as RiasecDimensionScore | undefined;
+  if (!cell || typeof cell !== "object") {
+    return 0;
+  }
+  const max = Number(cell.max);
+  const score = Number(cell.score);
+  if (Number.isNaN(max) || Number.isNaN(score) || max <= 0) {
+    return 0;
+  }
+  return Math.max(0, Math.min(100, (score / max) * 100));
+};
+
+const AXES_COUNT = RIASEC_AXES_ORDER.length;
+
+/** 六轴放射线终点（viewBox 0–100，中心 50,50，外圈 r=40） */
 const radialLineEnds = computed(() => {
-  const n = 5;
   const r = 40;
-  return Array.from({ length: n }, (_, i) => {
-    const angle = -Math.PI / 2 + (2 * Math.PI * i) / n;
+  return Array.from({ length: AXES_COUNT }, (_, i) => {
+    const angle = -Math.PI / 2 + (2 * Math.PI * i) / AXES_COUNT;
     return {
       x2: 50 + r * Math.cos(angle),
       y2: 50 + r * Math.sin(angle),
@@ -103,17 +127,12 @@ const radialLineEnds = computed(() => {
   });
 });
 
-/**
- * 轴标签置于各轴最外端：与 SVG 同一坐标系（viewBox 0–100），
- * 外圈同心圆最大 r=40；标签锚点半径明显大于 40，避免文字仍落在圆内。
- */
 const axisLabelOuterStyles = computed(() => {
-  const n = 5;
   const rGridOuter = 40;
-  const labelOffset = 8;
+  const labelOffset = 10;
   const rOuter = rGridOuter + labelOffset;
-  return Array.from({ length: n }, (_, i) => {
-    const angle = -Math.PI / 2 + (2 * Math.PI * i) / n;
+  return Array.from({ length: AXES_COUNT }, (_, i) => {
+    const angle = -Math.PI / 2 + (2 * Math.PI * i) / AXES_COUNT;
     const x = 50 + rOuter * Math.cos(angle);
     const y = 50 + rOuter * Math.sin(angle);
     return {
@@ -125,29 +144,28 @@ const axisLabelOuterStyles = computed(() => {
 });
 
 const axisLabelsForChart = computed<AxisLabelItem[]>(() => {
-  const stats = props.model.stats ?? {};
-  return BIG_FIVE_DOMAINS.map((d, i) => {
-    const pct = Math.round(domainScorePercent(stats, d.id));
+  const stats = props.model.stats;
+  return RIASEC_AXES_ORDER.map((letter, i) => {
+    const pct = Math.round(riasecDimensionPercent(stats, letter));
     return {
-      id: d.id,
-      text: `${d.name} ${pct}%`,
+      id: letter,
+      text: `${RIASEC_TYPE_LABEL[letter]} ${pct}%`,
       textToneClass: TONE_CLASSES[i] ?? "text-on-surface-variant",
     };
   });
 });
 
 const dimensionPolygonPoints = computed(() => {
-  const stats = props.model.stats ?? {};
-  const n = 5;
+  const stats = props.model.stats;
   const radiusFromPercent = (percent: number): number => 10 + (Math.max(0, Math.min(100, percent)) / 100) * 30;
 
   const points: Array<[number, number]> = [];
-  for (let i = 0; i < n; i++) {
-    const key = BIG_FIVE_DOMAINS[i]?.id;
-    if (!key) continue;
-    const pct = domainScorePercent(stats, key);
+  for (let i = 0; i < AXES_COUNT; i++) {
+    const letter = RIASEC_AXES_ORDER[i];
+    if (!letter) continue;
+    const pct = riasecDimensionPercent(stats, letter);
     const r = radiusFromPercent(pct);
-    const angle = -Math.PI / 2 + (2 * Math.PI * i) / n;
+    const angle = -Math.PI / 2 + (2 * Math.PI * i) / AXES_COUNT;
     const x = 50 + r * Math.cos(angle);
     const y = 50 + r * Math.sin(angle);
     points.push([x, y]);
@@ -157,14 +175,14 @@ const dimensionPolygonPoints = computed(() => {
 });
 
 const legendRows = computed<LegendRowItem[]>(() => {
-  const stats = props.model.stats ?? {};
-  const tones: LegendRowItem["dotTone"][] = ["primary", "secondary", "tertiary", "primary", "secondary"];
-  return BIG_FIVE_DOMAINS.map((d, i) => {
-    const pct = Math.round(domainScorePercent(stats, d.id));
+  const stats = props.model.stats;
+  const tones: LegendRowItem["dotTone"][] = ["primary", "secondary", "tertiary", "primary", "secondary", "tertiary"];
+  return RIASEC_AXES_ORDER.map((letter, i) => {
+    const pct = Math.round(riasecDimensionPercent(stats, letter));
     return {
-      id: `bf-${d.id}`,
+      id: `riasec-${letter}`,
       dotTone: tones[i] ?? "tertiary",
-      text: `${d.id}: ${d.name} — 相对强度 ${pct}%`,
+      text: `${RIASEC_TYPE_LABEL[letter]} — 相对强度 ${pct}%`,
     };
   });
 });
@@ -177,7 +195,7 @@ const dotClass = (tone: LegendRowItem["dotTone"]): string => {
 </script>
 
 <style scoped>
-.big-five-panel {
+.riasec-panel {
   background: rgba(32, 38, 47, 0.4);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(68, 72, 79, 0.15);

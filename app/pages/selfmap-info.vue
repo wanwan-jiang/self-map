@@ -29,7 +29,12 @@
 
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6" v-if="isRiasec">
         <InfoDimensionRiasecPanel :model="submitResult" />
-        <InfoPercentageRiasecSection :cards="submitResult.character" />
+        <InfoPercentageRiasecSection
+          :model="submitResult"
+          :ai-identity-headline="bigFiveAiIdentityHeadline"
+          :ai-career-text="resultQwenMbti"
+          :ai-skills="aiSkills"
+        />
         <InfoEachRiasecScore :model="submitResult" />
       </div>
 
