@@ -134,3 +134,13 @@ export async function fetchUserLatestEnneagramResults(): Promise<UserEnneagramRe
     method: "GET",
   });
 }
+
+export async function fetchUserEnneagramInfo(
+  stats: UserEnneagramStats,
+  hollandType?: string,
+): Promise<SelfmapReportHeaderModel> {
+  return await $fetch<SelfmapReportHeaderModel>("/api/person-info/enneagram-info", {
+    method: "POST",
+    body: { stats, type: hollandType },
+  });
+}

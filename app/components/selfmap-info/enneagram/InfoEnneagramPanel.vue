@@ -5,42 +5,41 @@
         <h2 class="text-2xl font-bold">维度分布</h2>
       </div>
       <div class="relative flex-grow flex items-center justify-center overflow-visible min-h-0">
-        <!-- Atmospheric Background Glow -->
         <div class="absolute -top-24 -left-24 w-96 h-96 bg-[#b2a1ff]/10 rounded-full blur-[120px]" />
         <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-[#50e1f9]/10 rounded-full blur-[120px]" />
-        <!-- SVG Ring Chart -->
-        <svg class="w-full max-w-md drop-shadow-2xl" viewBox="0 0 400 400">
+        <svg
+          class="mx-auto block aspect-square w-full max-w-md shrink-0 drop-shadow-2xl"
+          viewBox="-40 -40 480 480"
+          preserveAspectRatio="xMidYMid meet"
+        >
           <defs>
-            <linearGradient id="grad-1" x1="0%" x2="100%" y1="0%" y2="100%">
-              <stop offset="0%" style="stop-color: #7858f6; stop-opacity: 1" />
-              <stop offset="100%" style="stop-color: #b2a1ff; stop-opacity: 1" />
+            <linearGradient
+              id="enneagram-grad-1"
+              gradientUnits="userSpaceOnUse"
+              x1="48"
+              y1="48"
+              x2="352"
+              y2="352"
+            >
+              <stop offset="0%" stop-color="#7858f6" stop-opacity="1" />
+              <stop offset="100%" stop-color="#b2a1ff" stop-opacity="1" />
             </linearGradient>
-            <linearGradient id="grad-2" x1="0%" x2="100%" y1="0%" y2="100%">
-              <stop offset="0%" style="stop-color: #50e1f9; stop-opacity: 1" />
-              <stop offset="100%" style="stop-color: #40d5ee; stop-opacity: 1" />
+            <linearGradient
+              id="enneagram-grad-2"
+              gradientUnits="userSpaceOnUse"
+              x1="320"
+              y1="80"
+              x2="80"
+              y2="320"
+            >
+              <stop offset="0%" stop-color="#50e1f9" stop-opacity="1" />
+              <stop offset="100%" stop-color="#40d5ee" stop-opacity="1" />
             </linearGradient>
-            <filter id="glow">
-              <feGaussianBlur result="coloredBlur" stdDeviation="2.5" />
-              <feMerge>
-                <feMergeNode in="coloredBlur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
           </defs>
-          <!-- Core Info Center -->
-          <circle cx="200" cy="200" fill="#0d0d1a" r="60" />
+          <circle cx="200" cy="200" class="fill-surface-container-highest" r="60" />
           <text
-            fill="#aba9bb"
-            font-family="Plus Jakarta Sans"
-            font-size="14"
-            font-weight="bold"
-            text-anchor="middle"
-            x="200"
-            y="195"
-          ></text>
-          <text
-            fill="#b2a1ff"
-            font-family="Plus Jakarta Sans"
+            class="fill-secondary-fixed"
+            font-family="Plus Jakarta Sans, sans-serif"
             font-size="24"
             font-weight="800"
             text-anchor="middle"
@@ -49,104 +48,36 @@
           >
             ENNEAGRAM
           </text>
-          <!-- Ring Segments (Conceptual Paths) -->
-          <!-- S1: Logic — 和平型 -->
-          <path
-            class="ring-segment"
-            d="M200 60 A140 140 0 0 1 294 97"
-            fill="none"
-            stroke="url(#grad-1)"
-            stroke-dasharray="100"
-            stroke-linecap="round"
-            stroke-width="24"
-          />
-          <text class="enneagram-ring-label" pointer-events="none" text-anchor="middle" x="262" y="52">和平型</text>
-          <!-- S2: Empathy — 忠诚型 -->
-          <path
-            class="ring-segment"
-            d="M305 108 A140 140 0 0 1 340 200"
-            fill="none"
-            opacity="0.9"
-            stroke="#ff86c3"
-            stroke-linecap="round"
-            stroke-width="24"
-          />
-          <text class="enneagram-ring-label" pointer-events="none" text-anchor="middle" x="352" y="148">忠诚型</text>
-          <!-- S3: Vision — 成就型 -->
-          <path
-            class="ring-segment"
-            d="M340 215 A140 140 0 0 1 294 303"
-            fill="none"
-            stroke="url(#grad-2)"
-            stroke-linecap="round"
-            stroke-width="24"
-          />
-          <text class="enneagram-ring-label" pointer-events="none" text-anchor="middle" x="350" y="278">成就型</text>
-          <!-- S4: Discipline — 完美型 -->
-          <path
-            class="ring-segment"
-            d="M280 315 A140 140 0 0 1 200 340"
-            fill="none"
-            stroke="#7858f6"
-            stroke-linecap="round"
-            stroke-width="24"
-          />
-          <text class="enneagram-ring-label" pointer-events="none" text-anchor="middle" x="258" y="362">完美型</text>
-          <!-- S5: Adaptability — 自我型 -->
-          <path
-            class="ring-segment"
-            d="M185 340 A140 140 0 0 1 106 303"
-            fill="none"
-            stroke="#50e1f9"
-            stroke-linecap="round"
-            stroke-width="24"
-          />
-          <text class="enneagram-ring-label" pointer-events="none" text-anchor="middle" x="132" y="362">自我型</text>
-          <!-- S6: Courage — 助人型 -->
-          <path
-            class="ring-segment"
-            d="M92 290 A140 140 0 0 1 60 200"
-            fill="none"
-            stroke="#b2a1ff"
-            stroke-linecap="round"
-            stroke-width="24"
-          />
-          <text class="enneagram-ring-label" pointer-events="none" text-anchor="middle" x="36" y="268">助人型</text>
-          <!-- S7: Intuition — 领袖型 -->
-          <path
-            class="ring-segment"
-            d="M60 185 A140 140 0 0 1 106 97"
-            fill="none"
-            opacity="0.8"
-            stroke="#ff73b7"
-            stroke-linecap="round"
-            stroke-width="24"
-          />
-          <text class="enneagram-ring-label" pointer-events="none" text-anchor="middle" x="44" y="138">领袖型</text>
-          <!-- S8: Focus — 理智型 -->
-          <path
-            class="ring-segment"
-            d="M120 85 A140 140 0 0 1 170 65"
-            fill="none"
-            stroke="url(#grad-1)"
-            stroke-linecap="round"
-            stroke-width="24"
-          />
-          <text class="enneagram-ring-label" pointer-events="none" text-anchor="middle" x="128" y="48">理智型</text>
-          <!-- S9: Resonance — 活跃型 -->
-          <path
-            class="ring-segment"
-            d="M180 60 A140 140 0 0 1 190 60"
-            fill="none"
-            stroke="#54e3fc"
-            stroke-linecap="round"
-            stroke-width="24"
-          />
-          <text class="enneagram-ring-label" pointer-events="none" text-anchor="middle" x="185" y="44">活跃型</text>
-
+          <g v-for="seg in ringSegments" :key="seg.letter">
+            <path
+              v-if="seg.sweepDeg > 0.05"
+              class="ring-segment"
+              :d="seg.pathD"
+              fill="none"
+              stroke-linecap="butt"
+              stroke-width="24"
+              :opacity="seg.opacity"
+              :stroke="seg.strokeValue"
+            />
+            <text
+              v-if="seg.sweepDeg > 0.05"
+              class="enneagram-ring-label"
+              pointer-events="none"
+              text-anchor="middle"
+              :fill="seg.labelFill"
+              :opacity="seg.opacity"
+              :x="seg.labelX"
+              :y="seg.labelY"
+            >
+              {{ seg.name }}
+              <tspan class="opacity-80" :x="seg.labelX" dy="1.15em" font-size="9">
+                {{ seg.score }}分 · {{ seg.percentLabel }}
+              </tspan>
+            </text>
+          </g>
           <text
-            fill="#aba9bb"
-            font-family="Plus Jakarta Sans"
+            class="fill-on-surface-variant"
+            font-family="Plus Jakarta Sans, sans-serif"
             font-size="12"
             font-weight="bold"
             text-anchor="middle"
@@ -162,27 +93,252 @@
 </template>
 
 <script setup lang="ts">
+import type { SelfmapReportHeaderModel } from "../../../types/selfmapReportType";
+
+/**
+ * @description 九型环图：总分 = 各字母 A–I 得分之和（如 36 题×每题 1 分）；整圈 360° 按得分比例切分，每段 `d` 为对应圆心角的圆弧。
+ */
 defineOptions({
-  name: "ExamplePage",
+  name: "InfoEnneagramPanel",
 });
 
-useHead({
-  title: "性格维度深度解析 - SelfMap",
-  htmlAttrs: {
-    lang: "en",
-    class: "dark",
+const props = withDefaults(
+  defineProps<{
+    model?: SelfmapReportHeaderModel;
+  }>(),
+  {
+    model: () => ({}),
   },
-  meta: [{ charset: "utf-8" }, { name: "viewport", content: "width=device-width, initial-scale=1.0" }],
-  link: [
-    {
-      rel: "stylesheet",
-      href: "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Manrope:wght@400;500;600&family=Inter:wght@400;500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap",
-    },
-    {
-      rel: "stylesheet",
-      href: "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap",
-    },
-  ],
+);
+
+const CX = 200;
+const CY = 200;
+const R = 140;
+/** 标签放在弧中点外侧（圆环外沿约 R+12≈152，略大则文字更靠外） */
+const LABEL_R = 186;
+
+/** 与 `usePersonSubmit`、参考稿 `typeMap` 一致；环上顺序为 A→B→…→I */
+const ENNEAGRAM_LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H", "I"] as const;
+type EnneagramLetter = (typeof ENNEAGRAM_LETTERS)[number];
+
+const ENNEAGRAM_LETTER_TO_TYPE_NO: Record<EnneagramLetter, number> = {
+  A: 9,
+  B: 6,
+  C: 3,
+  D: 1,
+  E: 4,
+  F: 2,
+  G: 8,
+  H: 5,
+  I: 7,
+};
+
+const TYPE_NO_LABEL: Record<number, string> = {
+  1: "完美型",
+  2: "助人型",
+  3: "成就型",
+  4: "自我型",
+  5: "理智型",
+  6: "忠诚型",
+  7: "活跃型",
+  8: "领袖型",
+  9: "和平型",
+};
+
+const STROKE_BY_LETTER: Record<EnneagramLetter, { strokeValue: string; opacity: number }> = {
+  A: { strokeValue: "url(#enneagram-grad-1)", opacity: 1 },
+  B: { strokeValue: "#ff86c3", opacity: 0.9 },
+  C: { strokeValue: "url(#enneagram-grad-2)", opacity: 1 },
+  D: { strokeValue: "#7858f6", opacity: 1 },
+  E: { strokeValue: "#50e1f9", opacity: 1 },
+  F: { strokeValue: "#b2a1ff", opacity: 1 },
+  G: { strokeValue: "#ff73b7", opacity: 0.8 },
+  H: { strokeValue: "url(#enneagram-grad-1)", opacity: 1 },
+  I: { strokeValue: "#54e3fc", opacity: 1 },
+};
+
+/**
+ * @description 数学角（度）：0° 为右侧，逆时针为正；12 点方向为 -90°。与 `Math.cos`/`Math.sin` 一致。
+ */
+function polarDeg(cx: number, cy: number, r: number, deg: number): { x: number; y: number } {
+  const rad = (deg * Math.PI) / 180;
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+}
+
+/**
+ * @description 从 `startDeg` 顺时针画到 `endDeg` 的圆弧（沿半径 `r` 的圆）。`endDeg > startDeg`。
+ */
+function arcPathClockwise(cx: number, cy: number, r: number, startDeg: number, endDeg: number): string {
+  const p0 = polarDeg(cx, cy, r, startDeg);
+  const p1 = polarDeg(cx, cy, r, endDeg);
+  const delta = endDeg - startDeg;
+  const largeArc = delta > 180 ? 1 : 0;
+  return `M ${round2(p0.x)} ${round2(p0.y)} A ${r} ${r} 0 ${largeArc} 1 ${round2(p1.x)} ${round2(p1.y)}`;
+}
+
+/**
+ * @description 整圆（360°）时单段 `A` 起终点重合无法渲染，用两段半圆拼接。
+ */
+function fullCircleDoubleArc(cx: number, cy: number, r: number): string {
+  const top = polarDeg(cx, cy, r, -90);
+  const bottom = polarDeg(cx, cy, r, 90);
+  const left = polarDeg(cx, cy, r, 270);
+  return `M ${round2(top.x)} ${round2(top.y)} A ${r} ${r} 0 0 1 ${round2(bottom.x)} ${round2(bottom.y)} A ${r} ${r} 0 0 1 ${round2(left.x)} ${round2(left.y)}`;
+}
+
+function round2(n: number): number {
+  return Math.round(n * 100) / 100;
+}
+
+/**
+ * @description 最大余数法：九项「百分点×10」的整数之和为 1000，展示为一位小数时合计严格为 100.0%。
+ */
+function allocatePercentTenths(
+  weights: Record<EnneagramLetter, number>,
+  weightTotal: number,
+): Record<EnneagramLetter, number> {
+  const letters: EnneagramLetter[] = [...ENNEAGRAM_LETTERS];
+  if (weightTotal <= 0) {
+    const out = {} as Record<EnneagramLetter, number>;
+    const base = Math.floor(1000 / letters.length);
+    const rem = 1000 - base * letters.length;
+    letters.forEach((L, i) => {
+      out[L] = base + (i < rem ? 1 : 0);
+    });
+    return out;
+  }
+
+  const rows = letters.map((L) => {
+    const exact = (weights[L] / weightTotal) * 1000;
+    const flo = Math.floor(exact + 1e-9);
+    const frac = exact - flo;
+    return { L, flo, frac };
+  });
+  const sumFlo = rows.reduce((s, r) => s + r.flo, 0);
+  const rem = 1000 - sumFlo;
+  rows.sort((a, b) => b.frac - a.frac);
+  const out = {} as Record<EnneagramLetter, number>;
+  for (const r of rows) {
+    out[r.L] = r.flo;
+  }
+  for (let k = 0; k < rem; k++) {
+    const L = rows[k]?.L;
+    if (L !== undefined) {
+      out[L] += 1;
+    }
+  }
+  return out;
+}
+
+function tenthsToPercentLabel(tenths: number): string {
+  return `${(tenths / 10).toFixed(1)}%`;
+}
+
+const isEnneagramLetterStats = (stats: SelfmapReportHeaderModel["stats"]): stats is Record<string, number> => {
+  if (!stats || typeof stats !== "object" || Array.isArray(stats)) {
+    return false;
+  }
+  const rec = stats as Record<string, unknown>;
+  return ENNEAGRAM_LETTERS.some((L) => typeof rec[L] === "number" || typeof rec[L.toLowerCase()] === "number");
+};
+
+const scoreForLetter = (stats: Record<string, unknown> | undefined, letter: EnneagramLetter): number => {
+  if (!stats) {
+    return 0;
+  }
+  const raw = stats[letter] ?? stats[letter.toLowerCase()];
+  const n = typeof raw === "number" ? raw : Number(raw);
+  return Number.isFinite(n) && n >= 0 ? n : 0;
+};
+
+const letterStatsComputed = computed(() => {
+  const raw = props.model?.stats;
+  const rec = isEnneagramLetterStats(raw) ? (raw as Record<string, unknown>) : ({} as Record<string, unknown>);
+  const scores: Record<EnneagramLetter, number> = {
+    A: 0,
+    B: 0,
+    C: 0,
+    D: 0,
+    E: 0,
+    F: 0,
+    G: 0,
+    H: 0,
+    I: 0,
+  };
+  let total = 0;
+  for (const L of ENNEAGRAM_LETTERS) {
+    const s = scoreForLetter(rec, L);
+    scores[L] = s;
+    total += s;
+  }
+  return { scores, total };
+});
+
+const ringSegments = computed(() => {
+  const { scores, total } = letterStatsComputed.value;
+  const equalWeights: Record<EnneagramLetter, number> = {
+    A: 1,
+    B: 1,
+    C: 1,
+    D: 1,
+    E: 1,
+    F: 1,
+    G: 1,
+    H: 1,
+    I: 1,
+  };
+  const percentTenths = allocatePercentTenths(total > 0 ? scores : equalWeights, total > 0 ? total : 9);
+  /** 从 12 点顺时针铺满分母：无数据时每段均分 360° */
+  let cursorDeg = -90;
+  const out: Array<{
+    letter: EnneagramLetter;
+    name: string;
+    score: number;
+    share: number;
+    percentLabel: string;
+    sweepDeg: number;
+    pathD: string;
+    labelX: number;
+    labelY: number;
+    strokeValue: string;
+    /** 与 `strokeValue` 同源，供标签 `fill` 与弧段同色 */
+    labelFill: string;
+    opacity: number;
+  }> = [];
+
+  for (const letter of ENNEAGRAM_LETTERS) {
+    const score = scores[letter];
+    const share = total > 0 ? score / total : 1 / ENNEAGRAM_LETTERS.length;
+    const sweepDeg = total > 0 ? (score / total) * 360 : 360 / ENNEAGRAM_LETTERS.length;
+    const endDeg = cursorDeg + sweepDeg;
+    const midDeg = cursorDeg + sweepDeg / 2;
+    let pathD = "";
+    if (sweepDeg >= 359.5) {
+      pathD = fullCircleDoubleArc(CX, CY, R);
+    } else if (sweepDeg > 0.05) {
+      pathD = arcPathClockwise(CX, CY, R, cursorDeg, endDeg);
+    }
+    const labelPt = polarDeg(CX, CY, LABEL_R, midDeg);
+    const no = ENNEAGRAM_LETTER_TO_TYPE_NO[letter];
+    const strokeMeta = STROKE_BY_LETTER[letter];
+    out.push({
+      letter,
+      name: TYPE_NO_LABEL[no] ?? letter,
+      score: total > 0 ? score : 0,
+      share,
+      percentLabel: tenthsToPercentLabel(percentTenths[letter]),
+      sweepDeg,
+      pathD,
+      labelX: round2(labelPt.x),
+      labelY: round2(labelPt.y),
+      strokeValue: strokeMeta.strokeValue,
+      labelFill: strokeMeta.strokeValue,
+      opacity: strokeMeta.opacity,
+    });
+    cursorDeg = endDeg;
+  }
+
+  return out;
 });
 </script>
 
@@ -193,34 +349,17 @@ useHead({
   border: 1px solid rgba(68, 72, 79, 0.15);
 }
 
-.material-symbols-outlined {
-  font-variation-settings:
-    "FILL" 0,
-    "wght" 400,
-    "GRAD" 0,
-    "opsz" 24;
-}
-
-.editorial-gradient-text {
-  background: linear-gradient(135deg, #7858f6 0%, #b2a1ff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
 .enneagram-ring-label {
-  fill: #aba9bb;
   font-family: "Plus Jakarta Sans", sans-serif;
   font-size: 10px;
   font-weight: 600;
 }
 
 .ring-segment {
-  transition: transform 0.3s ease;
+  transition: opacity 0.25s ease;
 }
 
 .ring-segment:hover {
-  transform: scale(1.02);
-  filter: brightness(1.2);
+  filter: brightness(1.15);
 }
 </style>

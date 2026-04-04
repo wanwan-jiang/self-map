@@ -5,56 +5,36 @@
     >
       <div class="flex justify-between items-center mb-6">
         <h3 class="font-headline text-xl font-bold">人格镜像</h3>
-        <span class="text-[10px] font-bold text-primary px-2 py-1 bg-primary/10 rounded">TOP 3 TYPE</span>
+        <span class="text-[10px] font-bold text-primary px-2 py-1 bg-primary/10 rounded">TOP 类型</span>
       </div>
-      <div class="space-y-4">
-        <!-- Type 5 -->
-        <div class="p-4 bg-surface-container-highest rounded-lg flex items-center justify-between">
-          <div class="flex items-center gap-4">
-            <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary font-bold">
-              5
-            </div>
-            <div>
-              <div class="text-sm font-bold">理智型</div>
-              <div class="text-[10px] text-on-surface-variant">核心驱动: 观察与分析</div>
-            </div>
-          </div>
-          <div class="text-primary font-headline font-bold">92%</div>
-        </div>
-        <!-- Type 7 -->
-        <div class="p-4 bg-surface-container-low/50 rounded-lg flex items-center justify-between opacity-80">
-          <div class="flex items-center gap-4">
-            <div class="w-10 h-10 rounded-full bg-tertiary flex items-center justify-center text-on-tertiary font-bold">
-              7
-            </div>
-            <div>
-              <div class="text-sm font-bold">活跃型</div>
-              <div class="text-[10px] text-on-surface-variant">核心驱动: 体验与可能性</div>
-            </div>
-          </div>
-          <div class="text-tertiary font-headline font-bold">78%</div>
-        </div>
-        <!-- Type 9 -->
-        <div class="p-4 bg-surface-container-low/50 rounded-lg flex items-center justify-between opacity-80">
-          <div class="flex items-center gap-4">
+      <div v-if="rankingCards.length > 0" class="space-y-4">
+        <div
+          v-for="(item, idx) in rankingCards"
+          :key="`${item.tags.no}-${item.tags.letter}-${idx}`"
+          class="p-4 rounded-lg flex items-center justify-between"
+          :class="rowToneClass(idx)"
+        >
+          <div class="flex items-center gap-4 min-w-0 flex-1">
             <div
-              class="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-on-secondary font-bold"
+              class="w-10 h-10 shrink-0 rounded-full flex items-center justify-center font-bold text-sm"
+              :class="badgeToneClass(idx)"
             >
-              9
+              {{ item.tags.no }}
             </div>
-            <div>
-              <div class="text-sm font-bold">和平型</div>
-              <div class="text-[10px] text-on-surface-variant">核心驱动: 内在和谐</div>
+            <div class="min-w-0">
+              <div class="text-sm font-bold truncate">{{ item.tags.domainName || `型${item.tags.no}` }}</div>
+              <div class="text-[10px] text-on-surface-variant line-clamp-2">{{ item.tags.desc || item.content }}</div>
             </div>
           </div>
-          <div class="text-secondary font-headline font-bold">65%</div>
+          <div class="shrink-0 ml-2 font-headline font-bold text-sm" :class="percentToneClass(idx)">
+            {{ item.tags.percentLabel }}
+          </div>
         </div>
       </div>
-      <div class="mt-8 pt-6 border-t border-outline-variant/15">
+      <p v-else class="text-sm text-on-surface-variant">暂无排名数据，请完成测评后刷新。</p>
+      <div v-if="footerText" class="mt-8 pt-6 border-t border-outline-variant/15">
         <p class="text-xs leading-relaxed text-on-surface-variant">
-          你的主要能量集中在
-          <span class="text-primary font-bold">思考中心</span>
-          。在面对复杂环境时，你倾向于先退后观察，收集信息，这种理智带来的掌控感是你安全感的来源。
+          {{ footerText }}
         </p>
       </div>
     </div>
@@ -62,52 +42,66 @@
 </template>
 
 <script setup lang="ts">
-useHead({
-  title: "测评报告 - SelfMap",
-  htmlAttrs: {
-    lang: "zh-CN",
-    class: "dark",
-  },
-  meta: [{ charset: "utf-8" }, { name: "viewport", content: "width=device-width, initial-scale=1.0" }],
-  bodyAttrs: {
-    class: "bg-background text-on-surface font-body selection:bg-primary/30",
-  },
-  link: [
-    {
-      rel: "stylesheet",
-      href: "https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap",
-    },
-    {
-      rel: "stylesheet",
-      href: "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap",
-    },
-    {
-      rel: "stylesheet",
-      href: "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap",
-    },
-  ],
+import type { SelfmapReportHeaderModel } from "../../../types/selfmapReportType";
+
+/**
+ * @description 展示 `enneagram-info` 返回的 `character`：前三名及第三名同分并列项。
+ */
+defineOptions({
+  name: "InfoEnneagramRanking",
 });
+
+const props = defineProps<{
+  model?: SelfmapReportHeaderModel;
+}>();
+
+interface RankingCard {
+  content: string;
+  tags: Record<string, string>;
+}
+
+const rankingCards = computed((): RankingCard[] => {
+  const ch = props.model?.character;
+  if (!Array.isArray(ch)) {
+    return [];
+  }
+  return ch.filter((c): c is RankingCard => {
+    return typeof c === "object" && c !== null && "tags" in c && typeof (c as RankingCard).tags === "object";
+  }) as RankingCard[];
+});
+
+const footerText = computed(() => {
+  const d = props.model?.desc?.trim();
+  return d && d.length > 0 ? d : "";
+});
+
+const rowToneClass = (idx: number): string => {
+  if (idx === 0) {
+    return "bg-surface-container-highest";
+  }
+  return "bg-surface-container-low/50 opacity-90";
+};
+
+const badgeToneClass = (idx: number): string => {
+  const tones = [
+    "bg-primary text-on-primary",
+    "bg-tertiary text-on-tertiary",
+    "bg-secondary text-on-secondary",
+  ];
+  return tones[idx % tones.length] ?? "bg-outline text-on-surface";
+};
+
+const percentToneClass = (idx: number): string => {
+  const tones = ["text-primary", "text-tertiary", "text-secondary"];
+  return tones[idx % tones.length] ?? "text-on-surface-variant";
+};
 </script>
 
 <style scoped>
-.material-symbols-outlined {
-  font-variation-settings:
-    "FILL" 0,
-    "wght" 400,
-    "GRAD" 0,
-    "opsz" 24;
-}
-
-.editorial-gradient-text {
-  background: linear-gradient(135deg, #7858f6 0%, #b2a1ff 100%);
-}
-
-.ring-segment {
-  transition: transform 0.3s ease;
-}
-
-.ring-segment:hover {
-  transform: scale(1.02);
-  filter: brightness(1.2);
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>

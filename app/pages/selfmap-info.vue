@@ -40,7 +40,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6" v-if="isEnneagram">
         <InfoEnneagramPanel :model="submitResult" />
-        <InfoEnneagramRanking :cards="submitResult.character" />
+        <InfoEnneagramRanking :model="submitResult" />
       </div>
     </main>
 
@@ -59,13 +59,14 @@ import {
   fetchUserMbtiInfo,
   fetchUserBigFiveInfo,
   fetchUserRiasecInfo,
+  fetchUserEnneagramInfo,
 } from "../api/user/personResults";
 import { selfmapReportSample } from "../data/selfmapReportSample";
 import type { SelfmapReportHeaderModel, SelfmapSkillModel } from "../types/selfmapReportType";
 import type { UserMbtiResultItem } from "../types/userMbtiResultType";
 import type { BigFiveStatItem, UserBigFiveResultItem } from "../types/userBigFiveResultType";
 import type { UserRiasecResultItem, UserRiasecStats } from "../types/userRiasecResultType";
-import type { UserEnneagramResultItem } from "../types/userEnneagramResultType";
+import type { UserEnneagramResultItem, UserEnneagramStats } from "../types/userEnneagramResultType";
 import { clearAuthToken, getAuthToken } from "../utils/authToken";
 import { useChatAI } from "../composables/chat/chat_ai";
 import {
@@ -346,8 +347,7 @@ onMounted(async () => {
             .map((s) => ({
               domain: String(s.domain).toUpperCase(),
               level: s.level,
-              average:
-                typeof s.average === "number" && !Number.isNaN(s.average) ? s.average : Number(s.average) || 0,
+              average: typeof s.average === "number" && !Number.isNaN(s.average) ? s.average : Number(s.average) || 0,
               levelText: s.levelText.trim(),
             }));
           if (descriptions.length > 0) {
@@ -370,8 +370,7 @@ onMounted(async () => {
             const s = item as RiasecDomainLevelRow;
             byDomain.set(String(s.domain).toUpperCase(), {
               domain: String(s.domain),
-              average:
-                typeof s.average === "number" && !Number.isNaN(s.average) ? s.average : Number(s.average) || 0,
+              average: typeof s.average === "number" && !Number.isNaN(s.average) ? s.average : Number(s.average) || 0,
               level: s.level,
               levelText: typeof s.levelText === "string" ? s.levelText : "",
             });
@@ -419,30 +418,23 @@ onMounted(async () => {
           console.error("获取霍兰德报告失败", error);
         }
       } else if (type === ENNEAGRAM_TYPE_KEY) {
-        let type = window.localStorage.getItem(MBTI_TYPE_KEY);
-        let stats = JSON.parse(window.localStorage.getItem(MBTI_STATS_KEY) ?? "{}");
+        let hollandType = window.localStorage.getItem(ENNEAGRAM_TYPE_KEY) ?? "";
+        let stats: UserEnneagramStats = JSON.parse(window.localStorage.getItem(ENNEAGRAM_STATS_KEY) ?? "{}");
         const res = await fetchUserLatestEnneagramResults();
         savedHistory.value = res.data ?? [];
         if (savedHistory.value.length > 0) {
           const latestType = savedHistory.value[0]?.type?.toUpperCase() ?? "";
           const latestStats = savedHistory.value[0]?.stats ?? {};
-          type = latestType;
-          stats = latestStats;
-          window.localStorage.setItem(MBTI_TYPE_KEY, latestType);
-          window.localStorage.setItem(MBTI_STATS_KEY, JSON.stringify(latestStats));
-          window.dispatchEvent(new Event(MBTI_SUBMIT_EVENT));
+          hollandType = latestType;
+          stats = latestStats as UserEnneagramStats;
+          window.localStorage.setItem(ENNEAGRAM_TYPE_KEY, latestType);
+          window.localStorage.setItem(ENNEAGRAM_STATS_KEY, JSON.stringify(latestStats));
+          window.dispatchEvent(new Event(ENNEAGRAM_SUBMIT_EVENT));
         }
         try {
-          submitResult.value = await $fetch<SelfmapReportHeaderModel>("/api/person-info/mbti-info", {
-            method: "POST",
-            body: {
-              type,
-              stats: stats,
-            },
-          });
-          console.log("submitResult", submitResult.value);
-          message.value = `你好，分析下我的MBTI:${type}的报告，并给出职业规划建议。最后不要出现任何其他内容，只返回职业规划建议。`;
-          messageTitle.value = `请给出三点${type}的核心赋能技能。严格按三行输出，每行格式：标题|描述。标题6个字以内，描述16个字以内，不要输出其他内容。`;
+          submitResult.value = await fetchUserEnneagramInfo(stats, hollandType);
+          message.value = `你好，我的九型人格测评主型为 ${submitResult.value.type ?? hollandType}，请结合报告给出成长建议(150字以内)。最后不要出现任何其他内容，只返回建议。`;
+          messageTitle.value = `请根据我的九型人格测评给出三点核心赋能技能。严格按三行输出，每行格式：标题|描述。标题6个字以内，描述16个字以内，不要输出其他内容。`;
 
           resultQwenMbti.value = "";
           await askQwenStream(message.value, (_delta, fullText) => {
@@ -458,8 +450,8 @@ onMounted(async () => {
             aiSkills.value = report.skills ?? [];
           }
         } catch (error) {
-          submitError.value = "获取 MBTI 报告失败，请稍后重试。";
-          console.error("获取 MBTI 报告失败", error);
+          submitError.value = "获取九型人格报告失败，请稍后重试。";
+          console.error("获取九型人格报告失败", error);
         }
       } else {
         savedHistory.value = [];
