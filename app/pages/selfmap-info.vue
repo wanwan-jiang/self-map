@@ -8,11 +8,22 @@
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6" v-if="isMbti">
         <InfoDimensionMbtiPanel :model="submitResult" />
         <InfoInsightsSection :cards="submitResult.character" />
+        <InfoCareerNavigation
+          :image-url="report.careerImageUrl ?? ''"
+          :image-alt="report.careerImageAlt ?? ''"
+          :skills="aiSkills"
+          :result-qwen-mbti="resultQwenMbti"
+        />
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12" v-if="isBigFive">
         <InfoDimensionBigFivePanel :model="submitResult" />
-        <InfoPercentageBigFiveSection :cards="submitResult.character" />
+        <InfoPercentageBigFiveSection
+          :model="submitResult"
+          :ai-identity-headline="bigFiveAiIdentityHeadline"
+          :ai-career-text="resultQwenMbti"
+          :ai-skills="aiSkills"
+        />
         <InfoEachBigFiveScore :model="submitResult" />
       </div>
 
@@ -26,13 +37,6 @@
         <InfoEnneagramPanel :model="submitResult" />
         <InfoEnneagramRanking :cards="submitResult.character" />
       </div>
-
-      <InfoCareerNavigation
-        :image-url="report.careerImageUrl ?? ''"
-        :image-alt="report.careerImageAlt ?? ''"
-        :skills="aiSkills"
-        :result-qwen-mbti="resultQwenMbti"
-      />
     </main>
 
     <AuthFooterLinks />
@@ -47,11 +51,13 @@ import {
   fetchUserLatestBigFiveResults,
   fetchUserLatestRiasecResults,
   fetchUserLatestEnneagramResults,
+  fetchUserMbtiInfo,
+  fetchUserBigFiveInfo,
 } from "../api/user/personResults";
 import { selfmapReportSample } from "../data/selfmapReportSample";
 import type { SelfmapReportHeaderModel, SelfmapSkillModel } from "../types/selfmapReportType";
 import type { UserMbtiResultItem } from "../types/userMbtiResultType";
-import type { UserBigFiveResultItem } from "../types/userBigFiveResultType";
+import type { BigFiveStatItem, UserBigFiveResultItem } from "../types/userBigFiveResultType";
 import type { UserRiasecResultItem } from "../types/userRiasecResultType";
 import type { UserEnneagramResultItem } from "../types/userEnneagramResultType";
 import { clearAuthToken, getAuthToken } from "../utils/authToken";
@@ -86,9 +92,12 @@ const savedHistory = ref<
   (UserMbtiResultItem | UserBigFiveResultItem | UserRiasecResultItem | UserEnneagramResultItem)[]
 >([]);
 const resultQwenMbti = ref<string>("");
+/** 大五：`messageHead` 流式结果，作侧栏标题（个性化人物身份，约 6 字内） */
+const bigFiveAiIdentityHeadline = ref<string>("");
 const aiSkills = ref<SelfmapSkillModel[]>([]);
 let message = ref<string>("");
 let messageTitle = ref<string>("");
+let messageHead = ref<string>("");
 
 const { askQwenStream } = useChatAI();
 const parseSkillsFromStreamText = (fullText: string): SelfmapSkillModel[] => {
@@ -136,44 +145,241 @@ const parseSkillsFromStreamText = (fullText: string): SelfmapSkillModel[] => {
 };
 
 onMounted(async () => {
-  let mbtiType = window.localStorage.getItem(MBTI_TYPE_KEY);
-  let mbtiStats = window.localStorage.getItem(MBTI_STATS_KEY);
-  let bigFiveType = window.localStorage.getItem(BIG_FIVE_TYPE_KEY);
-  let bigFiveStats = window.localStorage.getItem(BIG_FIVE_STATS_KEY);
-  let riasecType = window.localStorage.getItem(RIASEC_TYPE_KEY);
-  let riasecStats = window.localStorage.getItem(RIASEC_STATS_KEY);
-  let enneagramType = window.localStorage.getItem(ENNEAGRAM_TYPE_KEY);
-  let enneagramStats = window.localStorage.getItem(ENNEAGRAM_STATS_KEY);
-
   //todo others
   if (getAuthToken()) {
     try {
       if (type === MBTI_TYPE_KEY) {
+        let type = window.localStorage.getItem(MBTI_TYPE_KEY) ?? "";
+        let stats = JSON.parse(window.localStorage.getItem(MBTI_STATS_KEY) ?? "{}");
         const res = await fetchUserLatestMbtiResults();
         savedHistory.value = res.data ?? [];
+        if (savedHistory.value.length > 0) {
+          const latestType = savedHistory.value[0]?.type?.toUpperCase() ?? "";
+          const latestStats = savedHistory.value[0]?.stats ?? {};
+          type = latestType;
+          stats = latestStats;
+          window.localStorage.setItem(MBTI_TYPE_KEY, latestType);
+          window.localStorage.setItem(MBTI_STATS_KEY, JSON.stringify(latestStats));
+          window.dispatchEvent(new Event(MBTI_SUBMIT_EVENT));
+        }
+        try {
+          submitResult.value = await fetchUserMbtiInfo(type, stats);
+          console.log("submitResult111", submitResult.value);
+          message.value = `你好，分析下我的MBTI:${type}的报告，并给出职业规划建议。最后不要出现任何其他内容，只返回职业规划建议。`;
+          messageTitle.value = `请给出三点${type}的核心赋能技能。严格按三行输出，每行格式：标题|描述。标题6个字以内，描述16个字以内，不要输出其他内容。`;
+
+          resultQwenMbti.value = "";
+          await askQwenStream(message.value, (_delta, fullText) => {
+            resultQwenMbti.value = fullText;
+          });
+
+          aiSkills.value = [];
+          await askQwenStream(messageTitle.value, (_delta, fullText) => {
+            aiSkills.value = parseSkillsFromStreamText(fullText);
+          });
+
+          if (aiSkills.value.length === 0) {
+            aiSkills.value = report.skills ?? [];
+          }
+        } catch (error) {
+          submitError.value = "获取 MBTI 报告失败，请稍后重试。";
+          console.error("获取 MBTI 报告失败", error);
+        }
       } else if (type === BIG_FIVE_TYPE_KEY) {
+        let stats = JSON.parse(window.localStorage.getItem(BIG_FIVE_STATS_KEY) ?? "{}");
         const res = await fetchUserLatestBigFiveResults();
         savedHistory.value = res.data ?? [];
+        if (savedHistory.value.length > 0) {
+          const latestStats = savedHistory.value[0]?.stats ?? {};
+          stats = latestStats;
+          window.localStorage.setItem(BIG_FIVE_STATS_KEY, JSON.stringify(latestStats));
+          window.dispatchEvent(new Event(BIG_FIVE_SUBMIT_EVENT));
+        }
+        submitResult.value = await fetchUserBigFiveInfo(stats as BigFiveStatItem[]);
+        const BIG_FIVE_DOMAIN_ROWS = [
+          { id: "O", title: "经验开放性" },
+          { id: "C", title: "尽责性" },
+          { id: "E", title: "外向性" },
+          { id: "A", title: "亲和性" },
+          { id: "N", title: "神经质" },
+        ] as const;
+
+        /** `bigfive-info` 返回的 stats 项含库表解析字段 `levelText` */
+        type BigFiveStatWithLevelText = BigFiveStatItem;
+
+        /**
+         * @description 将带 `levelText` 的 stats 同步到 `domainLevelDescriptions`，供子组件展示。
+         */
+        const syncBigFiveDomainLevelDescriptions = (model: SelfmapReportHeaderModel): void => {
+          const raw = model.stats;
+          if (!Array.isArray(raw)) {
+            return;
+          }
+          const descriptions = raw
+            .filter((s): s is BigFiveStatWithLevelText & { levelText: string } => {
+              if (typeof s !== "object" || s === null) {
+                return false;
+              }
+              const lt = (s as BigFiveStatWithLevelText).levelText;
+              return typeof lt === "string" && lt.trim().length > 0;
+            })
+            .map((s) => ({
+              domain: String(s.domain).toUpperCase(),
+              level: s.level,
+              average: typeof s.average === "number" && !Number.isNaN(s.average) ? s.average : Number(s.average) || 0,
+              levelText: s.levelText.trim(),
+            }));
+          if (descriptions.length > 0) {
+            model.domainLevelDescriptions = descriptions;
+          }
+        };
+
+        /**
+         * @description 按 OCEAN 顺序拼接 AI 上下文：`中文名（字母）：得分 x（满分100），性格：levelText`
+         */
+        const buildBigFiveAiContextLines = (statList: unknown): string => {
+          if (!Array.isArray(statList)) {
+            return "";
+          }
+          const byDomain = new Map<string, BigFiveStatWithLevelText>();
+          for (const item of statList) {
+            if (typeof item !== "object" || item === null || !("domain" in item)) {
+              continue;
+            }
+            const s = item as BigFiveStatWithLevelText;
+            byDomain.set(String(s.domain).toUpperCase(), {
+              domain: String(s.domain),
+              average: typeof s.average === "number" && !Number.isNaN(s.average) ? s.average : Number(s.average) || 0,
+              level: s.level,
+              levelText: typeof s.levelText === "string" ? s.levelText : "",
+            });
+          }
+          return BIG_FIVE_DOMAIN_ROWS.map(({ id, title }) => {
+            const row = byDomain.get(id);
+            if (!row) {
+              return `${title}（${id}）：暂无测评数据`;
+            }
+            const score = Math.round(Math.max(0, Math.min(100, (row.average / 5) * 100)));
+            const trait = row.levelText?.trim() || "（暂无性格说明）";
+            return `${title}（${id}）：得分 ${score}（满分100），性格：${trait}`;
+          }).join("\n");
+        };
+
+        syncBigFiveDomainLevelDescriptions(submitResult.value);
+        const bigFiveAiContextLines = buildBigFiveAiContextLines(submitResult.value.stats);
+        messageHead.value = `你好，我的大五人格维度如下：\n${bigFiveAiContextLines}\n请据此给出个性化人物身份(6字以内)。最后不要出现任何其他内容，只返回个性化人物身份。`;
+        message.value = `你好，我的大五人格维度如下：\n${bigFiveAiContextLines}\n请据此给出个性成长建议(150字以内)。最后不要出现任何其他内容，只返回个性成长建议。`;
+        messageTitle.value = `你好，我的大五人格维度如下：\n${bigFiveAiContextLines}\n严格按三行输出，每行格式：标题|描述。标题6个字以内，描述16个字以内，不要输出其他内容。`;
+
+        bigFiveAiIdentityHeadline.value = "";
+        await askQwenStream(messageHead.value, (_delta, fullText) => {
+          bigFiveAiIdentityHeadline.value = fullText;
+        });
+
+        resultQwenMbti.value = "";
+        await askQwenStream(message.value, (_delta, fullText) => {
+          resultQwenMbti.value = fullText;
+        });
+
+        aiSkills.value = [];
+        await askQwenStream(messageTitle.value, (_delta, fullText) => {
+          aiSkills.value = parseSkillsFromStreamText(fullText);
+        });
+
+        if (aiSkills.value.length === 0) {
+          aiSkills.value = report.skills ?? [];
+        }
       } else if (type === RIASEC_TYPE_KEY) {
+        let type = window.localStorage.getItem(MBTI_TYPE_KEY);
+        let stats = JSON.parse(window.localStorage.getItem(MBTI_STATS_KEY) ?? "{}");
         const res = await fetchUserLatestRiasecResults();
         savedHistory.value = res.data ?? [];
+        if (savedHistory.value.length > 0) {
+          const latestType = savedHistory.value[0]?.type?.toUpperCase() ?? "";
+          const latestStats = savedHistory.value[0]?.stats ?? {};
+          type = latestType;
+          stats = latestStats;
+          window.localStorage.setItem(MBTI_TYPE_KEY, latestType);
+          window.localStorage.setItem(MBTI_STATS_KEY, JSON.stringify(latestStats));
+          window.dispatchEvent(new Event(MBTI_SUBMIT_EVENT));
+        }
+        try {
+          submitResult.value = await $fetch<SelfmapReportHeaderModel>("/api/person-info/mbti-info", {
+            method: "POST",
+            body: {
+              type,
+              stats: stats,
+            },
+          });
+          console.log("submitResult", submitResult.value);
+          message.value = `你好，分析下我的MBTI:${type}的报告，并给出职业规划建议。最后不要出现任何其他内容，只返回职业规划建议。`;
+          messageTitle.value = `请给出三点${type}的核心赋能技能。严格按三行输出，每行格式：标题|描述。标题6个字以内，描述16个字以内，不要输出其他内容。`;
+
+          resultQwenMbti.value = "";
+          await askQwenStream(message.value, (_delta, fullText) => {
+            resultQwenMbti.value = fullText;
+          });
+
+          aiSkills.value = [];
+          await askQwenStream(messageTitle.value, (_delta, fullText) => {
+            aiSkills.value = parseSkillsFromStreamText(fullText);
+          });
+
+          if (aiSkills.value.length === 0) {
+            aiSkills.value = report.skills ?? [];
+          }
+        } catch (error) {
+          submitError.value = "获取 MBTI 报告失败，请稍后重试。";
+          console.error("获取 MBTI 报告失败", error);
+        }
       } else if (type === ENNEAGRAM_TYPE_KEY) {
+        let type = window.localStorage.getItem(MBTI_TYPE_KEY);
+        let stats = JSON.parse(window.localStorage.getItem(MBTI_STATS_KEY) ?? "{}");
         const res = await fetchUserLatestEnneagramResults();
         savedHistory.value = res.data ?? [];
+        if (savedHistory.value.length > 0) {
+          const latestType = savedHistory.value[0]?.type?.toUpperCase() ?? "";
+          const latestStats = savedHistory.value[0]?.stats ?? {};
+          type = latestType;
+          stats = latestStats;
+          window.localStorage.setItem(MBTI_TYPE_KEY, latestType);
+          window.localStorage.setItem(MBTI_STATS_KEY, JSON.stringify(latestStats));
+          window.dispatchEvent(new Event(MBTI_SUBMIT_EVENT));
+        }
+        try {
+          submitResult.value = await $fetch<SelfmapReportHeaderModel>("/api/person-info/mbti-info", {
+            method: "POST",
+            body: {
+              type,
+              stats: stats,
+            },
+          });
+          console.log("submitResult", submitResult.value);
+          message.value = `你好，分析下我的MBTI:${type}的报告，并给出职业规划建议。最后不要出现任何其他内容，只返回职业规划建议。`;
+          messageTitle.value = `请给出三点${type}的核心赋能技能。严格按三行输出，每行格式：标题|描述。标题6个字以内，描述16个字以内，不要输出其他内容。`;
+
+          resultQwenMbti.value = "";
+          await askQwenStream(message.value, (_delta, fullText) => {
+            resultQwenMbti.value = fullText;
+          });
+
+          aiSkills.value = [];
+          await askQwenStream(messageTitle.value, (_delta, fullText) => {
+            aiSkills.value = parseSkillsFromStreamText(fullText);
+          });
+
+          if (aiSkills.value.length === 0) {
+            aiSkills.value = report.skills ?? [];
+          }
+        } catch (error) {
+          submitError.value = "获取 MBTI 报告失败，请稍后重试。";
+          console.error("获取 MBTI 报告失败", error);
+        }
       } else {
         savedHistory.value = [];
       }
-
-      if (!mbtiType && savedHistory.value.length > 0) {
-        const latestMbti = savedHistory.value[0]?.type?.toUpperCase() ?? "";
-        const latestStats = savedHistory.value[0]?.stats ?? {};
-        window.localStorage.setItem(MBTI_TYPE_KEY, latestMbti);
-        window.localStorage.setItem(MBTI_STATS_KEY, JSON.stringify(latestStats));
-        window.dispatchEvent(new Event(MBTI_SUBMIT_EVENT));
-        mbtiType = window.localStorage.getItem(MBTI_TYPE_KEY);
-        mbtiStats = window.localStorage.getItem(MBTI_STATS_KEY);
-      }
     } catch (error: unknown) {
+      console.error("获取测试结果失败", error);
       const statusCode =
         typeof error === "object" &&
         error !== null &&
@@ -194,35 +400,6 @@ onMounted(async () => {
   //   await navigateTo("/mbti");
   //   return;
   // }
-
-  try {
-    submitResult.value = await $fetch<SelfmapReportHeaderModel>("/api/person-info/mbti-info", {
-      method: "POST",
-      body: {
-        mbtiType,
-        stats: mbtiStats,
-      },
-    });
-    message.value = `你好，分析下我的MBTI:${mbtiType}的报告，并给出职业规划建议。最后不要出现任何其他内容，只返回职业规划建议。`;
-    messageTitle.value = `请给出三点${mbtiType}的核心赋能技能。严格按三行输出，每行格式：标题|描述。标题6个字以内，描述16个字以内，不要输出其他内容。`;
-
-    resultQwenMbti.value = "";
-    await askQwenStream(message.value, (_delta, fullText) => {
-      resultQwenMbti.value = fullText;
-    });
-
-    aiSkills.value = [];
-    await askQwenStream(messageTitle.value, (_delta, fullText) => {
-      aiSkills.value = parseSkillsFromStreamText(fullText);
-    });
-
-    if (aiSkills.value.length === 0) {
-      aiSkills.value = report.skills ?? [];
-    }
-  } catch (error) {
-    submitError.value = "获取 MBTI 报告失败，请稍后重试。";
-    console.error("获取 MBTI 报告失败", error);
-  }
 });
 
 const onRetryTest = async (): Promise<void> => {

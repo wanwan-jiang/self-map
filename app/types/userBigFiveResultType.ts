@@ -18,6 +18,8 @@ interface BigFiveStatItem {
   domain: string;
   average: number;
   level: "h" | "n" | "l";
+  /** 报告/库表解析后写入；历史落库条目可能暂无 */
+  levelText?: string;
 }
 
 interface UserBigFiveResultItem {

@@ -1,11 +1,23 @@
+import type { BigFiveStatItem } from "./userBigFiveResultType";
+
 type SelfmapInsightTone = "primary" | "secondary" | "tertiary";
+
+/** 大五：库表 `BigFiveInfo.levels[level]` 解析结果 */
+interface SelfmapBigFiveDomainLevelDescription {
+  domain: string;
+  level: "h" | "n" | "l";
+  average: number;
+  levelText: string;
+}
 
 interface SelfmapReportHeaderModel {
   desc?: string;
-  stats?: Record<string, number>;
+  stats?: Record<string, number> | BigFiveStatItem[];
   title?: string;
   type?: string;
   character?: SelfmapInsightCardModel[] | Record<string, SelfmapInsightCardModel>;
+  /** 大五报告：各 domain 按测评 level 在库中解析的说明 */
+  domainLevelDescriptions?: SelfmapBigFiveDomainLevelDescription[];
 }
 
 interface SelfmapDimensionLegendItem {
@@ -16,7 +28,7 @@ interface SelfmapDimensionLegendItem {
 
 interface SelfmapDimensionAxisLabel {
   desc?: string;
-  stats?: Record<string, number>;
+  stats?: Record<string, number> | BigFiveStatItem[];
   title?: string;
   type?: string;
 }
@@ -59,6 +71,7 @@ interface SelfmapReportContent {
 
 export type {
   SelfmapInsightTone,
+  SelfmapBigFiveDomainLevelDescription,
   SelfmapReportHeaderModel,
   SelfmapDimensionLegendItem,
   SelfmapDimensionAxisLabel,

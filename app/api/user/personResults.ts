@@ -18,6 +18,7 @@ import type {
   UserEnneagramResultsListResponse,
   UserEnneagramStats,
 } from "../../types/userEnneagramResultType";
+import type { SelfmapReportHeaderModel } from "../../types/selfmapReportType";
 
 /**
  * @description 提交一条 MBTI 结果到服务端
@@ -35,6 +36,16 @@ export async function saveUserMbtiResult(type: string, stats: UserMbtiStats): Pr
 export async function fetchUserLatestMbtiResults(): Promise<UserMbtiResultsListResponse> {
   return await $fetch<UserMbtiResultsListResponse>("/api/person-result/latest-mbti-results", {
     method: "GET",
+  });
+}
+
+export async function fetchUserMbtiInfo(type: string, stats: UserMbtiStats): Promise<SelfmapReportHeaderModel> {
+  return await $fetch<SelfmapReportHeaderModel>("/api/person-info/mbti-info", {
+    method: "POST",
+    body: {
+      type,
+      stats: stats,
+    },
   });
 }
 
@@ -57,6 +68,13 @@ export async function saveUserBigFiveResult(
 export async function fetchUserLatestBigFiveResults(): Promise<UserBigFiveResultsListResponse> {
   return await $fetch<UserBigFiveResultsListResponse>("/api/person-result/latest-big-five-results", {
     method: "GET",
+  });
+}
+
+export async function fetchUserBigFiveInfo(stats: BigFiveStatItem[]): Promise<SelfmapReportHeaderModel> {
+  return await $fetch<SelfmapReportHeaderModel>("/api/person-info/bigfive-info", {
+    method: "POST",
+    body: { stats },
   });
 }
 
