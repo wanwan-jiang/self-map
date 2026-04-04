@@ -52,6 +52,7 @@
 <script setup lang="ts">
 import type { SelfmapReportHeaderModel } from "../../../types/selfmapReportType";
 import type { AxisLabelItem, LegendRowItem } from "~/types/questionType";
+import type { BigFiveStatItem } from "~/types/userBigFiveResultType";
 
 const props = defineProps<{
   model: SelfmapReportHeaderModel;
@@ -75,17 +76,41 @@ const TONE_CLASSES = [
 ] as const;
 
 /**
- * 将 `model.stats` 中各域分值转为 0–100（用于雷达半径）。
- * 支持：已是 0–100；或 1–5 量表（典型大五平均分）。
+ * @description 将某域分值转为 0–100（雷达半径与标签百分比）。
+ * - `stats` 为 `BigFiveStatItem[]` 时：匹配 `domain === key`（忽略大小写），比例 `average/5`，再 ×100。
+ * - `stats` 为 `Record` 时：数值在 0–5 内按 `/5×100`；在 (5,100] 内视为已是百分数。
  */
-const domainScorePercent = (stats: Record<string, number>, key: string): number => {
-  const raw = stats[key];
+const domainScorePercent = (stats: SelfmapReportHeaderModel["stats"], key: string): number => {
+  if (!stats) {
+    return 0;
+  }
+  const keyUpper = key.toUpperCase();
+
+  if (Array.isArray(stats)) {
+    const row = stats.find((s): s is BigFiveStatItem => {
+      if (typeof s !== "object" || s === null || !("domain" in s)) {
+        return false;
+      }
+      return String(s.domain).toUpperCase() === keyUpper;
+    });
+    if (!row || typeof row.average !== "number" || Number.isNaN(row.average)) {
+      return 0;
+    }
+    const ratio = Math.max(0, Math.min(1, row.average / 5));
+    return ratio * 100;
+  }
+
+  const record = stats;
+  const raw = record[key] ?? record[keyUpper] ?? record[key.toLowerCase()];
   if (raw === undefined || raw === null || Number.isNaN(Number(raw))) {
     return 0;
   }
   const v = Number(raw);
   if (v >= 0 && v <= 5) {
-    return Math.max(0, Math.min(100, ((v - 1) / 4) * 100));
+    return Math.max(0, Math.min(100, (v / 5) * 100));
+  }
+  if (v > 5 && v <= 100) {
+    return Math.max(0, Math.min(100, v));
   }
   return Math.max(0, Math.min(100, v));
 };
@@ -125,7 +150,8 @@ const axisLabelOuterStyles = computed(() => {
 });
 
 const axisLabelsForChart = computed<AxisLabelItem[]>(() => {
-  const stats = props.model.stats ?? {};
+  console.log("props.model", props.model);
+  const stats = props.model.stats;
   return BIG_FIVE_DOMAINS.map((d, i) => {
     const pct = Math.round(domainScorePercent(stats, d.id));
     return {
@@ -137,7 +163,7 @@ const axisLabelsForChart = computed<AxisLabelItem[]>(() => {
 });
 
 const dimensionPolygonPoints = computed(() => {
-  const stats = props.model.stats ?? {};
+  const stats = props.model.stats;
   const n = 5;
   const radiusFromPercent = (percent: number): number => 10 + (Math.max(0, Math.min(100, percent)) / 100) * 30;
 
@@ -157,7 +183,7 @@ const dimensionPolygonPoints = computed(() => {
 });
 
 const legendRows = computed<LegendRowItem[]>(() => {
-  const stats = props.model.stats ?? {};
+  const stats = props.model.stats;
   const tones: LegendRowItem["dotTone"][] = ["primary", "secondary", "tertiary", "primary", "secondary"];
   return BIG_FIVE_DOMAINS.map((d, i) => {
     const pct = Math.round(domainScorePercent(stats, d.id));
