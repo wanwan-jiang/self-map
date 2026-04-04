@@ -145,11 +145,11 @@ const onReportTabBlockedClick = (): void => {
         <AuthUserMenu v-else />
       </div>
 
-      <div v-else class="flex items-center gap-4">
+      <!-- <div v-else class="flex items-center gap-4">
         <a class="text-sm font-medium text-slate-400 transition-colors duration-300 hover:text-slate-100" href="#">
           帮助中心
         </a>
-      </div>
+      </div> -->
     </div>
 
     <PopUp v-if="viewReportError" :info-report="true" @close="viewReportError = false" />
