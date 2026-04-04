@@ -1,14 +1,14 @@
 import { defineMongooseModel } from "#nuxt/mongoose";
 import { object } from "zod";
 
-interface MbtiResult {
+interface MbtiInfo {
   type: string;
   title: string;
   desc: string;
   character: object;
 }
 
-export const MbtiResult = defineMongooseModel<MbtiResult>("mbtiresults", {
+export const MbtiInfo = defineMongooseModel<MbtiInfo>("mbtiinfos", {
   type: { type: String, required: true, unique: true },
   title: { type: String, required: true },
   desc: { type: String, required: true },

@@ -1,4 +1,4 @@
-import { MbtiResult } from "../../db/mbti-result";
+import { MbtiInfo } from "../../db/mbti-infos";
 
 interface MbtiStats {
   EI?: number;
@@ -16,26 +16,33 @@ interface MbtiStats {
 }
 
 interface SubmitBody {
-  mbtiType?: string;
+  type?: string;
   stats?: MbtiStats;
 }
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<SubmitBody>(event);
-  const mbtiType = body?.mbtiType?.trim().toUpperCase();
+  const type = body?.type?.trim().toUpperCase();
+  const stats = body?.stats ?? {};
 
-  if (!mbtiType) {
+  if (!type) {
     throw createError({
       statusCode: 400,
-      statusMessage: "mbtiType is required",
+      statusMessage: "type必须",
+    });
+  }
+  if (!stats) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "stats必须",
     });
   }
 
-  const result = await MbtiResult.findOne({ type: mbtiType }).lean();
+  const result = await MbtiInfo.findOne({ type }).lean();
   if (!result) {
     throw createError({
       statusCode: 404,
-      statusMessage: `No result found for mbtiType: ${mbtiType}`,
+      statusMessage: `未发现类型: ${type}`,
     });
   }
 
