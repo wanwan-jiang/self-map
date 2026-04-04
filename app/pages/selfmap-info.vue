@@ -22,10 +22,10 @@
         <InfoEachRiasecScore :model="submitResult" />
       </div>
 
-      <!-- <div class="grid grid-cols-1 md:grid-cols-12 gap-6" v-if="isEnneagram">
-        <InfoDimensionEnneagramPanel :model="submitResult" />
-        <InfoInsightsSection :cards="submitResult.character" />
-      </div>  -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6" v-if="isEnneagram">
+        <InfoEnneagramPanel :model="submitResult" />
+        <InfoEnneagramRanking :cards="submitResult.character" />
+      </div>
 
       <InfoCareerNavigation
         :image-url="report.careerImageUrl ?? ''"
