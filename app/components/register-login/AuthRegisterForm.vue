@@ -143,9 +143,9 @@ const onSubmit = async (): Promise<void> => {
         />
         <span class="text-xs leading-relaxed text-on-surface-variant">
           我同意
-          <a class="text-primary hover:underline" href="#">服务条款</a>
+          <nuxtLink class="text-primary hover:underline" to="/website-marked/terms-service">服务条款</nuxtLink>
           和
-          <a class="text-primary hover:underline" href="#">隐私政策</a>
+          <nuxtLink class="text-primary hover:underline" to="/website-marked/privicy">隐私政策</nuxtLink>
           ，并了解我的数据将用于生成个性化报告。
         </span>
       </label>

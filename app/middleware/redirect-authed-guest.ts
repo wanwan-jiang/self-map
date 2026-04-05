@@ -8,5 +8,5 @@ export default defineNuxtRouteMiddleware(() => {
   if (!raw?.trim()) {
     return;
   }
-  return navigateTo("/mbti", { replace: true });
+  return navigateTo("/test-board", { replace: true });
 });
