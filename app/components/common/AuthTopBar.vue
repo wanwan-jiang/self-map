@@ -43,16 +43,6 @@ onUnmounted(() => {
 });
 
 watch(() => route.fullPath, syncAuthTokenFromStorage);
-const isReportScene = computed<boolean>(() => {
-  return (
-    route.path === "/mbti" ||
-    route.path === "/big-five" ||
-    route.path === "/riasec" ||
-    route.path === "/enneagram" ||
-    route.path === "/selfmap-info" ||
-    route.path === "/test-board"
-  );
-});
 
 /** 顶栏「测评 / 看板 / 报告」当前高亮项 */
 const navHighlight = computed<"test" | "board" | "report">(() => {
@@ -92,7 +82,7 @@ const onReportTabBlockedClick = (): void => {
           </div>
         </div>
 
-        <div v-if="isReportScene" class="hidden md:flex gap-6">
+        <div class="hidden md:flex gap-6">
           <NuxtLink
             to="/test-board"
             class="font-medium transition-colors duration-300"
@@ -127,7 +117,7 @@ const onReportTabBlockedClick = (): void => {
         </div>
       </div>
 
-      <div v-if="isReportScene" class="flex items-center gap-4">
+      <div class="flex items-center gap-4">
         <div v-if="!hasToken" class="flex items-center gap-2">
           <NuxtLink
             to="/login"

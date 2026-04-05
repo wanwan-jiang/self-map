@@ -1,4 +1,14 @@
 <script setup lang="ts">
+import {
+  ENNEAGRAM_TYPE_KEY,
+  ENNEAGRAM_STATS_KEY,
+  RIASEC_STATS_KEY,
+  RIASEC_TYPE_KEY,
+  BIG_FIVE_STATS_KEY,
+  BIG_FIVE_TYPE_KEY,
+  MBTI_STATS_KEY,
+  MBTI_TYPE_KEY,
+} from "~/variables/variable";
 import { useLoginStore } from "../../../stores/login";
 import { clearAuthToken, getAuthToken, getAuthUsername } from "~/utils/authToken";
 
@@ -38,12 +48,28 @@ watch(
 const resolvedDisplayName = computed(() => props.displayName ?? cachedUsername.value ?? "");
 
 /**
- * @description 退出登录：将 `loginSuccess` 置为 `false`，并进入 `/login`（替换当前历史记录，避免后退仍停留在需登录态页面）。
+ * @description 退出登录：先清本地 token（避免全局 $fetch 仍带 Bearer），再调服务端 `clearUserSession` 清 Cookie，并 `fetch` 同步 `useUserSession` 内存态。
  */
 const onLogout = async (): Promise<void> => {
   clearAuthToken();
+  const { fetch: fetchUserSession, clear: clearServerSession } = useUserSession();
+  try {
+    await $fetch("/api/user/logout", { method: "POST", credentials: "include" });
+  } catch {
+    try {
+      await clearServerSession();
+    } catch {
+      // 仍继续清理本地 UI 态
+    }
+  }
+  try {
+    await fetchUserSession();
+  } catch {
+    // 拉取会话失败时仍以本地为准
+  }
   cachedUsername.value = null;
   loginStore.clearLoginSuccess();
+
   await navigateTo("/login", { replace: true });
 };
 </script>

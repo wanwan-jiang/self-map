@@ -25,10 +25,7 @@ const onSubmit = async (): Promise<void> => {
 
   emit("update:show", { show: true });
   loginStore.setLoginResult(true);
-
-  localStorage.removeItem("mbti_type");
-  localStorage.removeItem("mbti_stats");
-  navigateTo("/mbti");
+  navigateTo("/test-board", { replace: true });
 };
 </script>
 

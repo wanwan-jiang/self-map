@@ -1,13 +1,17 @@
 /**
  * @description 浏览器端保存登录接口返回的 token，供 $fetch 拦截器附加 Authorization 头使用。
  */
-export const AUTH_TOKEN_STORAGE_KEY = "selfmap_auth_token";
-
-/** 与 token 配套的展示用用户名（与接口字段 username 一致） */
-export const AUTH_USERNAME_STORAGE_KEY = "selfmap_user_name";
-
-/** 当前登录用户在数据库中的主键（MongoDB ObjectId 字符串） */
-export const AUTH_USER_ID_STORAGE_KEY = "selfmap_user_id";
+import { AUTH_TOKEN_STORAGE_KEY, AUTH_USERNAME_STORAGE_KEY, AUTH_USER_ID_STORAGE_KEY } from "~/variables/variable";
+import {
+  MBTI_TYPE_KEY,
+  MBTI_STATS_KEY,
+  BIG_FIVE_TYPE_KEY,
+  BIG_FIVE_STATS_KEY,
+  RIASEC_TYPE_KEY,
+  RIASEC_STATS_KEY,
+  ENNEAGRAM_TYPE_KEY,
+  ENNEAGRAM_STATS_KEY,
+} from "~/variables/variable";
 
 export function setAuthToken(token: string): void {
   if (import.meta.server) {
@@ -55,8 +59,14 @@ export function clearAuthToken(): void {
   if (import.meta.server) {
     return;
   }
-  localStorage.removeItem("mbti_type");
-  localStorage.removeItem("mbti_stats");
+  localStorage.removeItem(MBTI_TYPE_KEY);
+  localStorage.removeItem(MBTI_STATS_KEY);
+  localStorage.removeItem(BIG_FIVE_TYPE_KEY);
+  localStorage.removeItem(BIG_FIVE_STATS_KEY);
+  localStorage.removeItem(RIASEC_TYPE_KEY);
+  localStorage.removeItem(RIASEC_STATS_KEY);
+  localStorage.removeItem(ENNEAGRAM_TYPE_KEY);
+  localStorage.removeItem(ENNEAGRAM_STATS_KEY);
   localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
   localStorage.removeItem(AUTH_USERNAME_STORAGE_KEY);
   localStorage.removeItem(AUTH_USER_ID_STORAGE_KEY);
