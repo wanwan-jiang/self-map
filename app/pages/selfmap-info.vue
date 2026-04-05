@@ -540,20 +540,23 @@ const onRetryTest = async (): Promise<void> => {
     localStorage.removeItem(MBTI_TYPE_KEY);
     localStorage.removeItem(MBTI_STATS_KEY);
     window.dispatchEvent(new Event(MBTI_SUBMIT_EVENT));
+    await navigateTo("/mbti");
   } else if (type === BIG_FIVE_TYPE_KEY) {
     localStorage.removeItem(BIG_FIVE_TYPE_KEY);
     localStorage.removeItem(BIG_FIVE_STATS_KEY);
     window.dispatchEvent(new Event(BIG_FIVE_SUBMIT_EVENT));
+    await navigateTo("/big-five");
   } else if (type === RIASEC_TYPE_KEY) {
     localStorage.removeItem(RIASEC_TYPE_KEY);
     localStorage.removeItem(RIASEC_STATS_KEY);
     window.dispatchEvent(new Event(RIASEC_SUBMIT_EVENT));
+    await navigateTo("/riasec");
   } else if (type === ENNEAGRAM_TYPE_KEY) {
     localStorage.removeItem(ENNEAGRAM_TYPE_KEY);
     localStorage.removeItem(ENNEAGRAM_STATS_KEY);
     window.dispatchEvent(new Event(ENNEAGRAM_SUBMIT_EVENT));
+    await navigateTo("/enneagram");
   }
-  navigateTo("/test-board", { replace: true });
 };
 
 useHead({

@@ -38,10 +38,11 @@
             <span class="text-sm font-label text-on-surface/60">预计用时 15 分钟</span>
           </div>
           <button
-            @click="mbtiTest"
+            type="button"
             class="px-8 py-3 rounded-full bg-primary text-on-primary font-bold text-lg transition-all hover:shadow-[0_0_25px_rgba(165,165,255,0.6)] active:scale-95"
+            @click="onMbtiCta"
           >
-            立即测评
+            {{ hasMbtiStats ? "查看报告" : "立即测评" }}
           </button>
         </div>
       </div>
@@ -71,10 +72,11 @@
             <span class="text-sm font-label text-on-surface/60">预计用时 12 分钟</span>
           </div>
           <button
-            @click="bigFiveTest"
+            type="button"
             class="px-8 py-3 rounded-full border border-secondary/50 text-secondary font-bold text-lg hover:bg-secondary/10 transition-all active:scale-95"
+            @click="onBigFiveCta"
           >
-            深度解析
+            {{ hasBigFiveStats ? "查看报告" : "深度解析" }}
           </button>
         </div>
       </div>
@@ -104,10 +106,11 @@
             <span class="text-sm font-label text-on-surface/60">预计用时 10 分钟</span>
           </div>
           <button
-            @click="riasecTest"
+            type="button"
             class="px-8 py-3 rounded-full border border-tertiary/50 text-tertiary font-bold text-lg hover:bg-tertiary/10 transition-all active:scale-95"
+            @click="onRiasecCta"
           >
-            进入测试
+            {{ hasRiasecStats ? "查看报告" : "进入测试" }}
           </button>
         </div>
       </div>
@@ -137,10 +140,11 @@
             <span class="text-sm font-label text-on-surface/60">预计用时 20 分钟</span>
           </div>
           <button
-            @click="enneagramTest"
+            type="button"
             class="px-8 py-3 rounded-full bg-surface-container-highest border border-outline-variant/30 text-on-surface font-bold text-lg hover:border-primary/50 transition-all active:scale-95"
+            @click="onEnneagramCta"
           >
-            开始探索
+            {{ hasEnneagramStats ? "查看报告" : "开始探索" }}
           </button>
         </div>
       </div>
@@ -182,21 +186,88 @@
 </template>
 
 <script setup lang="ts">
-const mbtiTest = () => {
-  navigateTo("/mbti");
-};
+import {
+  MBTI_STATS_KEY,
+  MBTI_TYPE_KEY,
+  MBTI_SUBMIT_EVENT,
+  BIG_FIVE_STATS_KEY,
+  BIG_FIVE_TYPE_KEY,
+  BIG_FIVE_SUBMIT_EVENT,
+  RIASEC_STATS_KEY,
+  RIASEC_TYPE_KEY,
+  RIASEC_SUBMIT_EVENT,
+  ENNEAGRAM_STATS_KEY,
+  ENNEAGRAM_TYPE_KEY,
+  ENNEAGRAM_SUBMIT_EVENT,
+} from "~/variables/variable";
 
-const bigFiveTest = () => {
-  navigateTo("/big-five");
-};
+/** SSR 无 localStorage，默认 false，挂载后再同步 */
+const hasMbtiStats = ref(false);
+const hasBigFiveStats = ref(false);
+const hasRiasecStats = ref(false);
+const hasEnneagramStats = ref(false);
 
-const riasecTest = () => {
-  navigateTo("/riasec");
-};
+function syncTestCompletionFromStorage(): void {
+  if (!import.meta.client) {
+    return;
+  }
+  hasMbtiStats.value = Boolean(window.localStorage.getItem(MBTI_STATS_KEY)?.trim());
+  hasBigFiveStats.value = Boolean(window.localStorage.getItem(BIG_FIVE_STATS_KEY)?.trim());
+  hasRiasecStats.value = Boolean(window.localStorage.getItem(RIASEC_STATS_KEY)?.trim());
+  hasEnneagramStats.value = Boolean(window.localStorage.getItem(ENNEAGRAM_STATS_KEY)?.trim());
+}
 
-const enneagramTest = () => {
-  navigateTo("/enneagram");
-};
+onMounted(() => {
+  syncTestCompletionFromStorage();
+  window.addEventListener("storage", syncTestCompletionFromStorage);
+  window.addEventListener(MBTI_SUBMIT_EVENT, syncTestCompletionFromStorage);
+  window.addEventListener(BIG_FIVE_SUBMIT_EVENT, syncTestCompletionFromStorage);
+  window.addEventListener(RIASEC_SUBMIT_EVENT, syncTestCompletionFromStorage);
+  window.addEventListener(ENNEAGRAM_SUBMIT_EVENT, syncTestCompletionFromStorage);
+});
+
+onUnmounted(() => {
+  if (!import.meta.client) {
+    return;
+  }
+  window.removeEventListener("storage", syncTestCompletionFromStorage);
+  window.removeEventListener(MBTI_SUBMIT_EVENT, syncTestCompletionFromStorage);
+  window.removeEventListener(BIG_FIVE_SUBMIT_EVENT, syncTestCompletionFromStorage);
+  window.removeEventListener(RIASEC_SUBMIT_EVENT, syncTestCompletionFromStorage);
+  window.removeEventListener(ENNEAGRAM_SUBMIT_EVENT, syncTestCompletionFromStorage);
+});
+
+function onMbtiCta(): void {
+  if (hasMbtiStats.value) {
+    void navigateTo({ path: "/selfmap-info", query: { type: MBTI_TYPE_KEY } });
+    return;
+  }
+  void navigateTo("/mbti");
+}
+
+function onBigFiveCta(): void {
+  if (hasBigFiveStats.value) {
+    void navigateTo({ path: "/selfmap-info", query: { type: BIG_FIVE_TYPE_KEY } });
+    return;
+  }
+  void navigateTo("/big-five");
+}
+
+function onRiasecCta(): void {
+  if (hasRiasecStats.value) {
+    void navigateTo({ path: "/selfmap-info", query: { type: RIASEC_TYPE_KEY } });
+    return;
+  }
+  void navigateTo("/riasec");
+}
+
+function onEnneagramCta(): void {
+  if (hasEnneagramStats.value) {
+    void navigateTo({ path: "/selfmap-info", query: { type: ENNEAGRAM_TYPE_KEY } });
+    return;
+  }
+  void navigateTo("/enneagram");
+}
 
 useHead({
   title: "SelfMao - 测评看板",
