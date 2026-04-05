@@ -1,6 +1,7 @@
 <script setup lang="ts">
 /**
  * @description SelfMap 注册入口页，承载用户从访问到创建账号的主路径。
+ * 已登录用户由 `redirect-authed-guest` 依据 nuxt-auth-utils 会话（及客户端 token 兜底）跳转 `/test-board`。
  */
 
 definePageMeta({

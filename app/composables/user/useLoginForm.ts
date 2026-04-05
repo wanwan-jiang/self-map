@@ -53,6 +53,8 @@ export const useLoginForm = (): UseLoginFormReturn => {
       if (result.data.userId) {
         setAuthUserId(result.data.userId);
       }
+      const { fetch: fetchUserSession } = useUserSession();
+      await fetchUserSession();
       return result;
     } catch (e: unknown) {
       const err = e as { statusCode?: number; data?: unknown };
