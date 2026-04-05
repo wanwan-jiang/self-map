@@ -1,6 +1,7 @@
 <script setup lang="ts">
 /**
  * @description SelfMap 登录入口页，用于已有账号用户回到系统继续使用。
+ * 已登录用户由 `redirect-authed-guest` 依据 nuxt-auth-utils 会话跳转 `/test-board`。
  */
 
 definePageMeta({

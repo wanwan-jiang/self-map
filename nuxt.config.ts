@@ -10,8 +10,8 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    "/login": { ssr: false },
-    "/register": { ssr: false },
+    // "/login": { ssr: false },
+    // "/register": { ssr: false },
   },
 
   //忽略组件注册目录
