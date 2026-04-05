@@ -1,10 +1,63 @@
 <script setup lang="ts">
 import type { SelfmapReportHeaderModel } from "~/types/selfmapReportType";
+import type { UserMbtiStats } from "~/types/userMbtiResultType";
 import type { AxisLabelItem, LegendRowItem, PairPercentageResult } from "~/types/questionType";
 
 const props = defineProps<{
   model: SelfmapReportHeaderModel;
 }>();
+
+/**
+ * @description `SelfmapReportHeaderModel.stats` 为大五数组 / 霍兰德对象等联合类型；本面板仅在 MBTI 路由下使用，需先收窄为纯数字字典再读 E/I 等键。
+ */
+const isMbtiNumericStats = (stats: SelfmapReportHeaderModel["stats"]): stats is Record<string, number> => {
+  if (stats === undefined || stats === null) return false;
+  if (Array.isArray(stats)) return false;
+  return Object.values(stats as Record<string, unknown>).every(
+    (v) => typeof v === "number" && !Number.isNaN(v),
+  );
+};
+
+const mbtiStatsFromModel = (stats: SelfmapReportHeaderModel["stats"]): Partial<UserMbtiStats> =>
+  isMbtiNumericStats(stats) ? (stats as Partial<UserMbtiStats>) : {};
+
+type MbtiDimIndex = 0 | 1 | 2 | 3;
+
+/** 两极答题计数均为 0 时，用四字母类型对应位给出轻微偏置，避免比例与雷达全为 0 */
+const poleCountsWithTypeFallback = (
+  left: number,
+  right: number,
+  dimIndex: MbtiDimIndex,
+  mbtiType: string | undefined,
+): [number, number] => {
+  const L = Math.max(0, left);
+  const R = Math.max(0, right);
+  if (L + R > 0) return [L, R];
+
+  const t = (mbtiType ?? "").toUpperCase();
+  const pairs: ReadonlyArray<{ pos: string; neg: string }> = [
+    { pos: "E", neg: "I" },
+    { pos: "S", neg: "N" },
+    { pos: "T", neg: "F" },
+    { pos: "J", neg: "P" },
+  ];
+  const { pos, neg } = pairs[dimIndex]!;
+  const ch = t.charAt(dimIndex);
+  if (ch === pos) return [51, 49];
+  if (ch === neg) return [49, 51];
+  return [50, 50];
+};
+
+const mbtiPoleTuple = computed(() => {
+  const stats = mbtiStatsFromModel(props.model.stats);
+  const type = props.model.type;
+  return {
+    ei: poleCountsWithTypeFallback(stats.E ?? 0, stats.I ?? 0, 0, type),
+    sn: poleCountsWithTypeFallback(stats.S ?? 0, stats.N ?? 0, 1, type),
+    tf: poleCountsWithTypeFallback(stats.T ?? 0, stats.F ?? 0, 2, type),
+    jp: poleCountsWithTypeFallback(stats.J ?? 0, stats.P ?? 0, 3, type),
+  };
+});
 
 /** 与参考稿一致：上 → 右 → 下 → 左，最多展示 4 条轴标签 */
 const AXIS_LABEL_LAYOUT_CLASSES = [
@@ -46,11 +99,13 @@ const getPairPercentages = (
 };
 
 const axisLabelsForChart = computed<AxisLabelItem[]>(() => {
-  const stats = props.model.stats ?? {};
-  const ei = getPairPercentages(stats.E ?? 0, stats.I ?? 0, "外向 (E)", "内向 (I)");
-  const sn = getPairPercentages(stats.S ?? 0, stats.N ?? 0, "感觉 (S)", "直觉 (N)");
-  const tf = getPairPercentages(stats.T ?? 0, stats.F ?? 0, "思考 (T)", "情感 (F)");
-  const jp = getPairPercentages(stats.J ?? 0, stats.P ?? 0, "判断 (J)", "感知 (P)");
+  const { ei: [eCount, iCount], sn: [sCount, nCount], tf: [tCount, fCount], jp: [jCount, pCount] } =
+    mbtiPoleTuple.value;
+
+  const ei = getPairPercentages(eCount, iCount, "外向 (E)", "内向 (I)");
+  const sn = getPairPercentages(sCount, nCount, "实感 (S)", "直觉 (N)");
+  const tf = getPairPercentages(tCount, fCount, "思考 (T)", "情感 (F)");
+  const jp = getPairPercentages(jCount, pCount, "判断 (J)", "感知 (P)");
 
   return [
     {
@@ -77,11 +132,13 @@ const axisLabelsForChart = computed<AxisLabelItem[]>(() => {
 });
 
 const dimensionPolygonPoints = computed(() => {
-  const stats = props.model.stats ?? {};
-  const ei = getPairPercentages(stats.E ?? 0, stats.I ?? 0, "E", "I");
-  const sn = getPairPercentages(stats.S ?? 0, stats.N ?? 0, "S", "N");
-  const tf = getPairPercentages(stats.T ?? 0, stats.F ?? 0, "T", "F");
-  const jp = getPairPercentages(stats.J ?? 0, stats.P ?? 0, "J", "P");
+  const { ei: [eCount, iCount], sn: [sCount, nCount], tf: [tCount, fCount], jp: [jCount, pCount] } =
+    mbtiPoleTuple.value;
+
+  const ei = getPairPercentages(eCount, iCount, "E", "I");
+  const sn = getPairPercentages(sCount, nCount, "S", "N");
+  const tf = getPairPercentages(tCount, fCount, "T", "F");
+  const jp = getPairPercentages(jCount, pCount, "J", "P");
 
   // 以 50,50 为中心，最小半径 10，最大半径 40
   const radiusFromPercent = (percent: number): number => 10 + (Math.max(0, Math.min(100, percent)) / 100) * 30;
@@ -102,11 +159,13 @@ const dimensionPolygonPoints = computed(() => {
 });
 
 const legendRows = computed<LegendRowItem[]>(() => {
-  const stats = props.model.stats ?? {};
-  const ei = getPairPercentages(stats.E ?? 0, stats.I ?? 0, "外向", "内向");
-  const sn = getPairPercentages(stats.S ?? 0, stats.N ?? 0, "实感", "直觉");
-  const tf = getPairPercentages(stats.T ?? 0, stats.F ?? 0, "思考", "情感");
-  const jp = getPairPercentages(stats.J ?? 0, stats.P ?? 0, "判断", "感知");
+  const { ei: [eCount, iCount], sn: [sCount, nCount], tf: [tCount, fCount], jp: [jCount, pCount] } =
+    mbtiPoleTuple.value;
+
+  const ei = getPairPercentages(eCount, iCount, "外向", "内向");
+  const sn = getPairPercentages(sCount, nCount, "实感", "直觉");
+  const tf = getPairPercentages(tCount, fCount, "思考", "情感");
+  const jp = getPairPercentages(jCount, pCount, "判断", "感知");
 
   return [
     { id: "energy", dotTone: "primary", text: `能量来源: ${ei.dominantLabel}为主` },
