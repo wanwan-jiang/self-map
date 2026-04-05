@@ -59,12 +59,8 @@ const mainNavMode = computed<"board-only" | "board-test" | "board-report" | "ful
   return "full";
 });
 
-const showNavTest = computed(
-  () => mainNavMode.value === "board-test" || mainNavMode.value === "full",
-);
-const showNavReport = computed(
-  () => mainNavMode.value === "board-report" || mainNavMode.value === "full",
-);
+const showNavTest = computed(() => mainNavMode.value === "board-test" || mainNavMode.value === "full");
+const showNavReport = computed(() => mainNavMode.value === "board-report" || mainNavMode.value === "full");
 
 /** 顶栏「测评 / 看板 / 报告」当前高亮项 */
 const navHighlight = computed<"test" | "board" | "report">(() => {
@@ -157,6 +153,8 @@ const onReportTabBlockedClick = (): void => {
           </NuxtLink>
         </div>
         <AuthUserMenu v-else />
+
+        <!-- <DatePickerInfo /> -->
       </div>
 
       <!-- <div v-else class="flex items-center gap-4">

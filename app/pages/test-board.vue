@@ -37,6 +37,15 @@
             <span class="text-xs uppercase tracking-widest text-primary font-bold">Time Investment</span>
             <span class="text-sm font-label text-on-surface/60">预计用时 10 分钟</span>
           </div>
+          <!-- <button
+            v-if="hasAuthToken"
+            type="button"
+            class="px-6 py-3 rounded-full border border-primary text-primary font-bold text-lg flex items-center gap-2 hover:bg-primary/10 transition-all active:scale-95"
+            @click="goSelfmapReport(MBTI_TYPE_KEY)"
+          >
+            <span class="material-symbols-outlined text-xl">history</span>
+            <span>历史记录</span>
+          </button> -->
           <button
             type="button"
             class="px-8 py-3 rounded-full bg-primary text-on-primary font-bold text-lg transition-all hover:shadow-[0_0_25px_rgba(165,165,255,0.6)] active:scale-95"
@@ -63,7 +72,7 @@
             大五人格 (BIG FIVE)测评
           </h3>
           <p class="text-lg text-on-surface-variant leading-relaxed mb-4">
-            从外向性、宜人性、尽责性、情绪性及开放性五个维度深度剖析，是国际学术界公认的最科学的性格描述模型。
+            从外向性、亲和性、尽责性、情绪性及开放性五个维度深度剖析，是国际学术界公认的最科学的性格描述模型。
           </p>
         </div>
         <div class="relative z-10 flex justify-between items-end mt-8">
@@ -71,6 +80,15 @@
             <span class="text-xs uppercase tracking-widest text-secondary font-bold">Time Investment</span>
             <span class="text-sm font-label text-on-surface/60">预计用时 12 分钟</span>
           </div>
+          <!-- <button
+            v-if="hasAuthToken"
+            type="button"
+            class="px-6 py-3 rounded-full border border-secondary text-secondary font-bold text-lg flex items-center gap-2 hover:bg-secondary/10 transition-all active:scale-95"
+            @click="goSelfmapReport(BIG_FIVE_TYPE_KEY)"
+          >
+            <span class="material-symbols-outlined text-xl">history</span>
+            <span>历史记录</span>
+          </button> -->
           <button
             type="button"
             class="px-8 py-3 rounded-full border border-secondary/50 text-secondary font-bold text-lg hover:bg-secondary/10 transition-all active:scale-95"
@@ -105,6 +123,15 @@
             <span class="text-xs uppercase tracking-widest text-tertiary font-bold">Time Investment</span>
             <span class="text-sm font-label text-on-surface/60">预计用时 15 分钟</span>
           </div>
+          <!-- <button
+            v-if="hasAuthToken"
+            type="button"
+            class="px-6 py-3 rounded-full border border-tertiary text-tertiary font-bold text-lg flex items-center gap-2 hover:bg-tertiary/10 transition-all active:scale-95"
+            @click="goSelfmapReport(RIASEC_TYPE_KEY)"
+          >
+            <span class="material-symbols-outlined text-xl">history</span>
+            <span>历史记录</span>
+          </button> -->
           <button
             type="button"
             class="px-8 py-3 rounded-full border border-tertiary/50 text-tertiary font-bold text-lg hover:bg-tertiary/10 transition-all active:scale-95"
@@ -139,6 +166,15 @@
             <span class="text-xs uppercase tracking-widest text-primary font-bold">Time Investment</span>
             <span class="text-sm font-label text-on-surface/60">预计用时 20 分钟</span>
           </div>
+          <!-- <button
+            v-if="hasAuthToken"
+            type="button"
+            class="px-6 py-3 rounded-full border border-primary text-primary font-bold text-lg flex items-center gap-2 hover:bg-primary/10 transition-all active:scale-95"
+            @click="goSelfmapReport(ENNEAGRAM_TYPE_KEY)"
+          >
+            <span class="material-symbols-outlined text-xl">history</span>
+            <span>历史记录</span>
+          </button> -->
           <button
             type="button"
             class="px-8 py-3 rounded-full bg-surface-container-highest border border-outline-variant/30 text-on-surface font-bold text-lg hover:border-primary/50 transition-all active:scale-95"
@@ -200,6 +236,10 @@ import {
   ENNEAGRAM_TYPE_KEY,
   ENNEAGRAM_SUBMIT_EVENT,
 } from "~/variables/variable";
+import { getAuthToken } from "~/utils/authToken";
+
+/** 已登录（存在 selfmap_auth_token）时才展示「历史记录」入口 */
+const hasAuthToken = ref(false);
 
 /** SSR 无 localStorage，默认 false，挂载后再同步 */
 const hasMbtiStats = ref(false);
@@ -211,6 +251,7 @@ function syncTestCompletionFromStorage(): void {
   if (!import.meta.client) {
     return;
   }
+  hasAuthToken.value = Boolean(getAuthToken());
   hasMbtiStats.value = Boolean(window.localStorage.getItem(MBTI_STATS_KEY)?.trim());
   hasBigFiveStats.value = Boolean(window.localStorage.getItem(BIG_FIVE_STATS_KEY)?.trim());
   hasRiasecStats.value = Boolean(window.localStorage.getItem(RIASEC_STATS_KEY)?.trim());
@@ -236,6 +277,11 @@ onUnmounted(() => {
   window.removeEventListener(RIASEC_SUBMIT_EVENT, syncTestCompletionFromStorage);
   window.removeEventListener(ENNEAGRAM_SUBMIT_EVENT, syncTestCompletionFromStorage);
 });
+
+/** 已登录用户从看板进入对应类型的报告页（与 `selfmap-info` 的 `query.type` 一致） */
+function goSelfmapReport(reportType: string): void {
+  void navigateTo({ path: "/selfmap-info", query: { type: reportType } });
+}
 
 function onMbtiCta(): void {
   if (hasMbtiStats.value) {
