@@ -60,11 +60,11 @@ const props = defineProps<{
 
 /** OCEAN 五维：字母 → 中文名 */
 const BIG_FIVE_DOMAINS = [
-  { id: "O", name: "经验开放性" },
+  { id: "O", name: "开放性" },
   { id: "C", name: "尽责性" },
   { id: "E", name: "外向性" },
   { id: "A", name: "亲和性" },
-  { id: "N", name: "神经质" },
+  { id: "N", name: "情绪性" },
 ] as const;
 
 const TONE_CLASSES = [

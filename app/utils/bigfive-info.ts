@@ -9,11 +9,11 @@ import { BIG_FIVE_STATS_KEY, BIG_FIVE_SUBMIT_EVENT } from "../variables/variable
 import type { SelfmapSavedHistoryItem } from "./mbti-info";
 
 const BIG_FIVE_DOMAIN_ROWS = [
-  { id: "O", title: "经验开放性" },
+  { id: "O", title: "开放性" },
   { id: "C", title: "尽责性" },
   { id: "E", title: "外向性" },
   { id: "A", title: "亲和性" },
-  { id: "N", title: "神经质" },
+  { id: "N", title: "情绪性" },
 ] as const;
 
 /** `bigfive-info` 返回的 stats 项含库表解析字段 `levelText` */
@@ -87,10 +87,7 @@ export interface RunBigFiveSelfmapInfoSectionDeps {
   messageHead: Ref<string>;
   bigFiveAiIdentityHeadline: Ref<string>;
   reportSkillsFallback: SelfmapSkillModel[] | undefined;
-  askQwenStream: (
-    prompt: string,
-    onDelta: (delta: string, fullText: string) => void,
-  ) => Promise<string | null>;
+  askQwenStream: (prompt: string, onDelta: (delta: string, fullText: string) => void) => Promise<string | null>;
   parseSkillsFromStreamText: (fullText: string) => SelfmapSkillModel[];
 }
 

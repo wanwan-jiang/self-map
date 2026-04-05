@@ -200,11 +200,11 @@ export const usePersonSubmit = async (type: string, answers: Ref<Record<string, 
     }
     const domainOrder = ["O", "C", "E", "A", "N"] as const;
     const domainNameMap: Record<(typeof domainOrder)[number], string> = {
-      O: "经验开放性",
+      O: "开放性",
       C: "尽责性",
       E: "外向性",
       A: "亲和性",
-      N: "神经质",
+      N: "情绪性",
     };
     const getLevel = (avg: number): "h" | "n" | "l" => {
       if (avg > 3.5) return "h";

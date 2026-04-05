@@ -21,11 +21,11 @@ interface BigFiveScoreCardItem {
 
 /** OCEAN 顺序与题库 domain 一致 */
 const BIG_FIVE_DOMAIN_ROWS = [
-  { id: "O", title: "经验开放性" },
+  { id: "O", title: "开放性" },
   { id: "C", title: "尽责性" },
   { id: "E", title: "外向性" },
   { id: "A", title: "亲和性" },
-  { id: "N", title: "神经质" },
+  { id: "N", title: "情绪性" },
 ] as const;
 
 const isBigFiveStatsArray = (raw: SelfmapReportHeaderModel["stats"]): raw is BigFiveStatItem[] =>
