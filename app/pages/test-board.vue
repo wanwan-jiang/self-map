@@ -26,7 +26,7 @@
             <span class="material-symbols-outlined text-primary text-5xl mso-fill-1">psychology</span>
           </div>
           <h3 class="text-3xl md:text-4xl font-headline font-bold mb-6 text-on-surface leading-tight">
-            MBTI 职业性格测试
+            MBTI 性格类型测评
           </h3>
           <p class="text-lg text-on-surface-variant leading-relaxed mb-4">
             探索 16 种人格类型，寻找最适合您的工作环境与团队角色。基于荣格心理学深度研发，为您提供职场互动的金钥匙。
@@ -35,7 +35,7 @@
         <div class="relative z-10 flex justify-between items-end mt-8">
           <div class="flex flex-col gap-1">
             <span class="text-xs uppercase tracking-widest text-primary font-bold">Time Investment</span>
-            <span class="text-sm font-label text-on-surface/60">预计用时 15 分钟</span>
+            <span class="text-sm font-label text-on-surface/60">预计用时 10 分钟</span>
           </div>
           <button
             type="button"
@@ -60,7 +60,7 @@
             <span class="material-symbols-outlined text-secondary text-5xl mso-fill-1">pentagon</span>
           </div>
           <h3 class="text-3xl md:text-4xl font-headline font-bold mb-6 text-on-surface leading-tight">
-            大五人格 (BIG FIVE)
+            大五人格 (BIG FIVE)测评
           </h3>
           <p class="text-lg text-on-surface-variant leading-relaxed mb-4">
             从外向性、宜人性、尽责性、情绪性及开放性五个维度深度剖析，是国际学术界公认的最科学的性格描述模型。
@@ -94,16 +94,16 @@
             <span class="material-symbols-outlined text-tertiary text-5xl mso-fill-1">explore</span>
           </div>
           <h3 class="text-3xl md:text-4xl font-headline font-bold mb-6 text-on-surface leading-tight">
-            霍兰德职业兴趣测评
+            霍兰德 (RIASEC)兴趣测评
           </h3>
           <p class="text-lg text-on-surface-variant leading-relaxed mb-4">
-            精准识别您的职业偏好类型 (RIASEC)，为您匹配理想的职业发展路径。将个人天赋与市场需求完美融合。
+            精准识别您的职业偏好类型，为您匹配理想的职业发展路径。将个人天赋与市场需求完美融合。
           </p>
         </div>
         <div class="relative z-10 flex justify-between items-end mt-8">
           <div class="flex flex-col gap-1">
             <span class="text-xs uppercase tracking-widest text-tertiary font-bold">Time Investment</span>
-            <span class="text-sm font-label text-on-surface/60">预计用时 10 分钟</span>
+            <span class="text-sm font-label text-on-surface/60">预计用时 15 分钟</span>
           </div>
           <button
             type="button"
@@ -128,7 +128,7 @@
             <span class="material-symbols-outlined text-primary text-5xl mso-fill-1">hub</span>
           </div>
           <h3 class="text-3xl md:text-4xl font-headline font-bold mb-6 text-on-surface leading-tight">
-            九型人格 (Enneagram)
+            九型人格 (Enneagram)测评
           </h3>
           <p class="text-lg text-on-surface-variant leading-relaxed mb-4">
             洞察您最深层的核心动机与潜意识行为驱动力。提升自我觉察能力，优化人际洞察与团队协作效能。
