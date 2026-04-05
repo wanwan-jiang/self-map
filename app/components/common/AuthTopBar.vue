@@ -44,6 +44,28 @@ onUnmounted(() => {
 
 watch(() => route.fullPath, syncAuthTokenFromStorage);
 
+/** 主站顶栏导航展示模式：按路由控制「测评 / 报告」是否出现 */
+const mainNavMode = computed<"board-only" | "board-test" | "board-report" | "full">(() => {
+  const path = route.path.replace(/\/$/, "") || "/";
+  if (path === "/test-board") {
+    return "board-only";
+  }
+  if (path === "/selfmap-info") {
+    return "board-report";
+  }
+  if (path === "/mbti" || path === "/big-five" || path === "/enneagram" || path === "/riasec") {
+    return "board-test";
+  }
+  return "full";
+});
+
+const showNavTest = computed(
+  () => mainNavMode.value === "board-test" || mainNavMode.value === "full",
+);
+const showNavReport = computed(
+  () => mainNavMode.value === "board-report" || mainNavMode.value === "full",
+);
+
 /** 顶栏「测评 / 看板 / 报告」当前高亮项 */
 const navHighlight = computed<"test" | "board" | "report">(() => {
   if (route.path === "/selfmap-info") {
@@ -95,6 +117,7 @@ const onReportTabBlockedClick = (): void => {
             看板
           </NuxtLink>
           <NuxtLink
+            v-if="showNavTest"
             to="/mbti"
             class="font-medium transition-colors duration-300"
             :class="
@@ -107,6 +130,7 @@ const onReportTabBlockedClick = (): void => {
           </NuxtLink>
 
           <button
+            v-if="showNavReport"
             type="button"
             class="font-medium transition-colors duration-300"
             :class="reportTabLinkClass"

@@ -25,7 +25,7 @@
           @click="emit('retry-test')"
         >
           <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">refresh</span>
-          <span>重新测试</span>
+          <span>重新测评</span>
         </button>
       </div>
     </div>
