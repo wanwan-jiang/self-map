@@ -159,81 +159,79 @@ const parseSkillsFromStreamText = (fullText: string): SelfmapSkillModel[] => {
 
 onMounted(async () => {
   //todo others
-  if (getAuthToken()) {
-    try {
-      if (type === MBTI_TYPE_KEY) {
-        await runMbtiSelfmapInfoSection({
-          submitResult,
-          savedHistory,
-          resultQwenMbti,
-          aiSkills,
-          submitError,
-          message,
-          messageTitle,
-          reportSkillsFallback: report.skills,
-          askQwenStream,
-          parseSkillsFromStreamText,
-        });
-      } else if (type === BIG_FIVE_TYPE_KEY) {
-        await runBigFiveSelfmapInfoSection({
-          submitResult,
-          savedHistory,
-          resultQwenMbti,
-          aiSkills,
-          message,
-          messageTitle,
-          messageHead,
-          bigFiveAiIdentityHeadline,
-          reportSkillsFallback: report.skills,
-          askQwenStream,
-          parseSkillsFromStreamText,
-        });
-      } else if (type === RIASEC_TYPE_KEY) {
-        await runRiasecSelfmapInfoSection({
-          submitResult,
-          savedHistory,
-          submitError,
-          resultQwenMbti,
-          aiSkills,
-          message,
-          messageTitle,
-          messageHead,
-          bigFiveAiIdentityHeadline,
-          reportSkillsFallback: report.skills,
-          askQwenStream,
-          parseSkillsFromStreamText,
-        });
-      } else if (type === ENNEAGRAM_TYPE_KEY) {
-        await runEnneagramSelfmapInfoSection({
-          submitResult,
-          savedHistory,
-          submitError,
-          resultQwenMbti,
-          aiSkills,
-          message,
-          messageTitle,
-          enneagramPillarTexts,
-          askQwenStream,
-        });
-      } else {
-        savedHistory.value = [];
-      }
-    } catch (error: unknown) {
-      console.error("获取测试结果失败", error);
-      const statusCode =
-        typeof error === "object" &&
-        error !== null &&
-        "statusCode" in error &&
-        typeof (error as { statusCode?: unknown }).statusCode === "number"
-          ? (error as { statusCode: number }).statusCode
-          : undefined;
-
-      // 本地 token 存在但会话已失效时，清理本地登录态，避免重复触发 401 请求。
-      if (statusCode === 401) {
-        clearAuthToken();
-      }
+  try {
+    if (type === MBTI_TYPE_KEY) {
+      await runMbtiSelfmapInfoSection({
+        submitResult,
+        savedHistory,
+        resultQwenMbti,
+        aiSkills,
+        submitError,
+        message,
+        messageTitle,
+        reportSkillsFallback: report.skills,
+        askQwenStream,
+        parseSkillsFromStreamText,
+      });
+    } else if (type === BIG_FIVE_TYPE_KEY) {
+      await runBigFiveSelfmapInfoSection({
+        submitResult,
+        savedHistory,
+        resultQwenMbti,
+        aiSkills,
+        message,
+        messageTitle,
+        messageHead,
+        bigFiveAiIdentityHeadline,
+        reportSkillsFallback: report.skills,
+        askQwenStream,
+        parseSkillsFromStreamText,
+      });
+    } else if (type === RIASEC_TYPE_KEY) {
+      await runRiasecSelfmapInfoSection({
+        submitResult,
+        savedHistory,
+        submitError,
+        resultQwenMbti,
+        aiSkills,
+        message,
+        messageTitle,
+        messageHead,
+        bigFiveAiIdentityHeadline,
+        reportSkillsFallback: report.skills,
+        askQwenStream,
+        parseSkillsFromStreamText,
+      });
+    } else if (type === ENNEAGRAM_TYPE_KEY) {
+      await runEnneagramSelfmapInfoSection({
+        submitResult,
+        savedHistory,
+        submitError,
+        resultQwenMbti,
+        aiSkills,
+        message,
+        messageTitle,
+        enneagramPillarTexts,
+        askQwenStream,
+      });
+    } else {
       savedHistory.value = [];
     }
+  } catch (error: unknown) {
+    console.error("获取测试结果失败", error);
+    const statusCode =
+      typeof error === "object" &&
+      error !== null &&
+      "statusCode" in error &&
+      typeof (error as { statusCode?: unknown }).statusCode === "number"
+        ? (error as { statusCode: number }).statusCode
+        : undefined;
+
+    // 本地 token 存在但会话已失效时，清理本地登录态，避免重复触发 401 请求。
+    if (statusCode === 401) {
+      clearAuthToken();
+    }
+    savedHistory.value = [];
   }
 
   // if (!mbtiType) {

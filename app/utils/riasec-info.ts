@@ -93,10 +93,7 @@ export interface RunRiasecSelfmapInfoSectionDeps {
   messageHead: Ref<string>;
   bigFiveAiIdentityHeadline: Ref<string>;
   reportSkillsFallback: SelfmapSkillModel[] | undefined;
-  askQwenStream: (
-    prompt: string,
-    onDelta: (delta: string, fullText: string) => void,
-  ) => Promise<string | null>;
+  askQwenStream: (prompt: string, onDelta: (delta: string, fullText: string) => void) => Promise<string | null>;
   parseSkillsFromStreamText: (fullText: string) => SelfmapSkillModel[];
 }
 
@@ -121,19 +118,20 @@ export async function runRiasecSelfmapInfoSection(deps: RunRiasecSelfmapInfoSect
 
   let hollandType = window.localStorage.getItem(RIASEC_TYPE_KEY) ?? "";
   let stats: UserRiasecStats = JSON.parse(window.localStorage.getItem(RIASEC_STATS_KEY) ?? "{}");
+  if (getAuthToken()) {
+    const res = await fetchUserLatestRiasecResults();
+    savedHistory.value = res.data ?? [];
 
-  const res = await fetchUserLatestRiasecResults();
-  savedHistory.value = res.data ?? [];
-
-  if (savedHistory.value.length > 0) {
-    const latest = savedHistory.value[0];
-    const latestType = typeof latest?.type === "string" ? latest.type.trim().toUpperCase() : "";
-    const latestStats = latest?.stats ?? {};
-    hollandType = latestType;
-    stats = latestStats as UserRiasecStats;
-    window.localStorage.setItem(RIASEC_TYPE_KEY, latestType);
-    window.localStorage.setItem(RIASEC_STATS_KEY, JSON.stringify(latestStats));
-    window.dispatchEvent(new Event(RIASEC_SUBMIT_EVENT));
+    if (savedHistory.value.length > 0) {
+      const latest = savedHistory.value[0];
+      const latestType = typeof latest?.type === "string" ? latest.type.trim().toUpperCase() : "";
+      const latestStats = latest?.stats ?? {};
+      hollandType = latestType;
+      stats = latestStats as UserRiasecStats;
+      window.localStorage.setItem(RIASEC_TYPE_KEY, latestType);
+      window.localStorage.setItem(RIASEC_STATS_KEY, JSON.stringify(latestStats));
+      window.dispatchEvent(new Event(RIASEC_SUBMIT_EVENT));
+    }
   }
 
   try {

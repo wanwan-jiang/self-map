@@ -56,10 +56,7 @@ export interface RunEnneagramSelfmapInfoSectionDeps {
   message: Ref<string>;
   messageTitle: Ref<string>;
   enneagramPillarTexts: Ref<EnneagramPillarTexts>;
-  askQwenStream: (
-    prompt: string,
-    onDelta: (delta: string, fullText: string) => void,
-  ) => Promise<string | null>;
+  askQwenStream: (prompt: string, onDelta: (delta: string, fullText: string) => void) => Promise<string | null>;
 }
 
 /**
@@ -80,18 +77,19 @@ export async function runEnneagramSelfmapInfoSection(deps: RunEnneagramSelfmapIn
 
   let enneagramType = window.localStorage.getItem(ENNEAGRAM_TYPE_KEY) ?? "";
   let stats: UserEnneagramStats = JSON.parse(window.localStorage.getItem(ENNEAGRAM_STATS_KEY) ?? "{}");
+  if (getAuthToken()) {
+    const res = await fetchUserLatestEnneagramResults();
+    savedHistory.value = res.data ?? [];
 
-  const res = await fetchUserLatestEnneagramResults();
-  savedHistory.value = res.data ?? [];
-
-  if (savedHistory.value.length > 0) {
-    const latestType = savedHistory.value[0]?.type?.toUpperCase() ?? "";
-    const latestStats = savedHistory.value[0]?.stats ?? {};
-    enneagramType = latestType;
-    stats = latestStats as UserEnneagramStats;
-    window.localStorage.setItem(ENNEAGRAM_TYPE_KEY, latestType);
-    window.localStorage.setItem(ENNEAGRAM_STATS_KEY, JSON.stringify(latestStats));
-    window.dispatchEvent(new Event(ENNEAGRAM_SUBMIT_EVENT));
+    if (savedHistory.value.length > 0) {
+      const latestType = savedHistory.value[0]?.type?.toUpperCase() ?? "";
+      const latestStats = savedHistory.value[0]?.stats ?? {};
+      enneagramType = latestType;
+      stats = latestStats as UserEnneagramStats;
+      window.localStorage.setItem(ENNEAGRAM_TYPE_KEY, latestType);
+      window.localStorage.setItem(ENNEAGRAM_STATS_KEY, JSON.stringify(latestStats));
+      window.dispatchEvent(new Event(ENNEAGRAM_SUBMIT_EVENT));
+    }
   }
 
   try {

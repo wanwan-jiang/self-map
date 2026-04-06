@@ -62,6 +62,12 @@ const mainNavMode = computed<"board-only" | "board-test" | "board-report" | "ful
 const showNavTest = computed(() => mainNavMode.value === "board-test" || mainNavMode.value === "full");
 const showNavReport = computed(() => mainNavMode.value === "board-report" || mainNavMode.value === "full");
 
+/** 当前为登录 / 注册页：不展示看板、测评、报告，也不展示顶栏登录注册与用户菜单 */
+const isLoginOrRegisterRoute = computed(() => {
+  const path = route.path.replace(/\/$/, "") || "/";
+  return path === "/login" || path === "/register";
+});
+
 /** 顶栏「测评 / 看板 / 报告」当前高亮项 */
 const navHighlight = computed<"test" | "board" | "report">(() => {
   if (route.path === "/selfmap-info") {
@@ -100,7 +106,7 @@ const onReportTabBlockedClick = (): void => {
           </div>
         </div>
 
-        <div class="hidden md:flex gap-6">
+        <div v-if="!isLoginOrRegisterRoute" class="hidden md:flex gap-6">
           <NuxtLink
             to="/test-board"
             class="font-medium transition-colors duration-300"
@@ -137,7 +143,7 @@ const onReportTabBlockedClick = (): void => {
         </div>
       </div>
 
-      <div class="flex items-center gap-4">
+      <div v-if="!isLoginOrRegisterRoute" class="flex items-center gap-4">
         <div v-if="!hasToken" class="flex items-center gap-2">
           <NuxtLink
             to="/login"

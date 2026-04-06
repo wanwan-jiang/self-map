@@ -94,7 +94,7 @@
             class="px-8 py-3 rounded-full border border-secondary/50 text-secondary font-bold text-lg hover:bg-secondary/10 transition-all active:scale-95"
             @click="onBigFiveCta"
           >
-            {{ hasBigFiveStats ? "查看报告" : "深度解析" }}
+            {{ hasBigFiveStats ? "查看报告" : "立即测评" }}
           </button>
         </div>
       </div>
@@ -137,7 +137,7 @@
             class="px-8 py-3 rounded-full border border-tertiary/50 text-tertiary font-bold text-lg hover:bg-tertiary/10 transition-all active:scale-95"
             @click="onRiasecCta"
           >
-            {{ hasRiasecStats ? "查看报告" : "进入测试" }}
+            {{ hasRiasecStats ? "查看报告" : "立即测评" }}
           </button>
         </div>
       </div>
@@ -180,7 +180,7 @@
             class="px-8 py-3 rounded-full bg-surface-container-highest border border-outline-variant/30 text-on-surface font-bold text-lg hover:border-primary/50 transition-all active:scale-95"
             @click="onEnneagramCta"
           >
-            {{ hasEnneagramStats ? "查看报告" : "开始探索" }}
+            {{ hasEnneagramStats ? "查看报告" : "立即测评" }}
           </button>
         </div>
       </div>

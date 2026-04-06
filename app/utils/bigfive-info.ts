@@ -111,16 +111,17 @@ export async function runBigFiveSelfmapInfoSection(deps: RunBigFiveSelfmapInfoSe
 
   let stats = JSON.parse(window.localStorage.getItem(BIG_FIVE_STATS_KEY) ?? "{}") as BigFiveStatItem[];
 
-  const res = await fetchUserLatestBigFiveResults();
-  savedHistory.value = res.data ?? [];
+  if (getAuthToken()) {
+    const res = await fetchUserLatestBigFiveResults();
+    savedHistory.value = res.data ?? [];
 
-  if (savedHistory.value.length > 0) {
-    const latestStats = savedHistory.value[0]?.stats ?? {};
-    stats = latestStats as BigFiveStatItem[];
-    window.localStorage.setItem(BIG_FIVE_STATS_KEY, JSON.stringify(latestStats));
-    window.dispatchEvent(new Event(BIG_FIVE_SUBMIT_EVENT));
+    if (savedHistory.value.length > 0) {
+      const latestStats = savedHistory.value[0]?.stats ?? {};
+      stats = latestStats as BigFiveStatItem[];
+      window.localStorage.setItem(BIG_FIVE_STATS_KEY, JSON.stringify(latestStats));
+      window.dispatchEvent(new Event(BIG_FIVE_SUBMIT_EVENT));
+    }
   }
-
   submitResult.value = await fetchUserBigFiveInfo(stats as BigFiveStatItem[]);
 
   syncBigFiveDomainLevelDescriptions(submitResult.value);
