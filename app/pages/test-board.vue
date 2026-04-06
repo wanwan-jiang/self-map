@@ -186,7 +186,7 @@
       </div>
     </div>
     <!-- Secondary CTA/Insight -->
-    <section
+    <!-- <section
       class="mt-24 rounded-lg bg-surface-container-low overflow-hidden relative border border-outline-variant/10"
     >
       <div
@@ -216,7 +216,7 @@
           </span>
         </div>
       </div>
-    </section>
+    </section> -->
   </main>
   <AuthFooterLinks />
 </template>
