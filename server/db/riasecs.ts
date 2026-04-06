@@ -3,7 +3,7 @@ import { defineMongooseModel } from "#nuxt/mongoose";
 interface Riasec {
   id: string;
 }
-
-export const Riasec = defineMongooseModel<Riasec>("riasecexamples", {
+//riasecexamples
+export const Riasec = defineMongooseModel<Riasec>("riasecs", {
   id: { type: String, required: true, unique: true },
 });

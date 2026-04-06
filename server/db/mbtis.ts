@@ -3,7 +3,7 @@ import { defineMongooseModel } from "#nuxt/mongoose";
 interface Mbti {
   id: string;
 }
-
-export const Mbti = defineMongooseModel<Mbti>("mbtiexamples", {
+//mbtiexamples
+export const Mbti = defineMongooseModel<Mbti>("mbtis", {
   id: { type: String, required: true, unique: true },
 });
