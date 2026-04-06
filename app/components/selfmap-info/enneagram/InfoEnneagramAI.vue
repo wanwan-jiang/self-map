@@ -91,22 +91,92 @@ const props = withDefaults(
   },
 );
 
-const FALLBACK_AWARENESS = "正在分析......";
-const FALLBACK_EMBODIMENT = "正在分析......";
-const FALLBACK_CONNECTION = "正在分析......";
+const FALLBACK_AWARENESS = "AI正在分析......";
+const FALLBACK_EMBODIMENT = "AI正在分析......";
+const FALLBACK_CONNECTION = "AI正在分析......";
+/** 单栏长时间无正文时提示刷新（毫秒） */
+const PILLAR_LOADING_TIMEOUT_MS = 60_000;
+const PILLAR_TIMEOUT_HINT = "请稍候或刷新页面重试";
+
+/**
+ * @description 某栏流式正文超时仍为空时标记超时，收到正文后清除定时器。
+ */
+const usePillarStreamTimeout = (getText: () => string | undefined): Ref<boolean> => {
+  const timedOut = ref(false);
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  const clearTimer = (): void => {
+    if (timeoutId !== undefined) {
+      clearTimeout(timeoutId);
+      timeoutId = undefined;
+    }
+  };
+
+  watch(
+    () => getText()?.trim() ?? "",
+    (trimmed) => {
+      if (trimmed.length > 0) {
+        timedOut.value = false;
+        clearTimer();
+      }
+    },
+    { immediate: true },
+  );
+
+  onMounted(() => {
+    const trimmedOnMount = getText()?.trim() ?? "";
+    if (trimmedOnMount.length > 0) {
+      return;
+    }
+    timeoutId = setTimeout(() => {
+      timeoutId = undefined;
+      if ((getText()?.trim() ?? "").length === 0) {
+        timedOut.value = true;
+      }
+    }, PILLAR_LOADING_TIMEOUT_MS);
+  });
+
+  onBeforeUnmount(() => {
+    clearTimer();
+  });
+
+  return timedOut;
+};
+
+const awarenessLoadTimedOut = usePillarStreamTimeout(() => props.awarenessText);
+const embodimentLoadTimedOut = usePillarStreamTimeout(() => props.embodimentText);
+const connectionLoadTimedOut = usePillarStreamTimeout(() => props.connectionText);
 
 const displayAwareness = computed(() => {
   const t = props.awarenessText?.trim();
-  return t && t.length > 0 ? t : FALLBACK_AWARENESS;
+  if (t && t.length > 0) {
+    return t;
+  }
+  if (awarenessLoadTimedOut.value) {
+    return PILLAR_TIMEOUT_HINT;
+  }
+  return FALLBACK_AWARENESS;
 });
 
 const displayEmbodiment = computed(() => {
   const t = props.embodimentText?.trim();
-  return t && t.length > 0 ? t : FALLBACK_EMBODIMENT;
+  if (t && t.length > 0) {
+    return t;
+  }
+  if (embodimentLoadTimedOut.value) {
+    return PILLAR_TIMEOUT_HINT;
+  }
+  return FALLBACK_EMBODIMENT;
 });
 
 const displayConnection = computed(() => {
   const t = props.connectionText?.trim();
-  return t && t.length > 0 ? t : FALLBACK_CONNECTION;
+  if (t && t.length > 0) {
+    return t;
+  }
+  if (connectionLoadTimedOut.value) {
+    return PILLAR_TIMEOUT_HINT;
+  }
+  return FALLBACK_CONNECTION;
 });
 </script>

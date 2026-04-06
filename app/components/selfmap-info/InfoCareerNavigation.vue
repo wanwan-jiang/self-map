@@ -1,14 +1,45 @@
 <script setup lang="ts">
-import type { SelfmapCareerPathModel, SelfmapSkillModel } from "../../types/selfmapReportType";
+import type { SelfmapSkillModel } from "../../types/selfmapReportType";
+import {
+  STREAM_TEXT_TIMEOUT_HINT,
+  useStreamTextLoadingTimeout,
+} from "../../composables/useStreamTextLoadingTimeout";
 
-defineProps<{
+const props = defineProps<{
   imageUrl: string;
   imageAlt: string;
   skills: SelfmapSkillModel[];
-  // quote: string;
-  // paths: SelfmapCareerPathModel[];
   resultQwenMbti?: string;
 }>();
+
+const FALLBACK_AI_LOADING = "AI分析中......";
+
+const resultQwenTimedOut = useStreamTextLoadingTimeout(() => props.resultQwenMbti);
+
+const skillsTimedOut = useStreamTextLoadingTimeout(() =>
+  (props.skills?.length ?? 0) > 0 ? "ready" : undefined,
+);
+
+const displayResultQwenMbti = computed(() => {
+  const t = props.resultQwenMbti?.trim();
+  if (t && t.length > 0) {
+    return t;
+  }
+  if (resultQwenTimedOut.value) {
+    return STREAM_TEXT_TIMEOUT_HINT;
+  }
+  return FALLBACK_AI_LOADING;
+});
+
+const displaySkillsPlaceholder = computed(() => {
+  if ((props.skills?.length ?? 0) > 0) {
+    return "";
+  }
+  if (skillsTimedOut.value) {
+    return STREAM_TEXT_TIMEOUT_HINT;
+  }
+  return FALLBACK_AI_LOADING;
+});
 </script>
 
 <template>
@@ -28,7 +59,7 @@ defineProps<{
           </div>
           <div class="p-8 flex-grow">
             <h3 class="text-xl font-bold mb-6 text-primary">职业路径建议</h3>
-            <div class="text-sm text-on-surface-variant whitespace-pre-wrap">{{ resultQwenMbti }}</div>
+            <div class="text-sm text-on-surface-variant whitespace-pre-wrap">{{ displayResultQwenMbti }}</div>
             <!-- <div class="space-y-6">
             <div
               v-for="path in paths"
@@ -47,7 +78,7 @@ defineProps<{
 
         <div class="glass-card rounded-lg p-8">
           <h3 class="text-xl font-bold mb-6 text-secondary">核心赋能技能</h3>
-          <ul class="space-y-6">
+          <ul v-if="skills.length > 0" class="space-y-6">
             <li v-for="skill in skills" :key="skill.id" class="flex items-start gap-3">
               <div class="mt-1 w-5 h-5 rounded bg-primary-dim/20 flex items-center justify-center">
                 <span class="material-symbols-outlined text-[16px] text-primary icon-filled">check</span>
@@ -58,6 +89,7 @@ defineProps<{
               </div>
             </li>
           </ul>
+          <p v-else class="text-sm text-on-surface-variant whitespace-pre-wrap">{{ displaySkillsPlaceholder }}</p>
           <!-- <div class="mt-10 p-4 rounded-2xl bg-secondary-container/20 border border-secondary/20">
           <p class="text-xs text-secondary-fixed-dim italic">"{{ quote }}"</p>
         </div> -->

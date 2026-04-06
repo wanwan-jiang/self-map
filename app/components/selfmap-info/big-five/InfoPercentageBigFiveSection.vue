@@ -39,6 +39,10 @@
 
 <script setup lang="ts">
 import type { SelfmapReportHeaderModel, SelfmapSkillModel } from "../../../types/selfmapReportType";
+import {
+  STREAM_TEXT_TIMEOUT_HINT,
+  useStreamTextLoadingTimeout,
+} from "../../../composables/useStreamTextLoadingTimeout";
 
 /**
  * @description 大五报告侧栏：AI 人物身份标题 + 个性成长建议正文 + 技能亮点（前两则）。
@@ -78,9 +82,17 @@ const sectionHeadline = computed(() => {
   return props.model?.title?.trim() || "大五人格 · AI 解读";
 });
 
+const careerTextTimedOut = useStreamTextLoadingTimeout(() => props.aiCareerText);
+
 const careerBody = computed(() => {
   const t = props.aiCareerText?.trim();
-  return t && t.length > 0 ? t : "个性成长建议生成中，请稍候或刷新页面重试。";
+  if (t && t.length > 0) {
+    return t;
+  }
+  if (careerTextTimedOut.value) {
+    return STREAM_TEXT_TIMEOUT_HINT;
+  }
+  return "AI分析中......";
 });
 
 const highlightSkills = computed(() => (props.aiSkills ?? []).slice(0, 2));
