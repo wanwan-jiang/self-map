@@ -55,7 +55,7 @@ const handleSubmit = async (): Promise<void> => {
 };
 
 useHead({
-  title: "SelfMap - RIASEC 测试",
+  title: "SelfMap - RIASEC 测评",
   htmlAttrs: {
     lang: "zh-Hans",
     class: "dark",

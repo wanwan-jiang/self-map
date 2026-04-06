@@ -316,7 +316,7 @@ function onEnneagramCta(): void {
 }
 
 useHead({
-  title: "SelfMao - 测评看板",
+  title: "SelfMap - 看板",
   htmlAttrs: {
     lang: "zh-Hans",
     class: "dark",

@@ -55,7 +55,7 @@ const handleSubmit = async (): Promise<void> => {
 };
 
 useHead({
-  title: "SelfMap - MBTI 测试",
+  title: "SelfMap - MBTI 测评",
   htmlAttrs: {
     lang: "zh-Hans",
     class: "dark",
