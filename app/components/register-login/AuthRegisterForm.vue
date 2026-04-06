@@ -18,7 +18,6 @@ const onSubmit = async (): Promise<void> => {
   const result: RegisterApiSuccess | RegisterApiFailBody | false = await submitForm();
 
   if (result === false || (result && result.success === false)) {
-    console.log("result", result);
     const message = result && "message" in result ? result.message : undefined;
     emit("update:show", { show: true, ...(message ? { message } : {}) });
     registerStore.setRegisterResult(false);

@@ -58,7 +58,6 @@ export const useRegisterForm = (): UseRegisterFormReturn => {
       const code = err.statusCode;
       if (code === 400 && err.data && typeof err.data === "object") {
         const body = err.data as RegisterApiFailBody;
-        console.log("body3333333333333", body);
         if (body.fieldErrors) {
           const fe = body.fieldErrors;
           errors.value = {

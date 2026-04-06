@@ -150,7 +150,6 @@ const axisLabelOuterStyles = computed(() => {
 });
 
 const axisLabelsForChart = computed<AxisLabelItem[]>(() => {
-  console.log("props.model", props.model);
   const stats = props.model.stats;
   return BIG_FIVE_DOMAINS.map((d, i) => {
     const pct = Math.round(domainScorePercent(stats, d.id));

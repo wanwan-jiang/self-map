@@ -70,8 +70,6 @@ export const usePersonTest = async (type: string) => {
         code: currentQuestion.value?.code ?? "",
       };
     }
-
-    console.log("answers.value", answers.value);
   };
 
   const goPrev = (): void => {

@@ -139,7 +139,6 @@ export const usePersonSubmit = async (type: string, answers: Ref<Record<string, 
       if (pair === undefined) continue;
 
       stats[pair] = stats[pair] + 1;
-      console.log("stats[pair]", stats[pair]);
 
       const picked = mbtiScoreToLetter(pair, answer.value);
       if (picked === undefined) continue;
