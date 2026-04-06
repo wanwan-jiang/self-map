@@ -146,8 +146,8 @@ export const usePersonSubmit = async (type: string, answers: Ref<Record<string, 
     }
 
     const getFinalLetter = (pair: AxisPair, positive: AxisLetter, negative: AxisLetter): AxisLetter => {
-      // 按你的规则：正数 > 负数 => positive，否则 => negative（包含相等时）
-      return stats[positive] > stats[negative] ? positive : negative;
+      // 按你的规则：正数 >= 负数 => positive，否则 => negative
+      return stats[positive] >= stats[negative] ? positive : negative;
     };
 
     const ei = getFinalLetter("EI", "E", "I");

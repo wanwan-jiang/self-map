@@ -2,6 +2,16 @@
 import { useLoginStore } from "../../../stores/login";
 import { useLoginForm } from "~/composables/user/useLoginForm";
 import type { LoginApiSuccess, LoginApiFailBody, LoginShowUpdatePayload } from "~/types/loginType";
+import {
+  MBTI_TYPE_KEY,
+  MBTI_STATS_KEY,
+  BIG_FIVE_TYPE_KEY,
+  BIG_FIVE_STATS_KEY,
+  RIASEC_TYPE_KEY,
+  RIASEC_STATS_KEY,
+  ENNEAGRAM_TYPE_KEY,
+  ENNEAGRAM_STATS_KEY,
+} from "../../variables/variable";
 
 const emit = defineEmits<{
   "update:show": [payload: LoginShowUpdatePayload];
@@ -25,6 +35,14 @@ const onSubmit = async (): Promise<void> => {
 
   emit("update:show", { show: true });
   loginStore.setLoginResult(true);
+  localStorage.removeItem(MBTI_TYPE_KEY);
+  localStorage.removeItem(MBTI_STATS_KEY);
+  localStorage.removeItem(BIG_FIVE_TYPE_KEY);
+  localStorage.removeItem(BIG_FIVE_STATS_KEY);
+  localStorage.removeItem(RIASEC_TYPE_KEY);
+  localStorage.removeItem(RIASEC_STATS_KEY);
+  localStorage.removeItem(ENNEAGRAM_TYPE_KEY);
+  localStorage.removeItem(ENNEAGRAM_STATS_KEY);
   navigateTo("/test-board", { replace: true });
 };
 </script>
