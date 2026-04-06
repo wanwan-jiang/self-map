@@ -70,4 +70,5 @@ export function clearAuthToken(): void {
   localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
   localStorage.removeItem(AUTH_USERNAME_STORAGE_KEY);
   localStorage.removeItem(AUTH_USER_ID_STORAGE_KEY);
+  navigateTo("/login");
 }
