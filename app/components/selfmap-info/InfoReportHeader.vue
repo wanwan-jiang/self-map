@@ -6,7 +6,7 @@
         <span
           class="inline-block py-1 px-4 rounded-full bg-secondary-container/30 text-secondary text-sm font-medium mb-4"
         >
-          MBTI 专业深度解析
+          深度解析
         </span>
         <template v-if="isMbti">
           <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-4">
