@@ -10,6 +10,7 @@ const props = defineProps<{
   login?: boolean;
   infoReport?: boolean;
   message?: string;
+  isLoginStatusError?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -44,7 +45,7 @@ watch(
 );
 
 onMounted(() => {
-  if (props.register || props.login || props.infoReport) {
+  if (props.register || props.login || props.infoReport || props.isLoginStatusError) {
     startHideTimer();
   }
 });
@@ -143,6 +144,24 @@ onBeforeUnmount(() => {
           <div class="flex flex-col">
             <span class="text-on-surface font-headline font-bold text-lg leading-none">查看失败</span>
             <span class="text-on-surface-variant text-xs mt-0.5">未测试报告，请先进行测评...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div v-if="isLoginStatusError">
+    <div class="pt-[20px] fixed inset-0 z-[100] flex items-start justify-center pointer-events-none">
+      <div
+        class="bg-surface/80 backdrop-blur-2xl border border-primary/30 px-8 py-4 rounded-full shadow-[0_0_40px_rgba(88,86,214,0.2)] flex items-center gap-4 animate-in fade-in zoom-in duration-300 pointer-events-auto"
+      >
+        <div class="w-10 h-10 rounded-full flex items-center justify-center bg-error/20 text-error">
+          <span class="material-symbols-outlined text-[24px] font-bold">error</span>
+        </div>
+        <div>
+          <div class="flex flex-col">
+            <span class="text-on-surface font-headline font-bold text-lg leading-none">登录状态失效</span>
+            <span class="text-on-surface-variant text-xs mt-0.5">请重新登录...</span>
           </div>
         </div>
       </div>

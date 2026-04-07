@@ -51,6 +51,7 @@
     </main>
 
     <AuthFooterLinks />
+    <PopUp v-if="isLoginStatusError" :isLoginStatusError="true" @close="onCloseLoginStatusError" />
   </div>
 </template>
 <script setup lang="ts">
@@ -87,6 +88,10 @@ import {
 const route = useRoute();
 const type = route.query.type as string;
 
+const onCloseLoginStatusError = (): void => {
+  isLoginStatusError.value = false;
+};
+
 const isMbti = computed(() => type === MBTI_TYPE_KEY);
 const isBigFive = computed(() => type === BIG_FIVE_TYPE_KEY);
 const isRiasec = computed(() => type === RIASEC_TYPE_KEY);
@@ -95,6 +100,7 @@ const isEnneagram = computed(() => type === ENNEAGRAM_TYPE_KEY);
 const report = selfmapReportSample;
 const submitResult = ref<SelfmapReportHeaderModel>({});
 const submitError = ref<string>("");
+const isLoginStatusError = ref<boolean>(false);
 const savedHistory = ref<
   (UserMbtiResultItem | UserBigFiveResultItem | UserRiasecResultItem | UserEnneagramResultItem)[]
 >([]);
@@ -218,7 +224,6 @@ onMounted(async () => {
       savedHistory.value = [];
     }
   } catch (error: unknown) {
-    console.error("获取测试结果失败", error);
     const statusCode =
       typeof error === "object" &&
       error !== null &&
@@ -229,6 +234,7 @@ onMounted(async () => {
 
     // 本地 token 存在但会话已失效时，清理本地登录态，避免重复触发 401 请求。
     if (statusCode === 401) {
+      isLoginStatusError.value = true;
       clearAuthToken();
     }
     savedHistory.value = [];
