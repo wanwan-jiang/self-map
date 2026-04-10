@@ -57,19 +57,19 @@ export default defineEventHandler(async (event): Promise<RegisterSuccessBody | R
 
   const hashedPassword = await hashPassword(parsed.data.password);
 
-  await Users.create({
-    username,
-    email,
-    password: hashedPassword,
-    agreeTerms,
-    createdAt: new Date(),
-  });
+  // await Users.create({
+  //   username,
+  //   email,
+  //   password: hashedPassword,
+  //   agreeTerms,
+  //   createdAt: new Date(),
+  // });
 
-  return {
-    success: true,
-    data: {
-      username,
-      email,
-    },
-  };
+  // return {
+  //   success: true,
+  //   data: {
+  //     username,
+  //     email,
+  //   },
+  // };
 });
